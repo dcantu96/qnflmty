@@ -1,19 +1,17 @@
-import { db } from '~/server/db'
+import { authOptions } from '~/app/api/auth/[...nextauth]/route'
+import { getServerSession } from 'next-auth'
+import { AuthButtons } from '~/components/auth-buttons'
 
 export default async function HomePage() {
-	const posts = await db.query.posts.findMany()
+	const session = await getServerSession(authOptions)
 
 	return (
 		<main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-[#2e026d] to-[#15162c] text-white">
-			Hello, QNFLMTY in progress
-			{posts.map((post) => (
-				<div key={post.id} className="m-2 rounded bg-gray-800 p-4">
-					<h2 className="font-bold text-xl">{post.name}</h2>
-					<p className="text-gray-400 text-sm">
-						Created at: {new Date(post.createdAt).toLocaleString()}
-					</p>
-				</div>
-			))}
+			<p>Hello, QNFLMTY in progress</p>
+
+			<h1>Hello {session?.user?.name || 'Guest'}</h1>
+
+			<AuthButtons />
 		</main>
 	)
 }
