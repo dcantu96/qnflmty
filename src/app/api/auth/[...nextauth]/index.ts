@@ -1,4 +1,4 @@
-import NextAuth, { type NextAuthOptions } from 'next-auth'
+import type { NextAuthOptions } from 'next-auth'
 import GoogleProvider from 'next-auth/providers/google'
 import { DrizzleAdapter } from '@auth/drizzle-adapter'
 import { env } from '~/env'
@@ -16,5 +16,3 @@ export const authOptions = {
 		strategy: 'database',
 	},
 } satisfies NextAuthOptions
-
-export default NextAuth(authOptions)
