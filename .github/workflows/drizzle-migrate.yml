@@ -3,23 +3,24 @@ name: Run Drizzle Migrations on Production
 on:
   push:
     branches:
-      - main  # Change this to your production branch if different
+      - main
 
 jobs:
   migrate:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
-      - name: Setup Node.js 22 with pnpm cache
-        uses: actions/setup-node@v3
+      - uses: actions/setup-node@v3
         with:
           node-version: 22
           cache: 'pnpm'
 
-      - name: Install dependencies with pnpm
+      - name: Install pnpm
+        run: npm install -g pnpm
+
+      - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
       - name: Run Drizzle migrations
