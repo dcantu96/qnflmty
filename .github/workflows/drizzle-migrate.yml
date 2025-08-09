@@ -22,4 +22,4 @@ jobs:
       - name: Run Drizzle migrations
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
-        run: npx drizzle-kit migrate:latest --connection-url $DATABASE_URL
+        run: pnpm run db:migrate --connection-url $DATABASE_URL
