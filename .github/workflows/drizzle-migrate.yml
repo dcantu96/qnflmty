@@ -3,7 +3,7 @@ name: Run Drizzle Migrations on Production
 on:
   push:
     branches:
-      - main  # Adjust to your production branch
+      - main
 
 jobs:
   migrate:
@@ -22,4 +22,4 @@ jobs:
       - name: Run Drizzle migrations
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
-        run: pnpm run db:migrate --connection-url $DATABASE_URL
+        run: pnpm run db:migrate
