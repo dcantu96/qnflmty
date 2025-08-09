@@ -1,12 +1,10 @@
-import type { Config } from "drizzle-kit";
-
-import { env } from "~/env";
+import type { Config } from 'drizzle-kit'
 
 export default {
-	schema: "./src/server/db/schema.ts",
-	dialect: "postgresql",
+	schema: './src/server/db/schema.ts',
+	dialect: 'postgresql',
 	dbCredentials: {
-		url: env.DATABASE_URL,
+		// biome-ignore lint/style/noNonNullAssertion: <explanation>
+		url: process.env.DATABASE_URL!,
 	},
-	tablesFilter: ["qnflmty_*"],
-} satisfies Config;
+} satisfies Config
