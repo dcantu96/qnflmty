@@ -4,7 +4,8 @@ import { DrizzleAdapter } from '@auth/drizzle-adapter'
 import { env } from '~/env'
 import { db } from '~/server/db'
 import { eq } from 'drizzle-orm'
-import { users } from '~/server/db/schema'
+import { users, accounts } from '~/server/db/schema'
+import type { AdapterAccount } from 'next-auth/adapters'
 
 export const authOptions = {
 	adapter: DrizzleAdapter(db),
@@ -33,6 +34,19 @@ export const authOptions = {
 							image: user.image ?? '',
 						})
 						.where(eq(users.id, user.id))
+				} else {
+					await db.insert(accounts).values({
+						userId: existingUser.id,
+						type: account.type as unknown as AdapterAccount,
+						provider: account.provider,
+						providerAccountId: account.providerAccountId,
+						access_token: account.access_token,
+						token_type: account.token_type,
+						expires_at: account.expires_at,
+						scope: account.scope,
+						id_token: account.id_token,
+						session_state: account.session_state,
+					})
 				}
 			}
 
