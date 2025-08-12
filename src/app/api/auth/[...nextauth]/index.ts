@@ -33,7 +33,7 @@ export const authOptions = {
 							name: user.name ?? '',
 							image: user.image ?? '',
 						})
-						.where(eq(users.id, user.id))
+						.where(eq(users.id, Number(user.id)))
 				} else {
 					await db.insert(accounts).values({
 						userId: existingUser.id,
