@@ -1,5 +1,5 @@
 {
-  "id": "055d1a93-fb74-4111-87ff-5e957730dfa9",
+  "id": "04892a06-c89f-4356-a261-917e2b888075",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -10,7 +10,7 @@
       "columns": {
         "userId": {
           "name": "userId",
-          "type": "text",
+          "type": "integer",
           "primaryKey": false,
           "notNull": true
         },
@@ -109,7 +109,7 @@
         },
         "userId": {
           "name": "userId",
-          "type": "text",
+          "type": "integer",
           "primaryKey": false,
           "notNull": true
         },
@@ -192,7 +192,7 @@
         },
         "userId": {
           "name": "userId",
-          "type": "text",
+          "type": "integer",
           "primaryKey": false,
           "notNull": true
         },
@@ -231,7 +231,7 @@
       "columns": {
         "id": {
           "name": "id",
-          "type": "text",
+          "type": "bigserial",
           "primaryKey": true,
           "notNull": true
         },
@@ -258,6 +258,32 @@
           "type": "text",
           "primaryKey": false,
           "notNull": false
+        },
+        "encryptedPassword": {
+          "name": "encryptedPassword",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "phone": {
+          "name": "phone",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updatedAt": {
+          "name": "updatedAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
         }
       },
       "indexes": {},
