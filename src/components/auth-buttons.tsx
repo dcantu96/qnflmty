@@ -1,24 +1,14 @@
-'use client'
+import { redirect } from 'next/navigation'
+import { getServerSession } from 'next-auth'
+import { authOptions } from '~/app/api/auth/[...nextauth]'
+import { Logout } from './logout'
 
-import { signIn, signOut, useSession } from 'next-auth/react'
+export async function AuthButtons() {
+	const session = await getServerSession(authOptions)
 
-export function AuthButtons() {
-	const { data: session } = useSession()
-
-	if (session) {
-		return (
-			<>
-				<p>Signed in as {session.user?.email}</p>
-				<button type="button" onClick={() => signOut()}>
-					Sign out
-				</button>
-			</>
-		)
+	if (!session) {
+		redirect('/login')
 	}
 
-	return (
-		<button type="button" onClick={() => signIn('google')}>
-			Sign in with Google
-		</button>
-	)
+	return <Logout />
 }
