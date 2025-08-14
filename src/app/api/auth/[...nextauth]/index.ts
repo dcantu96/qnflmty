@@ -27,13 +27,30 @@ export const authOptions = {
 				})
 
 				if (!existingUser) {
-					await db
-						.update(users)
-						.set({
+					const newUsers = await db
+						.insert(users)
+						.values({
+							email,
 							name: user.name ?? '',
 							image: user.image ?? '',
 						})
-						.where(eq(users.id, Number(user.id)))
+						.returning({ id: users.id })
+					const newUser = newUsers?.[0]
+					if (!newUser) {
+						throw new Error('Failed to create user in database')
+					}
+					await db.insert(accounts).values({
+						userId: newUser.id,
+						type: account.type as unknown as AdapterAccount,
+						provider: account.provider,
+						providerAccountId: account.providerAccountId,
+						access_token: account.access_token,
+						token_type: account.token_type,
+						expires_at: account.expires_at,
+						scope: account.scope,
+						id_token: account.id_token,
+						session_state: account.session_state,
+					})
 				} else {
 					await db.insert(accounts).values({
 						userId: existingUser.id,
