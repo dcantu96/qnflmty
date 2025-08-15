@@ -3,7 +3,6 @@ import GoogleProvider from 'next-auth/providers/google'
 import { DrizzleAdapter } from '@auth/drizzle-adapter'
 import { env } from '~/env'
 import { db } from '~/server/db'
-import { eq } from 'drizzle-orm'
 import { users, accounts } from '~/server/db/schema'
 import type { AdapterAccount } from 'next-auth/adapters'
 
@@ -68,6 +67,12 @@ export const authOptions = {
 			}
 
 			return true
+		},
+		async session({ session, user }) {
+			if (session.user) {
+				session.user.id = Number(user.id)
+			}
+			return session
 		},
 	},
 	session: {
