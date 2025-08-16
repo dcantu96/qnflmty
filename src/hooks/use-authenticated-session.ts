@@ -1,4 +1,5 @@
 import { getServerSession } from 'next-auth'
+import { redirect } from 'next/navigation'
 import { authOptions } from '~/app/api/auth/[...nextauth]'
 
 /**
@@ -7,8 +8,8 @@ import { authOptions } from '~/app/api/auth/[...nextauth]'
  */
 export const useAuthenticatedSession = async () => {
 	const session = await getServerSession(authOptions)
-	if (!session || !session.user) {
-		throw new Error('User is not authenticated')
+	if (!session?.user) {
+		redirect('/login')
 	}
 	return session
 }
