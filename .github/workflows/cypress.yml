@@ -24,13 +24,13 @@ jobs:
         run: pnpm start &
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
-          G0OGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+          GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
           GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
           AUTH_SECRET: ${{ secrets.AUTH_SECRET }}
           AUTH_URL: http://localhost:3000
       
       - name: Wait for app to be ready
-        run: pnpm dlx wait-on http://localhost:3000
+        run: pnpm dlx wait-on http://localhost:3000 --timeout 60000 --strict
 
       - name: Run Cypress
         run: pnpm cypress run --record --parallel
