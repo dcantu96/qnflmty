@@ -9,7 +9,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        containers: [1, 2]
+        containers: [1, 2, 3]
 
     steps:
       - name: Checkout repository
@@ -34,7 +34,7 @@ jobs:
         run: pnpm dlx wait-on http://localhost:3000 --timeout 60000 --strict
 
       - name: Run Cypress
-        run: pnpm cypress run --record --parallel
+        run: pnpm cypress run --record --parallel --ci-build-id ${{ github.run_id }} --group "Group-${{ matrix.containers }}"
         env:
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
