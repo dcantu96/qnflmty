@@ -5,7 +5,7 @@ import { dirname, join } from 'node:path'
 import { parse, type Options } from 'csv-parse/sync'
 import * as schema from '~/server/db/schema'
 import { db } from './scripts-db'
-import { eq } from 'drizzle-orm'
+import { eq, sql } from 'drizzle-orm'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
@@ -453,6 +453,39 @@ async function seedWinners() {
 	console.log('✅ Winners imported successfully!')
 }
 
+// Reset sequences for all tables with explicit ID inserts
+async function resetSequences() {
+	const tables = [
+		'user',
+		'user_account',
+		'sport',
+		'tournament',
+		'week',
+		'group',
+		'request',
+		'membership',
+		'team',
+		'membership_week',
+		'match',
+		'pick',
+		'group_week',
+	] as const
+
+	for (const t of tables) {
+		const ident = `"${t}"`
+		await db.execute(
+			sql.raw(`
+				select setval(
+					pg_get_serial_sequence('${ident}', 'id'),
+					coalesce((select max(id) from ${ident}), 0),
+					true
+				)
+			`),
+		)
+	}
+	console.log('✅ Sequences reset for seeded tables')
+}
+
 async function seed() {
 	try {
 		await seedUsers()
@@ -469,6 +502,7 @@ async function seed() {
 		await seedPicks()
 		await seedGroupWeeks()
 		await seedWinners()
+		await resetSequences()
 	} catch (error) {
 		console.error('Error seeding data:', error)
 	}
