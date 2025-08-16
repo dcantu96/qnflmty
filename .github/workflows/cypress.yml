@@ -41,7 +41,7 @@ jobs:
         run: pnpm dlx wait-on http://localhost:3000 --timeout 60000 --strict
 
       - name: Run Cypress tests
-        run: pnpm cypress run --record --parallel --ci-build-id ${{ github.run_id }} --group "Group-1"
+        run: pnpm cypress run --record --parallel --ci-build-id ${{ github.run_id }} --group "Group-${{ matrix.containers }}"
         env:
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
