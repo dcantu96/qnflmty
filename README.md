@@ -8,7 +8,7 @@
 - [x] Attach db to ui
 - [x] Add authentication (w/ next-auth)
 - [x] Attach end to end tests (cypress)
-- [ ] Attach CI for cypress cloud
+- [x] Attach CI for cypress cloud
 - [ ] UI for brand new users
   - Layout: No sidebar, full page view
     - welcome message
