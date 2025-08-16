@@ -5,6 +5,7 @@ on: [push]
 jobs:
   cypress-run:
     runs-on: ubuntu-latest
+    environment: preview
     strategy:
       fail-fast: false
       matrix:
