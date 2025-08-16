@@ -7,7 +7,8 @@
 - [x] Setup db (vercel postgres)
 - [x] Attach db to ui
 - [x] Add authentication (w/ next-auth)
-- [ ] Attach end to end tests (storybook or playwright)
+- [x] Attach end to end tests (cypress)
+- [ ] Attach CI for cypress cloud
 - [ ] UI for brand new users
   - Layout: No sidebar, full page view
     - welcome message
