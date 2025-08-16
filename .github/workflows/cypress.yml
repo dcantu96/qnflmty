@@ -12,11 +12,9 @@ jobs:
         containers: [1]
 
     steps:
-      # 1️⃣ Checkout code
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # 2️⃣ Setup Node.js and pnpm
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
@@ -24,7 +22,6 @@ jobs:
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
 
-      # 3️⃣ Cache pnpm store and node_modules
       - name: Cache pnpm store
         uses: actions/cache@v4
         with:
@@ -35,11 +32,9 @@ jobs:
           restore-keys: |
             pnpm-${{ runner.os }}-
 
-      # 4️⃣ Install dependencies
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      # 5️⃣ Cache Cypress binary
       - name: Cache Cypress binary
         uses: actions/cache@v4
         with:
@@ -47,7 +42,6 @@ jobs:
           key: cypress-${{ runner.os }}-${{ hashFiles('package.json') }}
           restore-keys: cypress-${{ runner.os }}-
 
-      # 6️⃣ Start the app (dev server)
       - name: Start app
         run: pnpm dev &
         env:
@@ -57,11 +51,9 @@ jobs:
           AUTH_SECRET: ${{ secrets.AUTH_SECRET }}
           AUTH_URL: http://localhost:3000
 
-      # 7️⃣ Wait for app to be ready
       - name: Wait for app
         run: pnpm dlx wait-on http://localhost:3000 --timeout 60000 --strict
 
-      # 8️⃣ Run Cypress tests
       - name: Run Cypress tests
         run: pnpm cypress run --record --parallel --ci-build-id ${{ github.run_id }} --group "Group-${{ matrix.containers }}"
         env:
