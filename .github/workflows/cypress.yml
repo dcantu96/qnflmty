@@ -21,6 +21,13 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Cache Cypress binary
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/Cypress
+          key: cypress-${{ runner.os }}-${{ hashFiles('package.json') }}
+          restore-keys: cypress-${{ runner.os }}-
+
       - name: Start app
         run: pnpm dev &
         env:
@@ -29,12 +36,12 @@ jobs:
           GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
           AUTH_SECRET: ${{ secrets.AUTH_SECRET }}
           AUTH_URL: http://localhost:3000
-      
+
       - name: Wait for app to be ready
         run: pnpm dlx wait-on http://localhost:3000 --timeout 60000 --strict
 
-      - name: Run Cypress
-        run: pnpm cypress run --record --parallel --ci-build-id ${{ github.run_id }} --group "Group-${{ matrix.containers }}"
+      - name: Run Cypress tests
+        run: pnpm cypress run --record --parallel --ci-build-id ${{ github.run_id }} --group "Group-1"
         env:
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
