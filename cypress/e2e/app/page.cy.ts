@@ -7,6 +7,6 @@ describe('Authenticated Dashboard', () => {
 		cy.visit('/')
 		cy.contains('Hello, QNFLMTY in progress')
 		cy.contains('Hello David Cantu')
-		cy.contains('Your accounts: davidcantum, prueba123[]')
+		cy.contains('Your accounts: davidcantum, prueba123')
 	})
 })
