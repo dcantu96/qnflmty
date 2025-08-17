@@ -56,6 +56,10 @@ export function ProfileSwitcher({
 	const { isMobile } = useSidebar()
 	const router = useRouter()
 
+	const sortedProfiles = [...profiles].sort((a, b) =>
+		a.username.toLowerCase().localeCompare(b.username.toLowerCase()),
+	)
+
 	// Get the currently selected profile from localStorage
 	const [activeProfile, setActiveProfile] = React.useState<Profile | null>(null)
 	const [isLoading, setIsLoading] = React.useState(false)
@@ -69,20 +73,6 @@ export function ProfileSwitcher({
 			)
 			if (profile) {
 				setActiveProfile(profile)
-			} else {
-				// If stored profile doesn't exist, default to first profile
-				const firstProfile = profiles[0]
-				if (firstProfile) {
-					setActiveProfile(firstProfile)
-					localStorage.setItem('selectedProfile', firstProfile.id.toString())
-				}
-			}
-		} else {
-			// No stored profile, default to first
-			const firstProfile = profiles[0]
-			if (firstProfile) {
-				setActiveProfile(firstProfile)
-				localStorage.setItem('selectedProfile', firstProfile.id.toString())
 			}
 		}
 	}, [profiles])
@@ -171,7 +161,7 @@ export function ProfileSwitcher({
 						<DropdownMenuLabel className="text-muted-foreground text-xs">
 							Profiles
 						</DropdownMenuLabel>
-						{profiles.map((profile, index) => {
+						{sortedProfiles.map((profile, index) => {
 							const profileAvatarKey =
 								profile.avatar as keyof typeof avatarIcons
 							const ProfileAvatarIcon =

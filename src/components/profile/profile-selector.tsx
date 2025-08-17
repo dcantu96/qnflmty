@@ -46,6 +46,10 @@ export function ProfileSelector({ accounts }: ProfileSelectorProps) {
 		avatar: string | null
 	} | null>(null)
 
+	const sortedAccounts = [...accounts].sort((a, b) =>
+		a.username.toLowerCase().localeCompare(b.username.toLowerCase()),
+	)
+
 	useEffect(() => {
 		// Check if there's a selected profile in localStorage and auto-redirect
 		const storedProfile = localStorage.getItem('selectedProfile')
@@ -115,7 +119,7 @@ export function ProfileSelector({ accounts }: ProfileSelectorProps) {
 				</div>
 
 				<div className="flex flex-wrap justify-center gap-6">
-					{accounts.map((account) => {
+					{sortedAccounts.map((account) => {
 						const avatarKey = account.avatar as keyof typeof avatarIcons
 						const AvatarIcon = avatarIcons[avatarKey]?.icon || User
 						const avatarColor = avatarIcons[avatarKey]?.color || 'text-blue-600'
@@ -123,12 +127,12 @@ export function ProfileSelector({ accounts }: ProfileSelectorProps) {
 						return (
 							<Card
 								key={account.id}
-								className="group relative cursor-pointer transition-all hover:scale-105 hover:shadow-lg"
+								className="group relative w-32 cursor-pointer transition-colors hover:bg-accent"
 							>
-								<CardContent className="flex flex-col items-center p-6">
+								<CardContent className="flex flex-col items-center p-4">
 									{/* Edit Button */}
 									<Button
-										variant="outline"
+										variant="ghost"
 										size="sm"
 										className="absolute top-2 right-2 h-8 w-8 p-0 opacity-0 transition-opacity group-hover:opacity-100"
 										onClick={(e) => {
@@ -152,10 +156,13 @@ export function ProfileSelector({ accounts }: ProfileSelectorProps) {
 											}
 										}}
 									>
-										<div className="mb-4 flex h-24 w-24 items-center justify-center rounded-full bg-gray-100 transition-colors hover:bg-gray-200">
-											<AvatarIcon className={`h-12 w-12 ${avatarColor}`} />
+										<div className="mb-3 flex h-16 w-16 items-center justify-center rounded-lg bg-accent">
+											<AvatarIcon className={`h-8 w-8 ${avatarColor}`} />
 										</div>
-										<h3 className="text-center font-semibold text-gray-900 text-lg">
+										<h3
+											className="w-full truncate text-center font-medium text-sm"
+											title={account.username}
+										>
 											{account.username}
 										</h3>
 									</button>
@@ -166,14 +173,14 @@ export function ProfileSelector({ accounts }: ProfileSelectorProps) {
 
 					{/* Add New Profile */}
 					<Card
-						className="cursor-pointer transition-all hover:scale-105 hover:shadow-lg"
+						className="w-32 cursor-pointer transition-colors hover:bg-accent"
 						onClick={handleCreateNew}
 					>
-						<CardContent className="flex flex-col items-center p-6">
-							<div className="mb-4 flex h-24 w-24 items-center justify-center rounded-full bg-gray-100 transition-colors hover:bg-gray-200">
-								<Plus className="h-12 w-12 text-gray-400" />
+						<CardContent className="flex flex-col items-center p-4">
+							<div className="mb-3 flex h-16 w-16 items-center justify-center rounded-lg border-2 border-muted-foreground/25 border-dashed">
+								<Plus className="h-8 w-8 text-muted-foreground" />
 							</div>
-							<h3 className="text-center font-semibold text-gray-900 text-lg">
+							<h3 className="w-full truncate text-center font-medium text-muted-foreground text-sm">
 								Add Profile
 							</h3>
 						</CardContent>
