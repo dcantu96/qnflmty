@@ -1,38 +1,18 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card'
 import { Button } from '~/components/ui/button'
-import { UserCheck, Mail, Users, Clock } from 'lucide-react'
-import {
-	User,
-	Crown,
-	Zap,
-	Star,
-	Heart,
-	Shield,
-	Rocket,
-	Gamepad2,
-} from 'lucide-react'
+import { UserCheck, Mail, Users, Clock, User, ArrowLeft } from 'lucide-react'
 import { trpcClient } from '~/lib/trpcClient'
-import { useRouter } from 'next/navigation'
-
-const avatarIcons = {
-	user: { icon: User, color: 'text-blue-600' },
-	crown: { icon: Crown, color: 'text-yellow-600' },
-	zap: { icon: Zap, color: 'text-purple-600' },
-	star: { icon: Star, color: 'text-orange-600' },
-	heart: { icon: Heart, color: 'text-red-600' },
-	shield: { icon: Shield, color: 'text-green-600' },
-	rocket: { icon: Rocket, color: 'text-indigo-600' },
-	gamepad: { icon: Gamepad2, color: 'text-pink-600' },
-}
+import { avatarIconsMap, type AvatarIcon } from '~/lib/avatar-icons'
 
 interface RequestAccessFormProps {
 	userAccount: {
 		id: number
 		username: string
-		avatar: string | null
+		avatar: AvatarIcon
 		createdAt: Date
 	}
 }
@@ -54,9 +34,7 @@ export function RequestAccessForm({ userAccount }: RequestAccessFormProps) {
 	const [hasPendingRequest, setHasPendingRequest] = useState(false)
 	const router = useRouter()
 
-	const avatarKey = userAccount.avatar as keyof typeof avatarIcons
-	const AvatarIcon = avatarIcons[avatarKey]?.icon || User
-	const avatarColor = avatarIcons[avatarKey]?.color || 'text-blue-600'
+	const avatar = avatarIconsMap[userAccount.avatar]
 
 	// Fetch active group and check pending requests on mount
 	useEffect(() => {
@@ -141,7 +119,7 @@ export function RequestAccessForm({ userAccount }: RequestAccessFormProps) {
 				<CardContent className="p-8">
 					<div className="flex flex-col items-center space-y-4">
 						<div className="flex h-24 w-24 items-center justify-center rounded-full bg-gray-100 dark:bg-gray-800">
-							<AvatarIcon className={`h-12 w-12 ${avatarColor}`} />
+							<avatar.icon className={`h-12 w-12 ${avatar.color}`} />
 						</div>
 						<div className="text-center">
 							<h2 className="font-bold text-2xl text-gray-900 dark:text-white">
@@ -210,8 +188,8 @@ export function RequestAccessForm({ userAccount }: RequestAccessFormProps) {
 						</div>
 					</div>
 
-					{/* Action Button */}
-					<div className="text-center">
+					{/* Action Buttons */}
+					<div className="space-y-4 text-center">
 						{error && (
 							<div className="mb-4 rounded-md border border-red-200 bg-red-50 p-3">
 								<p className="text-red-700 text-sm">{error}</p>
@@ -224,14 +202,27 @@ export function RequestAccessForm({ userAccount }: RequestAccessFormProps) {
 							</div>
 						)}
 
-						<Button
-							size="lg"
-							className="px-8 py-6 text-lg"
-							disabled={isButtonDisabled}
-							onClick={handleRequestAccess}
-						>
-							{getButtonText()}
-						</Button>
+						<div className="flex flex-col gap-3">
+							<Button
+								size="lg"
+								className="px-8 py-6 text-lg"
+								disabled={isButtonDisabled}
+								onClick={handleRequestAccess}
+							>
+								{getButtonText()}
+							</Button>
+
+							<Button
+								variant="outline"
+								size="lg"
+								className="px-8 py-3"
+								onClick={() => router.push('/select-profile')}
+							>
+								<ArrowLeft className="mr-2 h-4 w-4" />
+								Switch Profile
+							</Button>
+						</div>
+
 						<p className="mt-3 text-gray-500 text-sm">
 							You'll be notified once your request is reviewed
 						</p>

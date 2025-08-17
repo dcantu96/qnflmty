@@ -26,6 +26,7 @@ import {
 	SidebarMenuItem,
 	useSidebar,
 } from '~/components/ui/sidebar'
+import { clearSelectedProfile } from '~/lib/profile-actions'
 
 export function NavUser({
 	user,
@@ -39,9 +40,7 @@ export function NavUser({
 	const { isMobile } = useSidebar()
 
 	const handleLogout = async () => {
-		// Clear selected profile from localStorage
-		localStorage.removeItem('selectedProfile')
-		// Sign out and redirect to home
+		await clearSelectedProfile()
 		await signOut({ callbackUrl: '/' })
 	}
 

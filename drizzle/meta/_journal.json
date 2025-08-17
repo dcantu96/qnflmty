@@ -15,6 +15,20 @@
       "when": 1755389921621,
       "tag": "0001_motionless_wind_dancer",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1755464637757,
+      "tag": "0002_overconfident_veda",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1755464694473,
+      "tag": "0003_spicy_devos",
+      "breakpoints": true
     }
   ]
 }

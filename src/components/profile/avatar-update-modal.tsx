@@ -9,29 +9,9 @@ import {
 	DialogTitle,
 } from '~/components/ui/dialog'
 import { Button } from '~/components/ui/button'
-import {
-	User,
-	Crown,
-	Zap,
-	Star,
-	Heart,
-	Shield,
-	Rocket,
-	Gamepad2,
-} from 'lucide-react'
 import { trpcClient } from '~/lib/trpcClient'
 import { useRouter } from 'next/navigation'
-
-const avatarIcons = {
-	user: { icon: User, color: 'text-blue-600', label: 'User' },
-	crown: { icon: Crown, color: 'text-yellow-600', label: 'Crown' },
-	zap: { icon: Zap, color: 'text-purple-600', label: 'Zap' },
-	star: { icon: Star, color: 'text-orange-600', label: 'Star' },
-	heart: { icon: Heart, color: 'text-red-600', label: 'Heart' },
-	shield: { icon: Shield, color: 'text-green-600', label: 'Shield' },
-	rocket: { icon: Rocket, color: 'text-indigo-600', label: 'Rocket' },
-	gamepad: { icon: Gamepad2, color: 'text-pink-600', label: 'Gamepad' },
-}
+import { avatarIconsMap } from '~/lib/avatar-icons'
 
 interface AvatarUpdateModalProps {
 	isOpen: boolean
@@ -90,26 +70,24 @@ export function AvatarUpdateModal({
 				</DialogHeader>
 
 				<div className="grid grid-cols-4 gap-4 py-4">
-					{Object.entries(avatarIcons).map(
-						([key, { icon: Icon, color, label }]) => (
-							<button
-								key={key}
-								type="button"
-								data-avatar={key}
-								className={`flex flex-col items-center gap-2 rounded-lg border-2 p-4 transition-all hover:bg-gray-50 ${
-									selectedAvatar === key
-										? 'border-blue-500 bg-blue-50'
-										: 'border-gray-200'
-								}`}
-								onClick={() => setSelectedAvatar(key)}
-							>
-								<Icon className={`h-8 w-8 ${color}`} />
-								<span className="font-medium text-gray-600 text-xs">
-									{label}
-								</span>
-							</button>
-						),
-					)}
+					{Object.entries(avatarIconsMap).map(([name, avatar]) => (
+						<button
+							key={name}
+							type="button"
+							data-avatar={name}
+							className={`flex flex-col items-center gap-2 rounded-lg border-2 p-4 transition-all hover:bg-gray-50 ${
+								selectedAvatar === name
+									? 'border-blue-500 bg-blue-50'
+									: 'border-gray-200'
+							}`}
+							onClick={() => setSelectedAvatar(name)}
+						>
+							<avatar.icon className={`h-8 w-8 ${avatar.color}`} />
+							<span className="font-medium text-gray-600 text-xs">
+								{avatar.name}
+							</span>
+						</button>
+					))}
 				</div>
 
 				<div className="flex justify-end gap-2">

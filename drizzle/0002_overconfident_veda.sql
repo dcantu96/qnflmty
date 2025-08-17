@@ -1,0 +1,3 @@
+CREATE TYPE "public"."avatar_icon" AS ENUM('user', 'crown', 'star', 'heart', 'diamond', 'club', 'spade', 'lightning', 'fire', 'snowflake', 'sun', 'moon');--> statement-breakpoint
+ALTER TABLE "user_account" ALTER COLUMN "avatar" SET DEFAULT 'user'::"public"."avatar_icon";--> statement-breakpoint
+ALTER TABLE "user_account" ALTER COLUMN "avatar" SET DATA TYPE "public"."avatar_icon" USING "avatar"::"public"."avatar_icon";

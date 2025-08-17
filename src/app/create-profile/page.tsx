@@ -1,8 +1,6 @@
-import { FullPageLayout } from '~/components/layout/full-page-layout'
 import { ProfileCreationForm } from '~/components/profile/profile-creation-form'
 import { useAuthenticatedSession } from '~/hooks/use-authenticated-session'
 import { db } from '~/server/db'
-import { redirect } from 'next/navigation'
 
 export default async function CreateProfilePage() {
 	const session = await useAuthenticatedSession()
@@ -14,7 +12,7 @@ export default async function CreateProfilePage() {
 	const isFirstProfile = accounts.length === 0
 
 	return (
-		<FullPageLayout className="bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 dark:from-gray-900 dark:via-purple-900 dark:to-blue-900">
+		<div className="min-h-screen w-full bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 dark:from-gray-900 dark:via-purple-900 dark:to-blue-900">
 			<div className="container mx-auto px-4 py-8">
 				<div className="mx-auto max-w-4xl">
 					<div className="mb-8 text-center">
@@ -31,6 +29,6 @@ export default async function CreateProfilePage() {
 					<ProfileCreationForm />
 				</div>
 			</div>
-		</FullPageLayout>
+		</div>
 	)
 }

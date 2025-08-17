@@ -1,4 +1,3 @@
-import { FullPageLayout } from '~/components/layout/full-page-layout'
 import { ProfileSelector } from '~/components/profile/profile-selector'
 import { useAuthenticatedSession } from '~/hooks/use-authenticated-session'
 import { db } from '~/server/db'
@@ -10,18 +9,24 @@ export default async function SelectProfilePage() {
 		where: (accounts, { eq }) => eq(accounts.userId, session.user.id),
 	})
 
+	const mappedAccounts = accounts.map((account) => ({
+		id: account.id,
+		username: account.username,
+		avatar: account.avatar ?? 'user',
+	}))
+
 	// If user has no accounts, redirect to profile creation
-	if (accounts.length === 0) {
+	if (mappedAccounts.length === 0) {
 		redirect('/create-profile')
 	}
 
 	return (
-		<FullPageLayout className="bg-gradient-to-br from-gray-900 via-blue-900 to-purple-900">
+		<div className="min-h-screen w-full bg-gradient-to-br from-gray-900 via-blue-900 to-purple-900">
 			<div className="flex min-h-screen items-center justify-center px-4 py-12">
 				<div className="mx-auto max-w-4xl">
-					<ProfileSelector accounts={accounts} />
+					<ProfileSelector accounts={mappedAccounts} />
 				</div>
 			</div>
-		</FullPageLayout>
+		</div>
 	)
 }

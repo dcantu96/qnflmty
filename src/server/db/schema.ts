@@ -9,9 +9,27 @@ import {
 	unique,
 	serial,
 	check,
+	pgEnum,
 } from 'drizzle-orm/pg-core'
 
 import type { AdapterAccount } from 'next-auth/adapters'
+
+// Define the avatar icon enum to match our centralized avatar system
+export const avatarEnum = pgEnum('avatar_icon', [
+	'user',
+	'crown',
+	'star',
+	'heart',
+	'diamond',
+	'club',
+	'spade',
+	'lightning',
+	'fire',
+	'snowflake',
+	'sun',
+	'moon',
+	'gamepad',
+])
 
 export const users = pgTable('user', {
 	id: serial('id').primaryKey(),
@@ -108,7 +126,7 @@ export const userAccounts = pgTable('user_account', {
 		.notNull()
 		.references(() => users.id, { onDelete: 'cascade' }),
 	username: text('username').notNull().unique(),
-	avatar: text('avatar').default('user'),
+	avatar: avatarEnum('avatar').default('user'),
 	createdAt: timestamp('created_at', { withTimezone: true })
 		.notNull()
 		.defaultNow(),
