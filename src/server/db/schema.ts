@@ -108,6 +108,7 @@ export const userAccounts = pgTable('user_account', {
 		.notNull()
 		.references(() => users.id, { onDelete: 'cascade' }),
 	username: text('username').notNull().unique(),
+	avatar: text('avatar').default('user'),
 	createdAt: timestamp('created_at', { withTimezone: true })
 		.notNull()
 		.defaultNow(),

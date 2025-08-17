@@ -1,55 +1,45 @@
-import { AppSidebar } from '~/components/app-sidebar'
-import {
-	Breadcrumb,
-	BreadcrumbItem,
-	BreadcrumbLink,
-	BreadcrumbList,
-	BreadcrumbPage,
-	BreadcrumbSeparator,
-} from '~/components/ui/breadcrumb'
-import { Separator } from '~/components/ui/separator'
-import {
-	SidebarInset,
-	SidebarProvider,
-	SidebarTrigger,
-} from '~/components/ui/sidebar'
+import { SidebarLayout } from '~/components/layout/sidebar-layout'
+import { useAuthenticatedSession } from '~/hooks/use-authenticated-session'
+import { db } from '~/server/db'
+import { redirect } from 'next/navigation'
 
-export default function Page() {
+export default async function Page() {
+	const session = await useAuthenticatedSession()
+
+	// Get user accounts to find the selected profile
+	const accounts = await db.query.userAccounts.findMany({
+		where: (accounts, { eq }) => eq(accounts.userId, session.user.id),
+	})
+
+	// If no accounts exist, redirect to profile creation
+	if (accounts.length === 0) {
+		redirect('/create-profile')
+	}
+
+	// Pass user data to sidebar
+	const userData = {
+		name: session.user.name || 'User',
+		email: session.user.email || '',
+		avatar: session.user.image || '/avatars/default.jpg',
+	}
+
 	return (
-		<SidebarProvider>
-			<AppSidebar />
-			<SidebarInset>
-				<header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
-					<div className="flex items-center gap-2 px-4">
-						<SidebarTrigger className="-ml-1" />
-						<Separator
-							orientation="vertical"
-							className="mr-2 data-[orientation=vertical]:h-4"
-						/>
-						<Breadcrumb>
-							<BreadcrumbList>
-								<BreadcrumbItem className="hidden md:block">
-									<BreadcrumbLink href="#">
-										Building Your Application
-									</BreadcrumbLink>
-								</BreadcrumbItem>
-								<BreadcrumbSeparator className="hidden md:block" />
-								<BreadcrumbItem>
-									<BreadcrumbPage>Data Fetching</BreadcrumbPage>
-								</BreadcrumbItem>
-							</BreadcrumbList>
-						</Breadcrumb>
-					</div>
-				</header>
-				<div className="flex flex-1 flex-col gap-4 p-4 pt-0">
-					<div className="grid auto-rows-min gap-4 md:grid-cols-3">
-						<div className="aspect-video rounded-xl bg-muted/50" />
-						<div className="aspect-video rounded-xl bg-muted/50" />
-						<div className="aspect-video rounded-xl bg-muted/50" />
-					</div>
-					<div className="min-h-[100vh] flex-1 rounded-xl bg-muted/50 md:min-h-min" />
-				</div>
-			</SidebarInset>
-		</SidebarProvider>
+		<SidebarLayout
+			breadcrumbs={{
+				items: [
+					{ href: '#', label: 'Dashboard' },
+					{ label: 'Overview', isActive: true },
+				],
+			}}
+			user={userData}
+			profiles={accounts}
+		>
+			<div className="grid auto-rows-min gap-4 md:grid-cols-3">
+				<div className="aspect-video rounded-xl bg-muted/50" />
+				<div className="aspect-video rounded-xl bg-muted/50" />
+				<div className="aspect-video rounded-xl bg-muted/50" />
+			</div>
+			<div className="min-h-[100vh] flex-1 rounded-xl bg-muted/50 md:min-h-min" />
+		</SidebarLayout>
 	)
 }

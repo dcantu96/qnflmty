@@ -2,22 +2,21 @@
 
 import type * as React from 'react'
 import {
-	AudioWaveform,
-	BookOpen,
-	Bot,
-	Command,
-	Frame,
-	GalleryVerticalEnd,
-	Map as MapIcon,
-	PieChart,
+	Trophy,
+	Users,
+	BarChart3,
+	Crown,
+	MessageSquare,
 	Settings2,
-	SquareTerminal,
+	Gamepad2,
+	Calendar,
+	Target,
 } from 'lucide-react'
 
 import { NavMain } from '~/components/nav-main'
 import { NavProjects } from '~/components/nav-projects'
 import { NavUser } from '~/components/nav-user'
-import { TeamSwitcher } from '~/components/team-switcher'
+import { ProfileSwitcher } from '~/components/profile-switcher'
 import {
 	Sidebar,
 	SidebarContent,
@@ -26,141 +25,127 @@ import {
 	SidebarRail,
 } from '~/components/ui/sidebar'
 
-// This is sample data.
-const data = {
-	user: {
-		name: 'shadcn',
-		email: 'm@example.com',
-		avatar: '/avatars/shadcn.jpg',
+interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
+	user?: {
+		name: string
+		email: string
+		avatar: string
+	}
+	profiles?: Array<{
+		id: number
+		username: string
+		avatar: string | null
+	}>
+}
+
+// Generate QNFLMTY-specific navigation data
+const getNavigationData = (user?: {
+	name: string
+	email: string
+	avatar: string
+}) => ({
+	user: user || {
+		name: 'User',
+		email: 'user@example.com',
+		avatar: '/avatars/default.jpg',
 	},
-	teams: [
-		{
-			name: 'Acme Inc',
-			logo: GalleryVerticalEnd,
-			plan: 'Enterprise',
-		},
-		{
-			name: 'Acme Corp.',
-			logo: AudioWaveform,
-			plan: 'Startup',
-		},
-		{
-			name: 'Evil Corp.',
-			logo: Command,
-			plan: 'Free',
-		},
-	],
 	navMain: [
 		{
-			title: 'Quiniela',
+			title: 'Dashboard',
 			url: '/dashboard',
-			icon: SquareTerminal,
+			icon: BarChart3,
 			isActive: true,
 			items: [
 				{
-					title: 'History',
-					url: '#',
+					title: 'Overview',
+					url: '/dashboard',
 				},
 				{
-					title: 'Starred',
-					url: '#',
-				},
-				{
-					title: 'Settings',
-					url: '#',
+					title: 'Statistics',
+					url: '/dashboard/stats',
 				},
 			],
 		},
 		{
-			title: 'Models',
-			url: '#',
-			icon: Bot,
+			title: 'Quiniela',
+			url: '/quiniela',
+			icon: Trophy,
 			items: [
 				{
-					title: 'Genesis',
-					url: '#',
+					title: 'Current Week',
+					url: '/quiniela/current',
 				},
 				{
-					title: 'Explorer',
-					url: '#',
+					title: 'Make Picks',
+					url: '/quiniela/picks',
 				},
 				{
-					title: 'Quantum',
-					url: '#',
+					title: 'Leaderboard',
+					url: '/quiniela/leaderboard',
 				},
 			],
 		},
 		{
-			title: 'Documentation',
-			url: '#',
-			icon: BookOpen,
+			title: 'Groups',
+			url: '/groups',
+			icon: Users,
 			items: [
 				{
-					title: 'Introduction',
-					url: '#',
+					title: 'My Groups',
+					url: '/groups/mine',
 				},
 				{
-					title: 'Get Started',
-					url: '#',
+					title: 'Join Group',
+					url: '/groups/join',
 				},
 				{
-					title: 'Tutorials',
-					url: '#',
-				},
-				{
-					title: 'Changelog',
-					url: '#',
+					title: 'Create Group',
+					url: '/groups/create',
 				},
 			],
 		},
 		{
-			title: 'Settings',
-			url: '#',
-			icon: Settings2,
+			title: 'Premium Chat',
+			url: '/chat',
+			icon: MessageSquare,
 			items: [
 				{
 					title: 'General',
-					url: '#',
+					url: '/chat/general',
 				},
 				{
-					title: 'Team',
-					url: '#',
-				},
-				{
-					title: 'Billing',
-					url: '#',
-				},
-				{
-					title: 'Limits',
-					url: '#',
+					title: 'Strategy',
+					url: '/chat/strategy',
 				},
 			],
 		},
 	],
 	projects: [
 		{
-			name: 'Design Engineering',
-			url: '#',
-			icon: Frame,
+			name: 'Season 2025',
+			url: '/season/2025',
+			icon: Calendar,
 		},
 		{
-			name: 'Sales & Marketing',
-			url: '#',
-			icon: PieChart,
+			name: 'Premium Picks',
+			url: '/premium-picks',
+			icon: Target,
 		},
 		{
-			name: 'Travel',
-			url: '#',
-			icon: MapIcon,
+			name: 'Game Center',
+			url: '/games',
+			icon: Gamepad2,
 		},
 	],
-}
+})
 
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+export function AppSidebar({ user, profiles = [], ...props }: AppSidebarProps) {
+	const data = getNavigationData(user)
+
 	return (
 		<Sidebar collapsible="icon" {...props}>
 			<SidebarHeader>
-				<TeamSwitcher teams={data.teams} />
+				<ProfileSwitcher profiles={profiles} />
 			</SidebarHeader>
 			<SidebarContent>
 				<NavMain items={data.navMain} />

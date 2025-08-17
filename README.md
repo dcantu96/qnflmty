@@ -9,11 +9,12 @@
 - [x] Add authentication (w/ next-auth)
 - [x] Attach end to end tests (cypress)
 - [x] Attach CI for cypress cloud
-- [ ] UI for brand new users
+- [x] UI for brand new users
   - Layout: No sidebar, full page view
     - welcome message
     - what's next section
     - Group Info section
+- [ ] Request Access / Create Username
 - [ ] UI for users with existing usernames
   - One username selected at a time, it can be authorized or not
   - If not authorized

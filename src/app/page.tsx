@@ -1,6 +1,12 @@
 import { AuthButtons } from '~/components/auth-buttons'
+import { FullPageLayout } from '~/components/layout/full-page-layout'
+import { WelcomeMessage } from '~/components/welcome/welcome-message'
+import { WhatsNextSection } from '~/components/welcome/whats-next-section'
+import { GroupInfoSection } from '~/components/welcome/group-info-section'
+import { RootRedirect } from '~/components/root-redirect'
 import { db } from '~/server/db'
 import { useAuthenticatedSession } from '~/hooks/use-authenticated-session'
+import { redirect } from 'next/navigation'
 
 export default async function HomePage() {
 	const session = await useAuthenticatedSession()
@@ -8,17 +14,6 @@ export default async function HomePage() {
 		where: (accounts, { eq }) => eq(accounts.userId, session.user.id),
 	})
 
-	return (
-		<main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-[#2e026d] to-[#15162c] text-white">
-			<p>Hello, QNFLMTY in progress</p>
-
-			<h1>Hello {session?.user?.name || 'Guest'}</h1>
-			<p>Your user ID is: {session.user.id}</p>
-			<p>
-				Your accounts:{' '}
-				{accounts.map((acc) => acc.username).join(', ') || 'No accounts linked'}
-			</p>
-			<AuthButtons />
-		</main>
-	)
+	// Use client-side component to handle localStorage check and routing
+	return <RootRedirect hasAccounts={accounts.length > 0} />
 }

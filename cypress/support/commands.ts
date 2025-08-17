@@ -17,6 +17,7 @@ Cypress.Commands.add('createUser', (user: { name: string; email: string }) => {
 		const response = res as { email: string; name: string }
 		expect(response).to.exist
 		expect(response.email).to.equal(user.email)
+		return response.email
 	})
 })
 
