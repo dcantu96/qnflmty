@@ -119,6 +119,14 @@ describe('Complete User Journey', () => {
 
 		// Should be redirected to request access page
 		cy.url().should('include', '/request-access')
+
+		// Verify the newly created profile username appears in the profile display
+		// Look for the h2 element that follows the "Profile Created" text
+		cy.contains('Profile Created', { matchCase: false })
+			.parent()
+			.find('h2')
+			.should('contain.text', firstUsername)
+
 		cy.contains('Access Request Submitted!', { matchCase: false })
 		cy.contains(firstUsername, { matchCase: false })
 	})
@@ -256,6 +264,14 @@ describe('Complete User Journey', () => {
 
 		// Should be redirected to request access page
 		cy.url().should('include', '/request-access')
+
+		// Verify the newly created profile username appears in the profile display
+		// Look for the h2 element that follows the "Profile Created" text
+		cy.contains('Profile Created', { matchCase: false })
+			.parent()
+			.find('h2')
+			.should('contain.text', secondUsername)
+
 		cy.contains('Access Request Submitted!', { matchCase: false })
 		cy.contains(secondUsername, { matchCase: false })
 	})

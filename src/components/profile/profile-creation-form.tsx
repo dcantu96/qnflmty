@@ -65,12 +65,16 @@ export function ProfileCreationForm() {
 		}
 
 		try {
-			await trpcClient.profile.create.mutate({
+			const newProfile = await trpcClient.profile.create.mutate({
 				username: trimmedUsername,
 				avatar: selectedAvatar,
 			})
 
-			router.push('/request-access')
+			// Set the newly created profile as the selected one in localStorage
+			localStorage.setItem('selectedProfile', newProfile.id.toString())
+
+			// Redirect with the profile ID so the server can use it
+			router.push(`/request-access?profileId=${newProfile.id}`)
 		} catch (err) {
 			// This will now mainly handle server-side errors (like "Username already taken")
 			if (

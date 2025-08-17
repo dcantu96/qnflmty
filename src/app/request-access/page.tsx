@@ -4,10 +4,21 @@ import { useAuthenticatedSession } from '~/hooks/use-authenticated-session'
 import { db } from '~/server/db'
 import { redirect } from 'next/navigation'
 
-export default async function RequestAccessPage() {
+export default async function RequestAccessPage({
+	searchParams,
+}: {
+	searchParams: { profileId?: string }
+}) {
 	const session = await useAuthenticatedSession()
+
+	// Get profileId from URL params if provided
+	const profileIdFromParams = searchParams.profileId
+		? Number.parseInt(searchParams.profileId)
+		: null
+
 	const accounts = await db.query.userAccounts.findMany({
 		where: (accounts, { eq }) => eq(accounts.userId, session.user.id),
+		orderBy: (accounts, { desc }) => [desc(accounts.createdAt)],
 	})
 
 	// If user has no accounts, redirect to profile creation
@@ -15,7 +26,18 @@ export default async function RequestAccessPage() {
 		redirect('/create-profile')
 	}
 
-	const userAccount = accounts[0]
+	// Find the profile to use:
+	// 1. If profileId in URL params, use that
+	// 2. Otherwise use the most recently created profile
+	let userAccount = profileIdFromParams
+		? accounts.find((account) => account.id === profileIdFromParams)
+		: accounts[0] // Most recent due to DESC order
+
+	if (!userAccount) {
+		// If specific profile not found, fallback to most recent
+		userAccount = accounts[0]
+	}
+
 	if (!userAccount) {
 		redirect('/create-profile')
 	}
