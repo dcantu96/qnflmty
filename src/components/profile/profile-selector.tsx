@@ -124,7 +124,6 @@ export function ProfileSelector({ accounts }: ProfileSelectorProps) {
 							<Card
 								key={account.id}
 								className="group relative cursor-pointer transition-all hover:scale-105 hover:shadow-lg"
-								data-testid="profile-card"
 							>
 								<CardContent className="flex flex-col items-center p-6">
 									{/* Edit Button */}
@@ -132,7 +131,6 @@ export function ProfileSelector({ accounts }: ProfileSelectorProps) {
 										variant="outline"
 										size="sm"
 										className="absolute top-2 right-2 h-8 w-8 p-0 opacity-0 transition-opacity group-hover:opacity-100"
-										data-testid="edit-avatar-button"
 										onClick={(e) => {
 											e.stopPropagation()
 											handleEditAvatar(account)
@@ -169,7 +167,6 @@ export function ProfileSelector({ accounts }: ProfileSelectorProps) {
 					{/* Add New Profile */}
 					<Card
 						className="cursor-pointer transition-all hover:scale-105 hover:shadow-lg"
-						data-testid="add-profile-card"
 						onClick={handleCreateNew}
 					>
 						<CardContent className="flex flex-col items-center p-6">

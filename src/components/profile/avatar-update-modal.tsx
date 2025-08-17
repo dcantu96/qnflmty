@@ -81,7 +81,7 @@ export function AvatarUpdateModal({
 
 	return (
 		<Dialog open={isOpen} onOpenChange={onClose}>
-			<DialogContent className="max-w-md" data-testid="avatar-update-modal">
+			<DialogContent className="max-w-md">
 				<DialogHeader>
 					<DialogTitle>Update Avatar</DialogTitle>
 					<DialogDescription>
@@ -95,7 +95,6 @@ export function AvatarUpdateModal({
 							<button
 								key={key}
 								type="button"
-								data-testid="avatar-modal-option"
 								data-avatar={key}
 								className={`flex flex-col items-center gap-2 rounded-lg border-2 p-4 transition-all hover:bg-gray-50 ${
 									selectedAvatar === key

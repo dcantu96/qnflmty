@@ -110,7 +110,6 @@ export function ProfileCreationForm() {
 									key={avatar.id}
 									type="button"
 									onClick={() => setSelectedAvatar(avatar.id)}
-									data-testid="avatar-option"
 									data-avatar={avatar.id}
 									className={`flex flex-col items-center justify-center rounded-lg border-2 p-4 transition-all hover:scale-105${
 										isSelected
