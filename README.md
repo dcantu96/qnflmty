@@ -9,27 +9,25 @@
 - [x] Add authentication (w/ next-auth)
 - [x] Attach end to end tests (cypress)
 - [x] Attach CI for cypress cloud
-- [x] UI for brand new users
+- [ ] Brand new users
   - Layout: No sidebar, full page view
     - welcome message
     - what's next section
-    - Group Info section
-- [ ] Request Access / Create Username
-- [ ] UI for users with existing usernames
-  - One username selected at a time, it can be authorized or not
-  - If not authorized
-    - Layout: No sidebar, full page view
-      - show request access section
-      - welcome message
-      - selected username
-      - request access section
-      - what's next section
-      - Group Info section
-  - If authorized
-    - Layout: Page with Sidebar
-      - dashboard home view
+    - Group Info sectiom
+- [x] create profile
+- [x] Request Access
+- If not profile authorized
+  - [x] Request access screen
+    - no access to dashboard yet
+- If profile authorized
+  - [x] dashboard access
+    - switch profiles
+    - logout
+    - sidebar
+- [ ] admin access
+- [ ] view requests
+- [ ] accept/deny requests
 - [ ] Error management (w/ sentry)
 - [ ] Routing (parallel route)
-- [ ] Delete button (w/server actions)
 - [ ] Analytics (posthog)
 - [ ] Ratelimiting (upstash)
