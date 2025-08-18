@@ -467,23 +467,27 @@ async function resetSequences() {
 		'team',
 		'membership_week',
 		'match',
-		'pick',
 		'group_week',
 	] as const
 
-	for (const t of tables) {
-		const ident = `"${t}"`
-		await db.execute(
-			sql.raw(`
+	for (const table of tables) {
+		await resetSequence(table)
+	}
+}
+
+async function resetSequence(table: string) {
+	const ident = `"${table}"`
+	await db.execute(
+		sql.raw(`
 				select setval(
 					pg_get_serial_sequence('${ident}', 'id'),
 					coalesce((select max(id) from ${ident}), 0),
 					true
 				)
 			`),
-		)
-	}
-	console.log('✅ Sequences reset for seeded tables')
+	)
+
+	console.log(`✅ Sequences reset for table ${table}`)
 }
 
 async function seed() {
@@ -499,10 +503,11 @@ async function seed() {
 		await seedTeams()
 		await seedMembershipWeeks()
 		await seedMatches()
-		await seedPicks()
 		await seedGroupWeeks()
 		await seedWinners()
 		await resetSequences()
+		await seedPicks()
+		await resetSequence('pick')
 	} catch (error) {
 		console.error('Error seeding data:', error)
 	}

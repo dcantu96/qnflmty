@@ -1,4 +1,4 @@
-CREATE TYPE "public"."avatar_icon" AS ENUM('user', 'crown', 'star', 'heart', 'diamond', 'club', 'spade', 'lightning', 'fire', 'snowflake', 'sun', 'moon', 'gamepad', 'shield', 'rocket');--> statement-breakpoint
+CREATE TYPE "public"."avatar_icon" AS ENUM('club', 'crown', 'diamond', 'fire', 'gamepad', 'heart', 'lightning', 'moon', 'rocket', 'shield', 'snowflake', 'spade', 'star', 'sun', 'user');--> statement-breakpoint
 CREATE TABLE "account" (
 	"userId" integer NOT NULL,
 	"type" text NOT NULL,

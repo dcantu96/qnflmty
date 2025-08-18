@@ -1,5 +1,5 @@
 {
-  "id": "f9a8c0a2-39c7-4c52-8f86-cac069a9aa35",
+  "id": "3ec59f0b-6b42-4f5d-9014-246cd609432f",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -1408,21 +1408,21 @@
       "name": "avatar_icon",
       "schema": "public",
       "values": [
-        "user",
-        "crown",
-        "star",
-        "heart",
-        "diamond",
         "club",
-        "spade",
-        "lightning",
+        "crown",
+        "diamond",
         "fire",
-        "snowflake",
-        "sun",
-        "moon",
         "gamepad",
+        "heart",
+        "lightning",
+        "moon",
+        "rocket",
         "shield",
-        "rocket"
+        "snowflake",
+        "spade",
+        "star",
+        "sun",
+        "user"
       ]
     }
   },

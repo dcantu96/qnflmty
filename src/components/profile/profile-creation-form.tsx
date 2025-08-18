@@ -14,7 +14,11 @@ function SubmitButton() {
 	const { pending } = useFormStatus()
 
 	return (
-		<Button type="submit" className="w-full" disabled={pending}>
+		<Button
+			type="submit"
+			className="w-full disabled:cursor-not-allowed disabled:opacity-50 group-invalid:pointer-events-none group-invalid:cursor-not-allowed group-invalid:opacity-50"
+			disabled={pending}
+		>
 			{pending ? 'Creating Profile...' : 'Create Profile'}
 		</Button>
 	)
@@ -24,7 +28,7 @@ export function ProfileCreationForm() {
 	const [state, formAction] = useActionState(createProfileAction, null)
 
 	return (
-		<form action={formAction} className="space-y-6">
+		<form action={formAction} className="group space-y-6">
 			<Card>
 				<CardHeader>
 					<CardTitle className="text-xl">Choose Your Avatar</CardTitle>

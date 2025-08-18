@@ -52,19 +52,6 @@ export const usersRouter = createTRPCRouter({
 		)
 		.mutation(async ({ input }) => {
 			try {
-				// Check if user already exists
-				const existingUser = await db.query.users.findFirst({
-					where: eq(users.email, input.email),
-				})
-
-				if (existingUser) {
-					throw new TRPCError({
-						code: 'CONFLICT',
-						message: 'User with this email already exists',
-					})
-				}
-
-				// Create the user
 				const [newUser] = await db
 					.insert(users)
 					.values({

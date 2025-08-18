@@ -165,7 +165,8 @@ export async function createProfileAction(
 	try {
 		// Check if username already exists (case insensitive)
 		const existingAccount = await db.query.userAccounts.findFirst({
-			where: eq(userAccounts.username, trimmedUsername.toLowerCase()),
+			where: (accounts, { sql }) =>
+				sql`lower(${accounts.username}) = lower(${trimmedUsername})`,
 		})
 
 		if (existingAccount) {
@@ -177,7 +178,7 @@ export async function createProfileAction(
 			.insert(userAccounts)
 			.values({
 				userId: session.user.id,
-				username: trimmedUsername.toLowerCase(),
+				username: trimmedUsername,
 				avatar,
 			})
 			.returning()
