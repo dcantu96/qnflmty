@@ -7,24 +7,23 @@ import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 import { AvatarUpdateModal } from './avatar-update-modal'
 import { ProfileCard } from './profile-card'
-import type { AvatarIcon } from '~/lib/avatar-icons'
+import type { AvatarIcon } from '~/server/db/schema'
+
+interface Account {
+	id: number
+	username: string
+	avatar: AvatarIcon
+}
 
 interface ProfileSelectorProps {
-	accounts: Array<{
-		id: number
-		username: string
-		avatar: AvatarIcon
-	}>
+	accounts: Array<Account>
 }
 
 export function ProfileSelector({ accounts }: ProfileSelectorProps) {
 	const router = useRouter()
 	const [showAvatarModal, setShowAvatarModal] = useState(false)
-	const [selectedAccountForEdit, setSelectedAccountForEdit] = useState<{
-		id: number
-		username: string
-		avatar: string | null
-	} | null>(null)
+	const [selectedAccountForEdit, setSelectedAccountForEdit] =
+		useState<Account | null>(null)
 
 	const sortedAccounts = [...accounts].sort((a, b) =>
 		a.username.toLowerCase().localeCompare(b.username.toLowerCase()),
@@ -34,11 +33,7 @@ export function ProfileSelector({ accounts }: ProfileSelectorProps) {
 		router.push('/create-profile')
 	}
 
-	const handleEditAvatar = (account: {
-		id: number
-		username: string
-		avatar: string | null
-	}) => {
+	const handleEditAvatar = (account: Account) => {
 		setSelectedAccountForEdit(account)
 		setShowAvatarModal(true)
 	}

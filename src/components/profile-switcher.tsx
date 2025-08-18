@@ -4,7 +4,7 @@ import * as React from 'react'
 import { ChevronsUpDown, Plus, Edit3, User } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { setSelectedProfile } from '~/lib/profile-actions'
-import { avatarIconsMap, type AvatarIcon } from '~/lib/avatar-icons'
+import { avatarIconsMap } from '~/lib/avatar-icons'
 import {
 	DropdownMenu,
 	DropdownMenuContent,
@@ -21,6 +21,7 @@ import {
 	useSidebar,
 } from '~/components/ui/sidebar'
 import { AvatarUpdateModal } from '~/components/profile/avatar-update-modal'
+import type { AvatarIcon } from '~/server/db/schema'
 
 interface Profile {
 	id: number

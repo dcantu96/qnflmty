@@ -15,20 +15,40 @@ import {
 import type { AdapterAccount } from 'next-auth/adapters'
 
 // Define the avatar icon enum to match our centralized avatar system
+
+export type AvatarIcon =
+	| 'club'
+	| 'crown'
+	| 'diamond'
+	| 'fire'
+	| 'gamepad'
+	| 'heart'
+	| 'lightning'
+	| 'moon'
+	| 'rocket'
+	| 'shield'
+	| 'snowflake'
+	| 'spade'
+	| 'star'
+	| 'sun'
+	| 'user'
+
 export const avatarEnum = pgEnum('avatar_icon', [
-	'user',
-	'crown',
-	'star',
-	'heart',
-	'diamond',
 	'club',
-	'spade',
-	'lightning',
+	'crown',
+	'diamond',
 	'fire',
-	'snowflake',
-	'sun',
-	'moon',
 	'gamepad',
+	'heart',
+	'lightning',
+	'moon',
+	'rocket',
+	'shield',
+	'snowflake',
+	'spade',
+	'star',
+	'sun',
+	'user',
 ])
 
 export const users = pgTable('user', {

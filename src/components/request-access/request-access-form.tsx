@@ -6,7 +6,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card'
 import { Button } from '~/components/ui/button'
 import { UserCheck, Mail, Users, Clock, User, ArrowLeft } from 'lucide-react'
 import { trpcClient } from '~/lib/trpcClient'
-import { avatarIconsMap, type AvatarIcon } from '~/lib/avatar-icons'
+import { avatarIconsMap } from '~/lib/avatar-icons'
+import type { AvatarIcon } from '~/server/db/schema'
 
 interface RequestAccessFormProps {
 	userAccount: {

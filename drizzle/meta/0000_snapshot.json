@@ -1,5 +1,5 @@
 {
-  "id": "85acdc74-698a-4e10-b263-7c9dbc5cab22",
+  "id": "f9a8c0a2-39c7-4c52-8f86-cac069a9aa35",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -1166,6 +1166,14 @@
           "primaryKey": false,
           "notNull": true
         },
+        "avatar": {
+          "name": "avatar",
+          "type": "avatar_icon",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'user'"
+        },
         "created_at": {
           "name": "created_at",
           "type": "timestamp with time zone",
@@ -1395,7 +1403,29 @@
       "isRLSEnabled": false
     }
   },
-  "enums": {},
+  "enums": {
+    "public.avatar_icon": {
+      "name": "avatar_icon",
+      "schema": "public",
+      "values": [
+        "user",
+        "crown",
+        "star",
+        "heart",
+        "diamond",
+        "club",
+        "spade",
+        "lightning",
+        "fire",
+        "snowflake",
+        "sun",
+        "moon",
+        "gamepad",
+        "shield",
+        "rocket"
+      ]
+    }
+  },
   "schemas": {},
   "sequences": {},
   "roles": {},

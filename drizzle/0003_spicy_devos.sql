@@ -1,1 +1,0 @@
-ALTER TYPE "public"."avatar_icon" ADD VALUE 'gamepad';

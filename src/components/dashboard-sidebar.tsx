@@ -24,6 +24,7 @@ import {
 	SidebarTrigger,
 } from '~/components/ui/sidebar'
 import { Separator } from '~/components/ui/separator'
+import type { AvatarIcon } from '~/server/db/schema'
 
 interface DashboardSidebarProps {
 	userData: {
@@ -34,12 +35,12 @@ interface DashboardSidebarProps {
 	accounts: Array<{
 		id: number
 		username: string
-		avatar: string | null
+		avatar: AvatarIcon
 	}>
 	selectedProfile: {
 		id: number
 		username: string
-		avatar: string | null
+		avatar: AvatarIcon
 	}
 	children: React.ReactNode
 }

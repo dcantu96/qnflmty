@@ -1,3 +1,4 @@
+CREATE TYPE "public"."avatar_icon" AS ENUM('user', 'crown', 'star', 'heart', 'diamond', 'club', 'spade', 'lightning', 'fire', 'snowflake', 'sun', 'moon', 'gamepad', 'shield', 'rocket');--> statement-breakpoint
 CREATE TABLE "account" (
 	"userId" integer NOT NULL,
 	"type" text NOT NULL,
@@ -153,6 +154,7 @@ CREATE TABLE "user_account" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"userId" integer NOT NULL,
 	"username" text NOT NULL,
+	"avatar" "avatar_icon" DEFAULT 'user',
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
 	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,
 	CONSTRAINT "user_account_username_unique" UNIQUE("username")

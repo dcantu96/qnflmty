@@ -12,12 +12,13 @@ import { Button } from '~/components/ui/button'
 import { trpcClient } from '~/lib/trpcClient'
 import { useRouter } from 'next/navigation'
 import { avatarIconsMap } from '~/lib/avatar-icons'
+import type { AvatarIcon } from '~/server/db/schema'
 
 interface AvatarUpdateModalProps {
 	isOpen: boolean
 	onClose: () => void
 	profileId: number
-	currentAvatar: string | null
+	currentAvatar: AvatarIcon
 	profileUsername: string
 	onSuccess?: () => void
 }
@@ -30,9 +31,8 @@ export function AvatarUpdateModal({
 	profileUsername,
 	onSuccess,
 }: AvatarUpdateModalProps) {
-	const [selectedAvatar, setSelectedAvatar] = useState<string>(
-		currentAvatar || 'user',
-	)
+	const [selectedAvatar, setSelectedAvatar] =
+		useState<AvatarIcon>(currentAvatar)
 	const [isUpdating, setIsUpdating] = useState(false)
 	const router = useRouter()
 
@@ -70,17 +70,17 @@ export function AvatarUpdateModal({
 				</DialogHeader>
 
 				<div className="grid grid-cols-4 gap-4 py-4">
-					{Object.entries(avatarIconsMap).map(([name, avatar]) => (
+					{Object.values(avatarIconsMap).map((avatar) => (
 						<button
-							key={name}
+							key={avatar.key}
 							type="button"
-							data-avatar={name}
+							data-avatar={avatar.key}
 							className={`flex flex-col items-center gap-2 rounded-lg border-2 p-4 transition-all hover:bg-gray-50 ${
-								selectedAvatar === name
+								selectedAvatar === avatar.key
 									? 'border-blue-500 bg-blue-50'
 									: 'border-gray-200'
 							}`}
-							onClick={() => setSelectedAvatar(name)}
+							onClick={() => setSelectedAvatar(avatar.key)}
 						>
 							<avatar.icon className={`h-8 w-8 ${avatar.color}`} />
 							<span className="font-medium text-gray-600 text-xs">

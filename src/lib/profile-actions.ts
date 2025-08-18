@@ -5,62 +5,8 @@ import { redirect } from 'next/navigation'
 import { revalidatePath } from 'next/cache'
 import { useAuthenticatedSession } from '~/hooks/use-authenticated-session'
 import { db } from '~/server/db'
-import { userAccounts, groups, memberships } from '~/server/db/schema'
+import { userAccounts, groups, type AvatarIcon } from '~/server/db/schema'
 import { eq, and } from 'drizzle-orm'
-import type { AvatarIcon } from './avatar-icons'
-
-// Map AvatarIcon to valid database enum values
-function mapAvatarToDbEnum(
-	avatar: AvatarIcon,
-):
-	| 'user'
-	| 'crown'
-	| 'star'
-	| 'heart'
-	| 'diamond'
-	| 'club'
-	| 'spade'
-	| 'lightning'
-	| 'fire'
-	| 'snowflake'
-	| 'sun'
-	| 'moon'
-	| 'gamepad' {
-	// Map unsupported avatars to supported ones
-	const mapping: Record<
-		AvatarIcon,
-		| 'user'
-		| 'crown'
-		| 'star'
-		| 'heart'
-		| 'diamond'
-		| 'club'
-		| 'spade'
-		| 'lightning'
-		| 'fire'
-		| 'snowflake'
-		| 'sun'
-		| 'moon'
-		| 'gamepad'
-	> = {
-		user: 'user',
-		crown: 'crown',
-		star: 'star',
-		heart: 'heart',
-		shield: 'user', // Map shield to user as fallback
-		rocket: 'fire', // Map rocket to fire as similar concept
-		gamepad: 'gamepad',
-		diamond: 'diamond',
-		club: 'club',
-		spade: 'spade',
-		lightning: 'lightning',
-		fire: 'fire',
-		snowflake: 'snowflake',
-		sun: 'sun',
-		moon: 'moon',
-	}
-	return mapping[avatar]
-}
 
 export async function setSelectedProfile(profileId: number) {
 	const session = await useAuthenticatedSession()
@@ -232,7 +178,7 @@ export async function createProfileAction(
 			.values({
 				userId: session.user.id,
 				username: trimmedUsername.toLowerCase(),
-				avatar: mapAvatarToDbEnum(avatar || 'user'),
+				avatar,
 			})
 			.returning()
 

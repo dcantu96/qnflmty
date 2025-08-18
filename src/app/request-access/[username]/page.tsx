@@ -6,10 +6,10 @@ import { redirect } from 'next/navigation'
 export default async function RequestAccessPage({
 	params,
 }: {
-	params: { username: string }
+	params: Promise<{ username: string }>
 }) {
 	const session = await useAuthenticatedSession()
-	const { username } = params
+	const { username } = await params
 
 	const accounts = await db.query.userAccounts.findMany({
 		where: (accounts, { eq }) => eq(accounts.userId, session.user.id),

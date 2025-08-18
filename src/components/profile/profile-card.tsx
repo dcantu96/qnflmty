@@ -5,7 +5,8 @@ import { Button } from '~/components/ui/button'
 import { Edit3, User } from 'lucide-react'
 import { useFormStatus } from 'react-dom'
 import { selectProfileAction } from '~/lib/profile-actions'
-import { avatarIconsMap, type AvatarIcon } from '~/lib/avatar-icons'
+import { avatarIconsMap } from '~/lib/avatar-icons'
+import type { AvatarIcon } from '~/server/db/schema'
 
 interface ProfileCardProps {
 	account: {

@@ -5,8 +5,25 @@ import { createTRPCRouter, protectedProcedure } from '~/server/trpc'
 import { userAccounts } from '~/server/db/schema'
 import { db } from '~/server/db'
 
+const avatarEnum = z.enum([
+	'user',
+	'crown',
+	'star',
+	'heart',
+	'diamond',
+	'club',
+	'spade',
+	'lightning',
+	'fire',
+	'snowflake',
+	'sun',
+	'moon',
+	'gamepad',
+	'shield',
+	'rocket',
+])
+
 export const profileRouter = createTRPCRouter({
-	// Create user profile
 	create: protectedProcedure
 		.input(
 			z.object({
@@ -18,7 +35,7 @@ export const profileRouter = createTRPCRouter({
 						/^[a-zA-Z0-9_-]+$/,
 						'Username can only contain letters, numbers, underscores, and hyphens',
 					),
-				avatar: z.string().optional().default('user'),
+				avatar: avatarEnum,
 			}),
 		)
 		.mutation(async ({ input, ctx }) => {
@@ -118,7 +135,7 @@ export const profileRouter = createTRPCRouter({
 		.input(
 			z.object({
 				profileId: z.number(),
-				avatar: z.string(),
+				avatar: avatarEnum,
 			}),
 		)
 		.mutation(async ({ input, ctx }) => {
