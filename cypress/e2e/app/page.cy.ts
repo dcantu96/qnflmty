@@ -156,17 +156,15 @@ describe('Complete User Journey', () => {
 		cy.contains(/Request Already Submitted/i)
 	})
 
-	it.skip('8. should update avatar from sidebar profile switcher', () => {
+	it('8. should update avatar from the profile switcher', () => {
 		// Ensure we're on dashboard with profile selected
 		cy.visit('/select-profile')
-		cy.get('h3').contains(firstUsername).click()
-		cy.visit('/dashboard')
-
-		// Click on profile switcher dropdown
-		cy.get('button').contains(firstUsername).click()
+		cy.get('h3').contains(firstUsername)
 
 		// Click "Edit avatar" option from dropdown
-		cy.contains(/Edit avatar/i).click()
+		cy.contains(/Edit avatar/i)
+			.trigger('mouseover')
+			.click()
 
 		// Modal should open
 		cy.contains(/Update Avatar/i).should('be.visible')
@@ -181,6 +179,13 @@ describe('Complete User Journey', () => {
 
 		// Verify update (modal closes)
 		cy.contains(/Update Avatar/i).should('not.exist')
+
+		// verify the new avatar svg is displayed with the class lucide-heart for the updated profile
+		cy.get('h3')
+			.contains(firstUsername)
+			.parent()
+			.find('svg.lucide-heart')
+			.should('be.visible')
 	})
 
 	it.skip('9. should update avatar from profile selection screen', () => {

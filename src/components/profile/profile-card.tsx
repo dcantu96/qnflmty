@@ -40,8 +40,10 @@ function ProfileCardContent({
 			<Button
 				variant="ghost"
 				size="sm"
+				type="button"
 				className="absolute top-2 right-2 h-8 w-8 p-0 opacity-0 transition-opacity group-hover:opacity-100"
 				onClick={(e) => {
+					e.preventDefault()
 					e.stopPropagation()
 					onEditAvatar()
 				}}
