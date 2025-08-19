@@ -55,6 +55,7 @@ export const users = pgTable('user', {
 	id: serial('id').primaryKey(),
 	name: text('name'),
 	email: text('email').unique(),
+	admin: boolean('admin').default(false),
 	emailVerified: timestamp('emailVerified', { mode: 'date' }),
 	image: text('image'),
 	encryptedPassword: text('encryptedPassword'),
