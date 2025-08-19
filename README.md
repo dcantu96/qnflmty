@@ -1,5 +1,7 @@
 # Qnflmty
 
+[![Next.js App](https://img.shields.io/endpoint?url=https://cloud.cypress.io/badge/detailed/wxjaty/main&style=flat&logo=cypress)](https://cloud.cypress.io/projects/wxjaty/runs)
+
 ## Todo
 
 - [x] Make it deploy (vercel)
