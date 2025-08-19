@@ -1,0 +1,1 @@
+ALTER TABLE "user_account" ALTER COLUMN "avatar" SET NOT NULL;
