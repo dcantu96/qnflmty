@@ -21,12 +21,6 @@ export default async function DashboardLayout({
 		redirect('/create-profile')
 	}
 
-	const mappedAccounts = accounts.map((account) => ({
-		id: account.id,
-		username: account.username,
-		avatar: account.avatar ?? 'user',
-	}))
-
 	const selectedProfile = await getSelectedProfile()
 	if (!selectedProfile) {
 		redirect('/select-profile')
@@ -44,7 +38,7 @@ export default async function DashboardLayout({
 	return (
 		<DashboardSidebar
 			userData={userData}
-			accounts={mappedAccounts}
+			accounts={accounts}
 			selectedProfile={selectedProfile}
 		>
 			{children}

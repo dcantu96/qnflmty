@@ -48,12 +48,7 @@ export default async function RequestAccessPage({
 		<div className="min-h-screen w-full bg-gradient-to-br from-green-50 via-blue-50 to-purple-50 dark:from-gray-900 dark:via-green-900 dark:to-blue-900">
 			<div className="container mx-auto px-4 py-12">
 				<div className="mx-auto max-w-4xl">
-					<RequestAccessForm
-						userAccount={{
-							...userAccount,
-							avatar: userAccount.avatar ?? 'user',
-						}}
-					/>
+					<RequestAccessForm userAccount={userAccount} />
 				</div>
 			</div>
 		</div>
