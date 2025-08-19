@@ -1,16 +1,13 @@
 import { initTRPC, TRPCError } from '@trpc/server'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '~/app/api/auth/[...nextauth]'
+import { db } from './db'
+import { users } from './db/schema'
+import { eq } from 'drizzle-orm'
 
 const t = initTRPC.create()
-
-// base router you extend for all routers
 export const createTRPCRouter = t.router
-
-// helpers for procedures
 export const publicProcedure = t.procedure
-
-// protected procedure that requires authentication
 export const protectedProcedure = t.procedure.use(async ({ next }) => {
 	const session = await getServerSession(authOptions)
 
@@ -27,4 +24,19 @@ export const protectedProcedure = t.procedure.use(async ({ next }) => {
 			userId: session.user.id,
 		},
 	})
+})
+
+export const adminProcedure = protectedProcedure.use(async ({ ctx, next }) => {
+	const user = await db.query.users.findFirst({
+		where: eq(users.id, ctx.userId),
+	})
+
+	if (!user?.admin) {
+		throw new TRPCError({
+			code: 'FORBIDDEN',
+			message: 'You do not have permission to do this',
+		})
+	}
+
+	return next({ ctx })
 })
