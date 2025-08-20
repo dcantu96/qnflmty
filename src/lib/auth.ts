@@ -33,3 +33,8 @@ export const auth = async () => {
 export const getSession = async () => {
 	return await getServerSession(authOptions)
 }
+
+export const isAdminSession = async () => {
+	const { user } = await auth()
+	return user.admin
+}
