@@ -3,13 +3,13 @@
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { revalidatePath } from 'next/cache'
-import { useAuthenticatedSession } from '~/hooks/use-authenticated-session'
+import { auth } from '~/lib/auth'
 import { db } from '~/server/db'
 import { userAccounts, groups, type AvatarIcon } from '~/server/db/schema'
 import { eq, and } from 'drizzle-orm'
 
 export async function setSelectedProfile(profileId: number) {
-	const session = await useAuthenticatedSession()
+	const session = await auth()
 
 	const profile = await db.query.userAccounts.findFirst({
 		where: (accounts, { and, eq }) =>
@@ -50,7 +50,7 @@ export async function getSelectedProfile(): Promise<{
 	createdAt: Date
 	updatedAt: Date
 } | null> {
-	const session = await useAuthenticatedSession()
+	const session = await auth()
 	const cookieStore = await cookies()
 	const selectedProfileId = cookieStore.get('selectedProfile')?.value
 
@@ -68,11 +68,7 @@ export async function getSelectedProfile(): Promise<{
 		return null
 	}
 
-	// Ensure avatar is always a string, default to 'user' if null
-	return {
-		...profile,
-		avatar: profile.avatar || 'user',
-	}
+	return profile
 }
 
 export async function clearSelectedProfile() {
@@ -133,7 +129,7 @@ export async function createProfileAction(
 	prevState: { error?: string } | null,
 	formData: FormData,
 ) {
-	const session = await useAuthenticatedSession()
+	const session = await auth()
 
 	const username = formData.get('username') as string
 	const avatar = formData.get('avatar') as AvatarIcon
@@ -201,5 +197,9 @@ export async function createProfileAction(
 	// Set the newly created profile as selected and redirect
 	// These operations are outside try-catch so redirect() won't be caught
 	await setSelectedProfile(newAccount.id)
-	redirect(`/request-access/${newAccount.username}`)
+	if (session.user.admin) {
+		redirect('/dashboard')
+	} else {
+		redirect(`/request-access/${newAccount.username}`)
+	}
 }

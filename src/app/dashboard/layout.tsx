@@ -1,6 +1,6 @@
 import { redirect } from 'next/navigation'
-import { DashboardSidebar } from '~/components/dashboard-sidebar'
-import { useAuthenticatedSession } from '~/hooks/use-authenticated-session'
+import { DashboardSidebar } from '~/components/sidebar/dashboard-sidebar'
+import { auth } from '~/lib/auth'
 import {
 	getSelectedProfile,
 	enforceGroupMembership,
@@ -12,7 +12,7 @@ export default async function DashboardLayout({
 }: {
 	children: React.ReactNode
 }) {
-	const session = await useAuthenticatedSession()
+	const { session, user } = await auth()
 
 	const accounts = await db.query.userAccounts.findMany({
 		where: (accounts, { eq }) => eq(accounts.userId, session.user.id),
@@ -30,6 +30,7 @@ export default async function DashboardLayout({
 	await enforceGroupMembership()
 
 	const userData = {
+		admin: user.admin,
 		name: session.user.name || 'User',
 		email: session.user.email || '',
 		avatar: session.user.image || '/avatars/default.jpg',

@@ -1,14 +1,13 @@
 import { ProfileCreationForm } from '~/components/profile/profile-creation-form'
-import { useAuthenticatedSession } from '~/hooks/use-authenticated-session'
+import { auth } from '~/lib/auth'
 import { db } from '~/server/db'
 
 export default async function CreateProfilePage() {
-	const session = await useAuthenticatedSession()
+	const { user } = await auth()
 	const accounts = await db.query.userAccounts.findMany({
-		where: (accounts, { eq }) => eq(accounts.userId, session.user.id),
+		where: (accounts, { eq }) => eq(accounts.userId, user.id),
 	})
 
-	// Allow users to create additional profiles - no redirect needed
 	const isFirstProfile = accounts.length === 0
 
 	return (

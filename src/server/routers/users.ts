@@ -1,13 +1,17 @@
 import { z } from 'zod'
 import { eq } from 'drizzle-orm'
 import { TRPCError } from '@trpc/server'
-import { createTRPCRouter, publicProcedure } from '~/server/trpc'
+import {
+	createTRPCRouter,
+	protectedProcedure,
+	adminProcedure,
+} from '~/server/trpc'
 import { users } from '~/server/db/schema'
 import { db } from '~/server/db'
 
 export const usersRouter = createTRPCRouter({
 	// Get user by ID
-	byId: publicProcedure
+	byId: protectedProcedure
 		.input(z.object({ id: z.number().int().positive() }))
 		.query(async ({ input }) => {
 			const user = await db.query.users.findFirst({
@@ -25,7 +29,7 @@ export const usersRouter = createTRPCRouter({
 		}),
 
 	// Get user by email
-	byEmail: publicProcedure
+	byEmail: protectedProcedure
 		.input(z.object({ email: z.string().email() }))
 		.query(async ({ input }) => {
 			const user = await db.query.users.findFirst({
@@ -43,7 +47,7 @@ export const usersRouter = createTRPCRouter({
 		}),
 
 	// Create a new user
-	create: publicProcedure
+	create: adminProcedure
 		.input(
 			z.object({
 				email: z.string().email('Invalid email address'),
@@ -94,7 +98,7 @@ export const usersRouter = createTRPCRouter({
 		}),
 
 	// Update user
-	update: publicProcedure
+	update: adminProcedure
 		.input(
 			z.object({
 				id: z.number().int().positive(),
@@ -167,7 +171,7 @@ export const usersRouter = createTRPCRouter({
 		}),
 
 	// Delete user
-	delete: publicProcedure
+	delete: adminProcedure
 		.input(z.object({ id: z.number().int().positive() }))
 		.mutation(async ({ input }) => {
 			try {
@@ -197,7 +201,7 @@ export const usersRouter = createTRPCRouter({
 		}),
 
 	// List users with pagination
-	list: publicProcedure
+	list: protectedProcedure
 		.input(
 			z.object({
 				limit: z.number().min(1).max(100).default(10),
