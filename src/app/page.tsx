@@ -1,5 +1,4 @@
-import { db } from '~/server/db'
-import { getSession } from '~/lib/auth'
+import { getSession, isAdminSession } from '~/lib/auth'
 import { redirect } from 'next/navigation'
 import { cookies } from 'next/headers'
 import {
@@ -102,18 +101,29 @@ const stats = [
 	},
 ]
 
-export default async function Page() {
+async function rootRedirectHandler() {
 	const session = await getSession()
 	const cookiesStore = await cookies()
-	const selectedProfile = cookiesStore.get('selectedProfile')?.value
+	const selectedProfileId = cookiesStore.get('selectedProfile')?.value
 
 	if (session) {
-		if (selectedProfile) {
+		const isAdmin = await isAdminSession()
+		if (isAdmin) {
+			if (selectedProfileId) {
+				redirect('/dashboard')
+			} else {
+				redirect('/admin')
+			}
+		} else if (selectedProfileId) {
 			redirect('/dashboard')
 		} else {
 			redirect('/select-profile')
 		}
 	}
+}
+
+export default async function Page() {
+	await rootRedirectHandler()
 
 	return (
 		<div className="min-h-screen bg-background">

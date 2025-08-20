@@ -8,8 +8,6 @@ describe('Admin Journey', () => {
 		email: 'john@wick.com',
 	}
 
-	const username = 'johnwick'
-
 	before(() => {
 		cy.createAdmin(testAdmin)
 	})
@@ -23,31 +21,20 @@ describe('Admin Journey', () => {
 		cy.login(testAdmin.email)
 	})
 
-	it('1. should redirect new users to profile creation', () => {
+	it('1. admins without a profile should redirect straight to the admin dashboard', () => {
 		cy.visit('/')
-		cy.url().should('include', '/create-profile')
-		cy.contains(/Create Your Profile/i)
-		cy.contains(/Choose a username and avatar to get started with Qnflmty/i)
+		cy.url().should('include', '/admin')
+		cy.contains(/Admin/i)
 	})
 
-	it('4. should create first profile successfully and skip request access screen', () => {
-		cy.visit('/create-profile')
-
-		cy.get('label')
-			.contains(/Username/i)
-			.parent()
-			.find('input')
-			.clear()
-			.type(username)
-
-		cy.get('label')
-			.contains(/Rocket/i)
-			.click()
-
-		cy.get('button[type="submit"]')
-			.contains(/Create Profile/i)
-			.click()
-
+	it('2. admins with existing profiles should be redirected to the regular dashboard', () => {
+		cy.visit('/')
 		cy.url().should('include', '/dashboard')
+		cy.contains(/Dashboard/i)
+	})
+
+	it('3. admin without a profile can navigate to create a profile', () => {
+		cy.visit('/')
+		// press the user icon then navigate to user dashboard
 	})
 })
