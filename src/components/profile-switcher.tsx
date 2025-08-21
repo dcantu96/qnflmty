@@ -107,7 +107,7 @@ export function ProfileSwitcher({
 						<DropdownMenuLabel className="text-muted-foreground text-xs">
 							Profiles
 						</DropdownMenuLabel>
-						{sortedProfiles.map((profile, index) => {
+						{sortedProfiles.map((profile) => {
 							const profileAvatar = avatarIconsMap[profile.avatar]
 
 							return (
