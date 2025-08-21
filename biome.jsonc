@@ -21,6 +21,14 @@
 				"noUnusedImports": {
 					"level": "warn",
 					"fix": "safe"
+				},
+				"noUnusedVariables": {
+					"level": "warn",
+					"fix": "safe"
+				},
+				"noUnusedFunctionParameters": {
+					"level": "warn",
+					"fix": "safe"
 				}
 			},
 			"nursery": {
