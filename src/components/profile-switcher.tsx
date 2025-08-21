@@ -1,7 +1,7 @@
 'use client'
 
 import * as React from 'react'
-import { ChevronsUpDown, Plus, Edit3 } from 'lucide-react'
+import { ChevronsUpDown, Plus, Edit3, User } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { setSelectedProfile } from '~/lib/profile-actions'
 import { avatarIconsMap } from '~/lib/avatar-icons'
@@ -30,13 +30,13 @@ interface Profile {
 }
 
 export function ProfileSwitcher({
-	profiles,
+	profiles = [],
 	selectedProfile,
 }: {
-	profiles: Profile[]
-	selectedProfile: Profile
+	profiles?: Profile[]
+	selectedProfile?: Profile
 }) {
-	const avatar = avatarIconsMap[selectedProfile.avatar]
+	const avatar = selectedProfile ? avatarIconsMap[selectedProfile.avatar] : null
 	const { isMobile } = useSidebar()
 	const router = useRouter()
 
@@ -48,7 +48,7 @@ export function ProfileSwitcher({
 	const [showAvatarModal, setShowAvatarModal] = React.useState(false)
 
 	const handleProfileSwitch = async (profile: Profile) => {
-		if (profile.id === selectedProfile.id) return // Don't switch if already active
+		if (selectedProfile && profile.id === selectedProfile.id) return // Don't switch if already active
 
 		setIsLoading(true)
 
@@ -83,13 +83,17 @@ export function ProfileSwitcher({
 							<div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
 								{isLoading ? (
 									<div className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
-								) : (
+								) : avatar ? (
 									<avatar.icon className={`size-4 ${avatar.color}`} />
+								) : (
+									<User className="size-4" />
 								)}
 							</div>
 							<div className="grid flex-1 text-left text-sm leading-tight">
 								<span className="truncate font-medium">
-									{selectedProfile.username}
+									{selectedProfile
+										? selectedProfile.username
+										: 'No Profile Selected'}
 								</span>
 								<span className="truncate text-sidebar-muted-foreground text-xs">
 									QNFLMTY Profile
@@ -122,7 +126,7 @@ export function ProfileSwitcher({
 										/>
 									</div>
 									{profile.username}
-									{selectedProfile.id === profile.id && (
+									{selectedProfile?.id === profile.id && (
 										<DropdownMenuShortcut>✓</DropdownMenuShortcut>
 									)}
 								</DropdownMenuItem>
@@ -131,7 +135,8 @@ export function ProfileSwitcher({
 						<DropdownMenuSeparator />
 						<DropdownMenuItem
 							className="gap-2 p-2"
-							onClick={() => setShowAvatarModal(true)}
+							onClick={() => selectedProfile && setShowAvatarModal(true)}
+							disabled={!selectedProfile}
 						>
 							<div className="flex size-6 items-center justify-center rounded-md border bg-transparent">
 								<Edit3 className="size-4" />
@@ -153,14 +158,16 @@ export function ProfileSwitcher({
 			</SidebarMenuItem>
 
 			{/* Avatar Update Modal */}
-			<AvatarUpdateModal
-				isOpen={showAvatarModal}
-				onClose={() => setShowAvatarModal(false)}
-				profileId={selectedProfile.id}
-				currentAvatar={selectedProfile.avatar}
-				profileUsername={selectedProfile.username}
-				onSuccess={handleAvatarUpdate}
-			/>
+			{selectedProfile && (
+				<AvatarUpdateModal
+					isOpen={showAvatarModal}
+					onClose={() => setShowAvatarModal(false)}
+					profileId={selectedProfile.id}
+					currentAvatar={selectedProfile.avatar}
+					profileUsername={selectedProfile.username}
+					onSuccess={handleAvatarUpdate}
+				/>
+			)}
 		</SidebarMenu>
 	)
 }

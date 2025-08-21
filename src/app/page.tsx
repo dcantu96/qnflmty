@@ -25,6 +25,7 @@ import {
 	CardDescription,
 } from '~/components/ui/card'
 import { Separator } from '~/components/ui/separator'
+import { db } from '~/server/db'
 
 const steps = [
 	{
@@ -105,12 +106,17 @@ async function rootRedirectHandler() {
 	const session = await getSession()
 	const cookiesStore = await cookies()
 	const selectedProfileId = cookiesStore.get('selectedProfile')?.value
+	const accounts = await db.query.userAccounts.findMany({
+		where: (accounts, { eq }) => eq(accounts.userId, session?.user.id ?? -1),
+	})
 
 	if (session) {
 		const isAdmin = await isAdminSession()
 		if (isAdmin) {
 			if (selectedProfileId) {
 				redirect('/dashboard')
+			} else if (accounts.length) {
+				redirect('/select-profile')
 			} else {
 				redirect('/admin')
 			}

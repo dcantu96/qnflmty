@@ -1,6 +1,8 @@
 import { redirect } from 'next/navigation'
 import { AdminSidebar } from '~/components/sidebar/admin-sidebar'
 import { auth } from '~/lib/auth'
+import { getSelectedProfile } from '~/lib/profile-actions'
+import { db } from '~/server/db'
 
 export default async function DashboardLayout({
 	children,
@@ -8,6 +10,10 @@ export default async function DashboardLayout({
 	children: React.ReactNode
 }) {
 	const { session, user } = await auth()
+	const selectedProfile = await getSelectedProfile()
+	const accounts = await db.query.userAccounts.findMany({
+		where: (accounts, { eq }) => eq(accounts.userId, session.user.id),
+	})
 
 	if (!user.admin) {
 		redirect('/unauthorized')
@@ -20,5 +26,13 @@ export default async function DashboardLayout({
 		avatar: session.user.image || '/avatars/default.jpg',
 	}
 
-	return <AdminSidebar userData={userData}>{children}</AdminSidebar>
+	return (
+		<AdminSidebar
+			accounts={accounts}
+			userData={userData}
+			selectedProfile={selectedProfile}
+		>
+			{children}
+		</AdminSidebar>
+	)
 }

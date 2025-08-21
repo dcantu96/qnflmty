@@ -102,14 +102,19 @@ const projects = [
 ]
 
 export function AdminSidebar({
+	selectedProfile,
+	accounts,
 	userData,
 	children,
-}: Omit<
-	AppSidebarProps,
-	'projects' | 'navMain' | 'accounts' | 'selectedProfile'
->) {
+}: Omit<AppSidebarProps, 'projects' | 'navMain'>) {
 	return (
-		<AppSidebar userData={userData} navMain={navMain} projects={projects}>
+		<AppSidebar
+			selectedProfile={selectedProfile}
+			userData={userData}
+			accounts={accounts}
+			navMain={navMain}
+			projects={projects}
+		>
 			{children}
 		</AppSidebar>
 	)

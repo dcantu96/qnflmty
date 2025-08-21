@@ -52,14 +52,12 @@ export function AppSidebar({
 	return (
 		<SidebarProvider>
 			<Sidebar collapsible="icon">
-				{accounts && selectedProfile && (
-					<SidebarHeader>
-						<ProfileSwitcher
-							profiles={accounts}
-							selectedProfile={selectedProfile}
-						/>
-					</SidebarHeader>
-				)}
+				<SidebarHeader>
+					<ProfileSwitcher
+						profiles={accounts}
+						selectedProfile={selectedProfile}
+					/>
+				</SidebarHeader>
 				<SidebarContent>
 					<NavMain items={navMain} />
 					<NavProjects projects={projects} />
