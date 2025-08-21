@@ -1,7 +1,7 @@
 'use client'
 
 import * as React from 'react'
-import { ChevronsUpDown, Plus, Edit3, User } from 'lucide-react'
+import { ChevronsUpDown, Plus, Edit3 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { setSelectedProfile } from '~/lib/profile-actions'
 import { avatarIconsMap } from '~/lib/avatar-icons'
