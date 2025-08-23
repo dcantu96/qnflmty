@@ -6,7 +6,8 @@ import {
 	ChevronsUpDown,
 	CreditCard,
 	LogOut,
-	Sparkles,
+	ShieldUser,
+	User,
 } from 'lucide-react'
 import { signOut } from 'next-auth/react'
 
@@ -28,12 +29,15 @@ import {
 } from '~/components/ui/sidebar'
 import { clearSelectedProfile } from '~/lib/profile-actions'
 import type { UserData } from './sidebar/app-sidebar'
+import { usePathname, useRouter } from 'next/navigation'
 
 export function NavUser({
 	user,
 }: {
 	user: UserData
 }) {
+	const pathname = usePathname()
+	const router = useRouter()
 	const { isMobile } = useSidebar()
 
 	const handleLogout = async () => {
@@ -84,13 +88,24 @@ export function NavUser({
 							</div>
 						</DropdownMenuLabel>
 						<DropdownMenuSeparator />
-						<DropdownMenuGroup>
-							<DropdownMenuItem>
-								<Sparkles />
-								Upgrade to Pro
-							</DropdownMenuItem>
-						</DropdownMenuGroup>
-						<DropdownMenuSeparator />
+						{user.admin && (
+							<>
+								<DropdownMenuGroup>
+									{pathname.startsWith('/admin') ? (
+										<DropdownMenuItem onClick={() => router.push('/dashboard')}>
+											<User />
+											User Dashboard
+										</DropdownMenuItem>
+									) : (
+										<DropdownMenuItem onClick={() => router.push('/admin')}>
+											<ShieldUser />
+											Admin Dashboard
+										</DropdownMenuItem>
+									)}
+								</DropdownMenuGroup>
+								<DropdownMenuSeparator />
+							</>
+						)}
 						<DropdownMenuGroup>
 							<DropdownMenuItem>
 								<BadgeCheck />
