@@ -2,20 +2,15 @@ import { type NextRequest, NextResponse } from 'next/server'
 import { db } from '~/server/db'
 import { userAccounts } from '~/server/db/schema'
 import { eq } from 'drizzle-orm'
-import { useAuthenticatedSession } from '~/hooks/use-authenticated-session'
+import { auth } from '~/lib/auth'
 
 export async function POST(request: NextRequest) {
 	try {
-		const session = await useAuthenticatedSession()
-
-		if (!session?.user?.id) {
-			return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-		}
+		const { user } = await auth()
 
 		const { userId, username, avatar } = await request.json()
 
-		// Verify the userId matches the session
-		if (userId !== session.user.id) {
+		if (userId !== user.id) {
 			return NextResponse.json({ error: 'Unauthorized' }, { status: 403 })
 		}
 

@@ -27,15 +27,12 @@ import {
 	useSidebar,
 } from '~/components/ui/sidebar'
 import { clearSelectedProfile } from '~/lib/profile-actions'
+import type { UserData } from './sidebar/app-sidebar'
 
 export function NavUser({
 	user,
 }: {
-	user: {
-		name: string
-		email: string
-		avatar: string
-	}
+	user: UserData
 }) {
 	const { isMobile } = useSidebar()
 

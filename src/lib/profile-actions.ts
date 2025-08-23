@@ -3,13 +3,19 @@
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { revalidatePath } from 'next/cache'
-import { useAuthenticatedSession } from '~/hooks/use-authenticated-session'
+import { auth, isAdminSession } from '~/lib/auth'
 import { db } from '~/server/db'
-import { userAccounts, groups, type AvatarIcon } from '~/server/db/schema'
+import {
+	userAccounts,
+	groups,
+	type AvatarIcon,
+	memberships,
+	requests,
+} from '~/server/db/schema'
 import { eq, and } from 'drizzle-orm'
 
 export async function setSelectedProfile(profileId: number) {
-	const session = await useAuthenticatedSession()
+	const session = await auth()
 
 	const profile = await db.query.userAccounts.findFirst({
 		where: (accounts, { and, eq }) =>
@@ -42,20 +48,23 @@ export async function selectProfileAction(formData: FormData) {
 	await selectProfileAndRedirect(profileId)
 }
 
-export async function getSelectedProfile(): Promise<{
-	id: number
-	userId: number
-	username: string
-	avatar: AvatarIcon
-	createdAt: Date
-	updatedAt: Date
-} | null> {
-	const session = await useAuthenticatedSession()
+export async function getSelectedProfile(): Promise<
+	| {
+			id: number
+			userId: number
+			username: string
+			avatar: AvatarIcon
+			createdAt: Date
+			updatedAt: Date
+	  }
+	| undefined
+> {
+	const session = await auth()
 	const cookieStore = await cookies()
 	const selectedProfileId = cookieStore.get('selectedProfile')?.value
 
 	if (!selectedProfileId) {
-		return null
+		return undefined
 	}
 
 	const profileId = Number.parseInt(selectedProfileId, 10)
@@ -65,14 +74,10 @@ export async function getSelectedProfile(): Promise<{
 	})
 
 	if (!profile) {
-		return null
+		return undefined
 	}
 
-	// Ensure avatar is always a string, default to 'user' if null
-	return {
-		...profile,
-		avatar: profile.avatar || 'user',
-	}
+	return profile
 }
 
 export async function clearSelectedProfile() {
@@ -114,6 +119,7 @@ export async function checkProfileGroupMembership(
 
 // Check and redirect if profile doesn't have access to the active group
 export async function enforceGroupMembership() {
+	const isAdmin = await isAdminSession()
 	const profile = await getSelectedProfile()
 
 	if (!profile) {
@@ -123,17 +129,17 @@ export async function enforceGroupMembership() {
 
 	const hasAccess = await checkProfileGroupMembership(profile.id)
 
-	if (!hasAccess) {
+	if (!hasAccess && !isAdmin) {
 		// Profile doesn't have access to active group, redirect to request access
 		redirect(`/request-access/${profile.username}`)
 	}
 }
 
 export async function createProfileAction(
-	prevState: { error?: string } | null,
+	_prevState: { error?: string } | null,
 	formData: FormData,
 ) {
-	const session = await useAuthenticatedSession()
+	const { user } = await auth()
 
 	const username = formData.get('username') as string
 	const avatar = formData.get('avatar') as AvatarIcon
@@ -173,11 +179,10 @@ export async function createProfileAction(
 			return { error: 'Username is already taken' }
 		}
 
-		// Create the user account
 		const result = await db
 			.insert(userAccounts)
 			.values({
-				userId: session.user.id,
+				userId: user.id,
 				username: trimmedUsername,
 				avatar,
 			})
@@ -188,18 +193,41 @@ export async function createProfileAction(
 		if (!newAccount) {
 			return { error: 'Failed to create profile' }
 		}
+
+		const activeGroup = await db.query.groups.findFirst({
+			columns: {
+				id: true,
+			},
+			where: (groups, { and, eq }) =>
+				and(eq(groups.joinable, true), eq(groups.finished, false)),
+		})
+		if (!activeGroup) {
+			return { error: 'No active group found' }
+		}
+
+		if (user.admin) {
+			await db.insert(memberships).values({
+				userAccountId: newAccount.id,
+				groupId: activeGroup.id,
+			})
+		} else {
+			await db.insert(requests).values({
+				userAccountId: newAccount.id,
+				groupId: activeGroup.id,
+			})
+		}
 	} catch (error) {
-		// Handle database constraint violations
 		if (error instanceof Error && error.message.includes('unique constraint')) {
 			return { error: 'Username is already taken' }
 		}
 
-		// Generic error fallback
 		return { error: 'Something went wrong creating your profile' }
 	}
 
-	// Set the newly created profile as selected and redirect
-	// These operations are outside try-catch so redirect() won't be caught
 	await setSelectedProfile(newAccount.id)
-	redirect(`/request-access/${newAccount.username}`)
+	if (user.admin) {
+		redirect('/dashboard')
+	} else {
+		redirect(`/request-access/${newAccount.username}`)
+	}
 }

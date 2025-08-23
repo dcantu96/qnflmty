@@ -1,10 +1,7 @@
 import { redirect } from 'next/navigation'
-import { DashboardSidebar } from '~/components/sidebar/dashboard-sidebar'
+import { AdminSidebar } from '~/components/sidebar/admin-sidebar'
 import { auth } from '~/lib/auth'
-import {
-	getSelectedProfile,
-	enforceGroupMembership,
-} from '~/lib/profile-actions'
+import { getSelectedProfile } from '~/lib/profile-actions'
 import { db } from '~/server/db'
 
 export default async function DashboardLayout({
@@ -13,21 +10,14 @@ export default async function DashboardLayout({
 	children: React.ReactNode
 }) {
 	const { session, user } = await auth()
-
+	const selectedProfile = await getSelectedProfile()
 	const accounts = await db.query.userAccounts.findMany({
 		where: (accounts, { eq }) => eq(accounts.userId, session.user.id),
 	})
-	if (accounts.length === 0) {
-		redirect('/create-profile')
-	}
 
-	const selectedProfile = await getSelectedProfile()
-	if (!selectedProfile) {
-		redirect('/select-profile')
+	if (!user.admin) {
+		redirect('/unauthorized')
 	}
-
-	// Ensure the selected profile has access to the active group
-	await enforceGroupMembership()
 
 	const userData = {
 		admin: user.admin,
@@ -37,12 +27,12 @@ export default async function DashboardLayout({
 	}
 
 	return (
-		<DashboardSidebar
-			userData={userData}
+		<AdminSidebar
 			accounts={accounts}
+			userData={userData}
 			selectedProfile={selectedProfile}
 		>
 			{children}
-		</DashboardSidebar>
+		</AdminSidebar>
 	)
 }

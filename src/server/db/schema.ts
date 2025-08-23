@@ -55,6 +55,7 @@ export const users = pgTable('user', {
 	id: serial('id').primaryKey(),
 	name: text('name'),
 	email: text('email').unique(),
+	admin: boolean('admin').default(false).notNull(),
 	emailVerified: timestamp('emailVerified', { mode: 'date' }),
 	image: text('image'),
 	encryptedPassword: text('encryptedPassword'),
@@ -146,7 +147,7 @@ export const userAccounts = pgTable('user_account', {
 		.notNull()
 		.references(() => users.id, { onDelete: 'cascade' }),
 	username: text('username').notNull().unique(),
-	avatar: avatarEnum('avatar').default('user'),
+	avatar: avatarEnum('avatar').default('user').notNull(),
 	createdAt: timestamp('created_at', { withTimezone: true })
 		.notNull()
 		.defaultNow(),

@@ -8,6 +8,27 @@
       "when": 1755478407025,
       "tag": "0000_white_havok",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1755565376800,
+      "tag": "0001_lumpy_guardian",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1755568031685,
+      "tag": "0002_conscious_junta",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1755665647417,
+      "tag": "0003_exotic_glorian",
+      "breakpoints": true
     }
   ]
 }
