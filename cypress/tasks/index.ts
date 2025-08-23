@@ -1,7 +1,7 @@
 import { randomUUID } from 'node:crypto'
-import { eq } from 'drizzle-orm'
+import { eq, and } from 'drizzle-orm'
 import { getDb } from './cypress-db'
-import { sessions, users } from '~/server/db/schema'
+import { sessions, users, userAccounts } from '~/server/db/schema'
 
 export type LoginTaskParams = string
 export const login =
@@ -66,4 +66,40 @@ export const createAdmin =
 
 		await db.insert(users).values({ email, name, admin: true })
 		return null
+	}
+
+export interface GetUserAccountIdTaskParams {
+	email: string
+	username: string
+}
+
+export const getUserAccountId =
+	(connectionString: string) =>
+	async (params: GetUserAccountIdTaskParams): Promise<number> => {
+		const { email, username } = params
+		const db = getDb(connectionString)
+
+		const result = await db
+			.select({
+				id: userAccounts.id,
+			})
+			.from(userAccounts)
+			.innerJoin(users, eq(userAccounts.userId, users.id))
+			.where(and(eq(users.email, email), eq(userAccounts.username, username)))
+			.limit(1)
+
+		if (result.length === 0) {
+			throw new Error(
+				`UserAccount not found for email: ${email} and username: ${username}`,
+			)
+		}
+
+		const userAccount = result[0]
+		if (!userAccount) {
+			throw new Error(
+				`UserAccount not found for email: ${email} and username: ${username}`,
+			)
+		}
+
+		return userAccount.id
 	}
