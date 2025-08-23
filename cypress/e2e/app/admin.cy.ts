@@ -64,6 +64,15 @@ describe('Login, Redirects and Profile Creation', () => {
 					cy.contains(/Dashboard?/i)
 				})
 			})
+			describe('One selected', () => {
+				it('Should redirect to the dashboard', () => {
+					cy.setProfileId(testAdmin.email, username)
+					cy.login(testAdmin.email)
+					cy.visit('/')
+					cy.url().should('include', '/dashboard')
+					cy.contains(/Dashboard?/i)
+				})
+			})
 		})
 	})
 })
