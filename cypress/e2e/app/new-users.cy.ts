@@ -17,13 +17,14 @@ const testUser = {
 }
 const firstUsername = 'JourneyTester'
 const secondUsername = 'SecondProfile'
+
 describe('A New Authenticated User without access to dashboard', () => {
 	before(() => {
-		cy.createUser(testUser)
+		cy.task('createUser', testUser)
 	})
 
 	after(() => {
-		cy.deleteUser(testUser.email)
+		cy.task('deleteUser', testUser.email)
 	})
 
 	beforeEach(() => {

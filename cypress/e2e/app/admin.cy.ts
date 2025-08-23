@@ -1,21 +1,17 @@
-/**
- * Complete User Journey Tests
- * Sequential tests that build upon each other to test the complete user flow
- */
+const testAdmin = {
+	name: 'John Wick',
+	email: 'john@wick.com',
+}
+const username = 'john-wick'
+
 describe('Login, Redirects and Profile Creation', () => {
 	describe('An Admin', () => {
-		const testAdmin = {
-			name: 'John Wick',
-			email: 'john@wick.com',
-		}
-		const username = 'john-wick'
-
 		before(() => {
-			cy.createAdmin(testAdmin)
+			cy.task('createAdmin', testAdmin)
 		})
 
 		after(() => {
-			cy.deleteUser(testAdmin.email)
+			cy.task('deleteUser', testAdmin.email)
 		})
 
 		beforeEach(() => {

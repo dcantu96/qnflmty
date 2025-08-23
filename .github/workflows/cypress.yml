@@ -58,6 +58,7 @@ jobs:
         run: pnpm cypress run --record --parallel --ci-build-id ${{ github.run_id }} --group "Group-${{ matrix.containers }}"
         env:
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+          CYPRESS_DATABASE_URL: ${{ secrets.DATABASE_URL }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NODE_NO_WARNINGS: 1
           TERM: xterm

@@ -5,10 +5,10 @@ const testUser = {
 
 describe('Login page accessibility', () => {
 	before(() => {
-		cy.createUser(testUser)
+		cy.task('createUser', testUser)
 	})
 	after(() => {
-		cy.deleteUser(testUser.email)
+		cy.task('deleteUser', testUser.email)
 	})
 
 	it('Should display proper login page elements', () => {
