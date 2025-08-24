@@ -12,13 +12,6 @@ export const authOptions = {
 		GoogleProvider({
 			clientId: env.GOOGLE_CLIENT_ID,
 			clientSecret: env.GOOGLE_CLIENT_SECRET,
-			authorization: {
-				params: {
-					prompt: 'select_account',
-					access_type: 'offline',
-					response_type: 'code',
-				},
-			},
 		}),
 	],
 	callbacks: {
@@ -84,16 +77,5 @@ export const authOptions = {
 	},
 	session: {
 		strategy: 'database',
-	},
-	cookies: {
-		sessionToken: {
-			name: '__Secure-next-auth.session-token',
-			options: {
-				httpOnly: true,
-				sameSite: 'none',
-				path: '/',
-				secure: true,
-			},
-		},
 	},
 } satisfies NextAuthOptions
