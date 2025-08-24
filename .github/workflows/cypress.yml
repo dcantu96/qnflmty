@@ -61,12 +61,12 @@ jobs:
       - name: Run DB migrations
         run: pnpm db:migrate
         env:
-          DATABASE_URL: postgresql://test:test@postgres:5432/testdb
+          DATABASE_URL: postgresql://test:test@localhost:5432/testdb
 
       - name: Start app
         run: pnpm dev --hostname 0.0.0.0 &
         env:
-          DATABASE_URL: postgresql://test:test@postgres:5432/testdb
+          DATABASE_URL: postgresql://test:test@localhost:5432/testdb
           GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
           GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
           AUTH_SECRET: ${{ secrets.AUTH_SECRET }}
@@ -79,7 +79,7 @@ jobs:
         run: pnpm cypress run --record --parallel --ci-build-id ${{ github.run_id }} --group "Group-${{ matrix.containers }}"
         env:
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
-          CYPRESS_DATABASE_URL: postgresql://test:test@postgres:5432/testdb
+          CYPRESS_DATABASE_URL: postgresql://test:test@localhost:5432/testdb
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NODE_NO_WARNINGS: 1
           TERM: xterm
