@@ -81,9 +81,6 @@ jobs:
           AUTH_SECRET: ${{ secrets.AUTH_SECRET }}
           AUTH_URL: http://localhost:3000
 
-      - name: Wait for app
-        run: pnpm dlx wait-on http://localhost:3000 --timeout 60000 --strict
-
       - name: Run Cypress tests
         run: pnpm cypress run --record --parallel --ci-build-id ${{ github.run_id }} --group "Group-${{ matrix.containers }}"
         env:
