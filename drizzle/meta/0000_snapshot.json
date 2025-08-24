@@ -1,5 +1,5 @@
 {
-  "id": "3ec59f0b-6b42-4f5d-9014-246cd609432f",
+  "id": "27ec55f7-4175-4357-82b6-304b406ef3d3",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -1171,7 +1171,7 @@
           "type": "avatar_icon",
           "typeSchema": "public",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "default": "'user'"
         },
         "created_at": {
@@ -1240,6 +1240,13 @@
           "type": "text",
           "primaryKey": false,
           "notNull": false
+        },
+        "admin": {
+          "name": "admin",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
         },
         "emailVerified": {
           "name": "emailVerified",
