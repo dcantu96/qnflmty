@@ -65,7 +65,7 @@ jobs:
           DATABASE_URL: postgresql://test:test@localhost:5432/testdb
 
       - name: Start app
-        run: pnpm dev &
+        run: pnpm dev --hostname 0.0.0.0 &
         env:
           DATABASE_URL: postgresql://test:test@localhost:5432/testdb
           GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
