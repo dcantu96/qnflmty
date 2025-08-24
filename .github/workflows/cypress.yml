@@ -65,17 +65,24 @@ jobs:
       
       - name: Build app
         run: pnpm build
-
-      - name: Start app
-        run: |
-          pnpm start &
-          npx wait-on http://localhost:3000 --timeout 60000 --strict
         env:
           DATABASE_URL: postgresql://test:test@localhost:5432/testdb
           GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
           GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
           AUTH_SECRET: ${{ secrets.AUTH_SECRET }}
           AUTH_URL: http://localhost:3000
+
+      - name: Start app
+        run: pnpm start &
+        env:
+          DATABASE_URL: postgresql://test:test@localhost:5432/testdb
+          GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+          GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
+          AUTH_SECRET: ${{ secrets.AUTH_SECRET }}
+          AUTH_URL: http://localhost:3000
+
+      - name: Wait for app
+        run: pnpm dlx wait-on http://localhost:3000 --timeout 60000 --strict
 
       - name: Run Cypress tests
         run: pnpm cypress run --record --parallel --ci-build-id ${{ github.run_id }} --group "Group-${{ matrix.containers }}"
