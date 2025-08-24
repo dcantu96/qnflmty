@@ -1,16 +1,3 @@
-// A New Authenticated User without access to dashboard
-// - Creating a profile
-//  - should be redirected to /create-profile
-//  - should see all avatar options
-//  - should see errors if the username is invalid
-//  - should be able to successfully create a profile
-//  - should be redirected to request access page
-// - can select a profile from the profile selector
-//  - should see the request access page
-// - can edit a profile
-// - can create additional profiles
-//  - should see errors if the username is already taken
-// - can switch between profiles
 const testUser = {
 	name: 'Journey Test User',
 	email: 'journey-test@example.com',

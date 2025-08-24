@@ -11,7 +11,7 @@
 - [x] Add authentication (w/ next-auth)
 - [x] Attach end to end tests (cypress)
 - [x] Attach CI for cypress cloud
-- [ ] Brand new users
+- [x] Brand new users
   - Layout: No sidebar, full page view
     - welcome message
     - what's next section

@@ -1,9 +1,3 @@
-// without a session
-// - should land on the landing page
-// - should be able to navigate to profile creation
-// - should be redirected to login in case of unauthorized access
-// - should be able to login
-
 describe('Users without session', () => {
 	describe('Landing on the site', () => {
 		it('Should land on the landing page', () => {

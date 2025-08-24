@@ -1,5 +1,11 @@
 import { defineConfig } from 'cypress'
-import { createUser, login, deleteUser, createAdmin } from './cypress/tasks'
+import {
+	createUser,
+	login,
+	deleteUser,
+	createAdmin,
+	getUserAccountId,
+} from './cypress/tasks'
 
 export default defineConfig({
 	projectId: 'wxjaty',
@@ -14,6 +20,7 @@ export default defineConfig({
 				createUser: createUser(dbUrl),
 				deleteUser: deleteUser(dbUrl),
 				createAdmin: createAdmin(dbUrl),
+				getUserAccountId: getUserAccountId(dbUrl),
 			})
 
 			return cypressConfig
