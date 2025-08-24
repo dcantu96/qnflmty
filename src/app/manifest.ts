@@ -12,19 +12,16 @@ export default function manifest(): MetadataRoute.Manifest {
 		orientation: 'portrait-primary',
 		scope: '/',
 		icons: [
-			// Favicon for browsers
 			{
 				src: '/favicon.ico',
 				sizes: '32x32',
 				type: 'image/x-icon',
 			},
-			// Apple touch icon for iOS (must be first PNG for iOS compatibility)
 			{
 				src: '/apple-touch-icon.png',
 				sizes: '180x180',
 				type: 'image/png',
 			},
-			// Standard PNG icons (ordered by size for better fallback)
 			{
 				src: '/icon-192.png',
 				sizes: '192x192',
@@ -35,7 +32,6 @@ export default function manifest(): MetadataRoute.Manifest {
 				sizes: '512x512',
 				type: 'image/png',
 			},
-			// Maskable icons for Android adaptive icons
 			{
 				src: '/icon-192-maskable.png',
 				sizes: '192x192',
@@ -48,7 +44,6 @@ export default function manifest(): MetadataRoute.Manifest {
 				type: 'image/png',
 				purpose: 'maskable',
 			},
-			// SVG as fallback for any size (last for compatibility)
 			{
 				src: '/logo.svg',
 				sizes: 'any',
