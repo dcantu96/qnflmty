@@ -154,7 +154,7 @@ CREATE TABLE "user_account" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"userId" integer NOT NULL,
 	"username" text NOT NULL,
-	"avatar" "avatar_icon" DEFAULT 'user',
+	"avatar" "avatar_icon" DEFAULT 'user' NOT NULL,
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
 	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,
 	CONSTRAINT "user_account_username_unique" UNIQUE("username")
@@ -164,6 +164,7 @@ CREATE TABLE "user" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"name" text,
 	"email" text,
+	"admin" boolean DEFAULT false NOT NULL,
 	"emailVerified" timestamp,
 	"image" text,
 	"encryptedPassword" text,
