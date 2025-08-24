@@ -11,6 +11,22 @@ jobs:
       matrix:
         containers: [1]
 
+    services:
+      postgres:
+        image: postgres:16
+        ports:
+          - 5432:5432
+        env:
+          POSTGRES_USER: test
+          POSTGRES_PASSWORD: test
+          POSTGRES_DB: testdb
+        # GitHub will wait until Postgres is ready before continuing
+        options: >-
+          --health-cmd "pg_isready -U test -d testdb"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -19,6 +35,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 22
+
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
 
@@ -42,10 +59,15 @@ jobs:
           key: cypress-${{ runner.os }}-${{ hashFiles('package.json') }}
           restore-keys: cypress-${{ runner.os }}-
 
+      - name: Run DB migrations
+        run: pnpm db:migrate
+        env:
+          DATABASE_URL: postgresql://test:test@localhost:5432/testdb
+
       - name: Start app
         run: pnpm dev &
         env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          DATABASE_URL: postgresql://test:test@localhost:5432/testdb
           GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
           GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
           AUTH_SECRET: ${{ secrets.AUTH_SECRET }}
@@ -58,7 +80,7 @@ jobs:
         run: pnpm cypress run --record --parallel --ci-build-id ${{ github.run_id }} --group "Group-${{ matrix.containers }}"
         env:
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
-          CYPRESS_DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          CYPRESS_DATABASE_URL: postgresql://test:test@localhost:5432/testdb
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NODE_NO_WARNINGS: 1
           TERM: xterm
