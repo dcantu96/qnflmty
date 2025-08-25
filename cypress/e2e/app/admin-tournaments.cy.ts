@@ -31,5 +31,6 @@ describe('An Admin', () => {
 		cy.contains(/tournaments/i).click()
 		cy.url().should('include', '/admin/tournaments')
 		cy.contains(/tournaments/i)
+		cy.contains(/national football league/i)
 	})
 })
