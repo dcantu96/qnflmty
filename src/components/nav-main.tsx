@@ -1,6 +1,8 @@
 'use client'
 
 import { ChevronRight, type LucideIcon } from 'lucide-react'
+import { usePathname } from 'next/navigation'
+import { useCallback } from 'react'
 
 import {
 	Collapsible,
@@ -36,15 +38,31 @@ export function NavMain({
 }: {
 	items: NavItem[]
 }) {
+	const pathname = usePathname()
+	const isAdminRoute = pathname.startsWith('/admin')
+
+	const isAnySubItemActive = useCallback(
+		(subItems?: NavSubItem[]) => {
+			if (!subItems) return false
+			return subItems.some(
+				(subItem) =>
+					pathname === subItem.url || pathname.startsWith(`${subItem.url}/`),
+			)
+		},
+		[pathname],
+	)
+
 	return (
 		<SidebarGroup>
-			<SidebarGroupLabel>Platform</SidebarGroupLabel>
+			<SidebarGroupLabel>
+				{isAdminRoute ? 'Admin Dashboard' : 'Platform'}
+			</SidebarGroupLabel>
 			<SidebarMenu>
 				{items.map((item) => (
 					<Collapsible
 						key={item.title}
 						asChild
-						defaultOpen={item.isActive}
+						defaultOpen={isAnySubItemActive(item.items)}
 						className="group/collapsible"
 					>
 						<SidebarMenuItem>
@@ -59,7 +77,10 @@ export function NavMain({
 								<SidebarMenuSub>
 									{item.items?.map((subItem) => (
 										<SidebarMenuSubItem key={subItem.title}>
-											<SidebarMenuSubButton asChild>
+											<SidebarMenuSubButton
+												asChild
+												isActive={pathname === subItem.url}
+											>
 												<a href={subItem.url}>
 													<span>{subItem.title}</span>
 												</a>
