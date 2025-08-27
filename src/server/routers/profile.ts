@@ -40,7 +40,9 @@ export const profileRouter = createTRPCRouter({
 		)
 		.mutation(async ({ input, ctx }) => {
 			const { username, avatar } = input
-			const { userId } = ctx
+			const {
+				user: { id: userId },
+			} = ctx
 
 			try {
 				// Check if username already exists (case insensitive)
