@@ -16,7 +16,9 @@ export const requestsRouter = createTRPCRouter({
 		)
 		.mutation(async ({ input, ctx }) => {
 			const { groupId, userAccountId } = input
-			const { userId } = ctx
+			const {
+				user: { id: userId },
+			} = ctx
 
 			try {
 				// Verify the user account belongs to the current user
@@ -118,7 +120,9 @@ export const requestsRouter = createTRPCRouter({
 		)
 		.query(async ({ input, ctx }) => {
 			const { groupId, userAccountId } = input
-			const { userId } = ctx
+			const {
+				user: { id: userId },
+			} = ctx
 
 			// Verify the user account belongs to the current user
 			const userAccount = await db.query.userAccounts.findFirst({
