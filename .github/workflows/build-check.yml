@@ -5,6 +5,7 @@ on: [push]
 jobs:
   build-check:
     runs-on: ubuntu-latest
+    environment: preview
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -31,3 +32,9 @@ jobs:
       
       - name: Run build (lint/type check)
         run: pnpm build
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+          GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
+          AUTH_SECRET: ${{ secrets.AUTH_SECRET }}
+          AUTH_URL: ${{ secrets.AUTH_URL }}
