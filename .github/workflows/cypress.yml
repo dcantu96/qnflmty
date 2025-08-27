@@ -16,15 +16,6 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
       
-      - name: Create Neon Branch
-        id: create-branch
-        uses: neondatabase/create-branch-action@v6
-        with:
-          project_id: ${{ secrets.NEON_PROJECT_ID }}
-          branch_name: test-${{ github.run_id }}-${{ matrix.containers }}
-          role: neondb_owner
-          api_key: ${{ secrets.NEON_API_KEY }}
-
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
@@ -63,6 +54,16 @@ jobs:
 
       - name: Wait for app
         run: pnpm dlx wait-on http://localhost:3000 --timeout 60000 --strict
+      
+      - name: Create Neon Branch
+        id: create-branch
+        uses: neondatabase/create-branch-action@v6
+        with:
+          project_id: ${{ secrets.NEON_PROJECT_ID }}
+          branch_name: test-${{ github.run_id }}-${{ matrix.containers }}
+          role: neondb_owner
+          api_key: ${{ secrets.NEON_API_KEY }}
+
 
       - name: Run Cypress tests
         run: pnpm cypress run --record --parallel --ci-build-id ${{ github.run_id }} --group "Group-${{ matrix.containers }}"
