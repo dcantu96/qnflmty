@@ -3,12 +3,14 @@ import { usersRouter } from './users'
 import { profileRouter } from './profile'
 import { groupsRouter } from './groups'
 import { requestsRouter } from './requests'
+import { adminRouter } from './admin'
 
 export const appRouter = createTRPCRouter({
 	users: usersRouter,
 	profile: profileRouter,
 	groups: groupsRouter,
 	requests: requestsRouter,
+	admin: adminRouter,
 })
 
 export type AppRouter = typeof appRouter
