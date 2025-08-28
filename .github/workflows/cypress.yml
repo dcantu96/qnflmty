@@ -13,12 +13,12 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: 24
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
 
@@ -79,5 +79,3 @@ jobs:
           project_id: ${{ secrets.NEON_PROJECT_ID }}
           branch: test-${{ github.run_id }}-${{ matrix.containers }}
           api_key: ${{ secrets.NEON_API_KEY }}
-
-          
