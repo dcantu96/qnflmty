@@ -20,6 +20,19 @@ export const getTournaments = adminAuth(
 
 		const tournamentsList = await db.query.tournaments.findMany({
 			where,
+			with: {
+				sport: {
+					columns: {
+						name: true,
+					},
+				},
+			},
+			columns: {
+				id: true,
+				name: true,
+				createdAt: true,
+				year: true,
+			},
 			orderBy: (tournaments, { desc }) => [desc(tournaments.createdAt)],
 			limit,
 			offset,
