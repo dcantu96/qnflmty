@@ -45,14 +45,18 @@ jobs:
       - name: Install Cypress binary
         run: pnpm exec cypress install
 
+      - name: Extract short commit hash
+        id: short-sha
+        run: echo "::set-output name=short_sha::$(echo $GITHUB_SHA | cut -c1-7)"
+
       - name: Create Neon Branch
         id: create-branch
         uses: neondatabase/create-branch-action@v6
         with:
           project_id: ${{ secrets.NEON_PROJECT_ID }}
-          branch_name: test-${{ github.run_id }}-${{ matrix.containers }}
-          role: neondb_owner
+          branch_name: test-${{ steps.short-sha.outputs.short_sha }}-${{ matrix.containers }}
           api_key: ${{ secrets.NEON_API_KEY }}
+          branch_type: schema-only
 
       - name: Start app
         run: pnpm dev &
@@ -84,5 +88,5 @@ jobs:
         uses: neondatabase/delete-branch-action@v3
         with:
           project_id: ${{ secrets.NEON_PROJECT_ID }}
-          branch: test-${{ github.run_id }}-${{ matrix.containers }}
+          branch: test-${{ steps.short-sha.outputs.short_sha }}-${{ matrix.containers }}
           api_key: ${{ secrets.NEON_API_KEY }}
