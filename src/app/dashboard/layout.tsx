@@ -33,7 +33,7 @@ export default async function DashboardLayout({
 		admin: user.admin,
 		name: session.user.name || 'User',
 		email: session.user.email || '',
-		avatar: session.user.image || '/avatars/default.jpg',
+		avatar: session.user.image || undefined,
 	}
 
 	return (

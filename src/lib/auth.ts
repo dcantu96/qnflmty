@@ -9,8 +9,8 @@ import { db } from '~/server/db'
  */
 export const auth = async () => {
 	const session = await getSession()
-
 	if (!session?.user) {
+		console.error('Session not found', session)
 		redirect('/login')
 	}
 
@@ -38,3 +38,21 @@ export const isAdminSession = async () => {
 	const { user } = await auth()
 	return user.admin
 }
+
+export const adminAuth =
+	<Args extends unknown[], R>(fn: (...args: Args) => Promise<R>) =>
+	async (...args: Args): Promise<R> => {
+		const { user } = await auth()
+		if (!user?.admin) {
+			console.error('User is not an admin:', user?.id)
+			redirect('/')
+		}
+		return await fn(...args)
+	}
+
+export const protectedAuth =
+	<Args extends unknown[], R>(fn: (...args: Args) => Promise<R>) =>
+	async (...args: Args): Promise<R> => {
+		await auth()
+		return await fn(...args)
+	}

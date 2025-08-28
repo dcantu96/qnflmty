@@ -19,7 +19,7 @@ export interface UserData {
 	admin: boolean
 	name: string
 	email: string
-	avatar: string
+	avatar?: string
 }
 
 export interface AppSidebarProps {

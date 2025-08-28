@@ -1,21 +1,21 @@
 import { DataTable } from '~/components/ui/data-table'
-import { columns, type Tournament } from './columns'
-import { trpcClient } from '~/lib/trpcClient'
+import { columns } from './columns'
+import { getTournaments } from '~/server/admin/queries'
 
-async function getTournaments() {
-	const list = await trpcClient.admin.list.query()
-	return list.items.map(
-		(item): Tournament => ({
-			id: item.id,
-			name: item.name,
-			year: item.year,
-			sport: item.sportId.toString(),
-		}),
-	)
+async function getTournamentsMapped() {
+	const data = await getTournaments()
+
+	return data.items.map((tournament) => ({
+		id: tournament.id,
+		name: tournament.name,
+		sport: tournament.sportId.toString(),
+		year: tournament.year,
+	}))
 }
 
 export default async function DashboardPage() {
-	const data = await getTournaments()
+	const data = await getTournamentsMapped()
+
 	return (
 		<>
 			<div className="grid auto-rows-min gap-4 md:grid-cols-3">
