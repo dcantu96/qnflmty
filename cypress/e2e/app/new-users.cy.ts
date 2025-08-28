@@ -285,7 +285,7 @@ describe('A New Authenticated User without access to dashboard', () => {
 
 			// Should be on request access page for first profile
 			cy.url().should('include', '/request-access')
-			cy.get('button')
+			cy.get('a')
 				.contains(/Switch Profile/i)
 				.click()
 

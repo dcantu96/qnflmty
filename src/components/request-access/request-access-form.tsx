@@ -31,7 +31,7 @@ export async function RequestAccessForm({
 			)}
 
 			<div className="flex flex-col gap-3">
-				<Submit disabled={hasPendingRequest} />
+				<Submit hasPendingRequest={hasPendingRequest} />
 
 				<Button
 					type="button"
@@ -51,16 +51,20 @@ export async function RequestAccessForm({
 	)
 }
 
-const Submit = ({ disabled }: { disabled: boolean }) => {
+const Submit = ({ hasPendingRequest }: { hasPendingRequest: boolean }) => {
 	const { pending } = useFormStatus()
 	return (
 		<Button
 			type="submit"
-			disabled={disabled || pending}
+			disabled={hasPendingRequest || pending}
 			size="lg"
 			className="px-8 py-6 text-lg"
 		>
-			{pending ? 'Requesting...' : 'Request Access'}
+			{hasPendingRequest
+				? 'Request Already Submitted'
+				: pending
+					? 'Requesting...'
+					: 'Request Access'}
 		</Button>
 	)
 }
