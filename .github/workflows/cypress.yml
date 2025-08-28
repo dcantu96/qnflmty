@@ -10,7 +10,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        containers: [1, 2, 3, 4]
+        containers: [1, 2, 3]
     steps:
       - name: Checkout repository
         uses: actions/checkout@v5
@@ -71,7 +71,7 @@ jobs:
         with:
           record: true
           parallel: true
-          group: '4x Electron'
+          group: '3x Electron'
         env:
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
           CYPRESS_DATABASE_URL: ${{ steps.create-branch.outputs.db_url }}
