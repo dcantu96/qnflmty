@@ -1,4 +1,4 @@
-import { sql } from 'drizzle-orm'
+import { relations, sql } from 'drizzle-orm'
 import {
 	boolean,
 	timestamp,
@@ -183,6 +183,17 @@ export const tournaments = pgTable(
 	},
 	(t) => [unique().on(t.name, t.year)],
 )
+
+export const sportsRelations = relations(sports, ({ many }) => ({
+	tournaments: many(tournaments),
+}))
+
+export const tournamentsRelations = relations(tournaments, ({ one }) => ({
+	sport: one(sports, {
+		fields: [tournaments.sportId],
+		references: [sports.id],
+	}),
+}))
 
 export const weeks = pgTable(
 	'week',
