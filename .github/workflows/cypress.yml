@@ -73,6 +73,7 @@ jobs:
           TERM: xterm
 
       - name: Delete neon branch
+        if: always()
         uses: neondatabase/delete-branch-action@v3
         with:
           project_id: ${{ secrets.NEON_PROJECT_ID }}
