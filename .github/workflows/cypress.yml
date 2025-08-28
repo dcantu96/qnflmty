@@ -35,6 +35,16 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Cache Cypress binary
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/Cypress
+          key: cypress-${{ runner.os }}-${{ hashFiles('package.json') }}
+          restore-keys: cypress-${{ runner.os }}-
+
+      - name: Install Cypress binary
+        run: pnpm exec cypress install
+
       - name: Create Neon Branch
         id: create-branch
         uses: neondatabase/create-branch-action@v6
