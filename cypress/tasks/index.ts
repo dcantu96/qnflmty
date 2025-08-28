@@ -1,7 +1,13 @@
 import { randomUUID } from 'node:crypto'
 import { eq, and } from 'drizzle-orm'
 import { getDb } from './cypress-db'
-import { sessions, users, userAccounts } from '~/server/db/schema'
+import {
+	sessions,
+	users,
+	userAccounts,
+	sports,
+	tournaments,
+} from '~/server/db/schema'
 
 export type LoginTaskParams = string
 export const login =
@@ -102,4 +108,75 @@ export const getUserAccountId =
 		}
 
 		return userAccount.id
+	}
+
+export interface CreateSportParams {
+	name: string
+}
+
+export const createSport =
+	(connectionString: string) => async (params: CreateSportParams) => {
+		const { name } = params
+		const db = getDb(connectionString)
+
+		const [sport] = await db.insert(sports).values({ name }).returning()
+
+		if (!sport) {
+			throw new Error(`Sport not found for name: ${name}`)
+		}
+
+		return sport
+	}
+
+export interface CreateTournamentParams {
+	name: string
+	year: number
+	sportId: number
+}
+
+export const createTournament =
+	(connectionString: string) => async (params: CreateTournamentParams) => {
+		const { name, year, sportId } = params
+		const db = getDb(connectionString)
+
+		const [tournament] = await db
+			.insert(tournaments)
+			.values({ name, year, sportId })
+			.returning()
+
+		if (!tournament) {
+			throw new Error(
+				`Tournament not found for name: ${name} and year: ${year}`,
+			)
+		}
+
+		return tournament
+	}
+
+export interface DeleteTournamentParams {
+	name: string
+}
+
+export const deleteTournament =
+	(connectionString: string) => async (params: DeleteTournamentParams) => {
+		const { name } = params
+		const db = getDb(connectionString)
+
+		await db.delete(tournaments).where(eq(tournaments.name, name))
+
+		return null
+	}
+
+export interface DeleteSportParams {
+	name: string
+}
+
+export const deleteSport =
+	(connectionString: string) => async (params: DeleteSportParams) => {
+		const { name } = params
+		const db = getDb(connectionString)
+
+		await db.delete(sports).where(eq(sports.name, name))
+
+		return null
 	}

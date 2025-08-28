@@ -5,6 +5,10 @@ import {
 	deleteUser,
 	createAdmin,
 	getUserAccountId,
+	createSport,
+	createTournament,
+	deleteSport,
+	deleteTournament,
 } from './cypress/tasks'
 
 export default defineConfig({
@@ -21,6 +25,10 @@ export default defineConfig({
 				deleteUser: deleteUser(dbUrl),
 				createAdmin: createAdmin(dbUrl),
 				getUserAccountId: getUserAccountId(dbUrl),
+				createSport: createSport(dbUrl),
+				deleteSport: deleteSport(dbUrl),
+				createTournament: createTournament(dbUrl),
+				deleteTournament: deleteTournament(dbUrl),
 			})
 
 			return cypressConfig
