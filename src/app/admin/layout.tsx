@@ -1,4 +1,5 @@
 import { redirect } from 'next/navigation'
+import { DashboardHeader } from '~/components/dashboard-header'
 import { AdminSidebar } from '~/components/sidebar/admin-sidebar'
 import { auth } from '~/lib/auth'
 import { getSelectedProfile } from '~/lib/profile-actions'
@@ -32,7 +33,8 @@ export default async function DashboardLayout({
 			userData={userData}
 			selectedProfile={selectedProfile}
 		>
-			{children}
+			<DashboardHeader />
+			<div className="flex flex-1 flex-col gap-4 p-4 pt-0">{children}</div>
 		</AdminSidebar>
 	)
 }
