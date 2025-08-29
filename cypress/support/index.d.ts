@@ -10,5 +10,23 @@ declare namespace Cypress {
 		task(event: 'createUser', params: CreateUserTaskParams): Chainable<null>
 		task(event: 'deleteUser', params: DeleteUserTaskParams): Chainable<null>
 		task(event: 'createAdmin', params: CreateAdminTaskParams): Chainable<null>
+		task(
+			event: 'createSport',
+			params: CreateSportTaskParams,
+		): Chainable<{ id: number }>
+		task(
+			event: 'createTournament',
+			params: CreateTournamentTaskParams,
+		): Chainable<{ id: number }>
+		task(event: 'deleteSport', params: DeleteSportTaskParams): Chainable<null>
+		task(
+			event: 'deleteTournament',
+			params: DeleteTournamentTaskParams,
+		): Chainable<null>
+		task(
+			event: 'createGroup',
+			params: CreateGroupParams,
+		): Chainable<{ id: number }>
+		task(event: 'deleteGroup', params: DeleteGroupParams): Chainable<null>
 	}
 }

@@ -9,10 +9,10 @@ import {
 	DialogTitle,
 } from '~/components/ui/dialog'
 import { Button } from '~/components/ui/button'
-import { trpcClient } from '~/lib/trpcClient'
 import { useRouter } from 'next/navigation'
 import { avatarIconsMap } from '~/lib/avatar-icons'
 import type { AvatarIcon } from '~/server/db/schema'
+import { updateUserAccount } from '~/server/user/mutations'
 
 interface AvatarUpdateModalProps {
 	isOpen: boolean
@@ -44,8 +44,7 @@ export function AvatarUpdateModal({
 
 		setIsUpdating(true)
 		try {
-			await trpcClient.profile.updateAvatar.mutate({
-				profileId,
+			await updateUserAccount(profileId, {
 				avatar: selectedAvatar,
 			})
 

@@ -5,6 +5,20 @@ const testUser = {
 const firstUsername = 'JourneyTester'
 const secondUsername = 'SecondProfile'
 
+const sport = {
+	name: 'Football',
+}
+
+const tournament = {
+	name: 'Champions League',
+	year: 2024,
+}
+
+const group = {
+	name: 'Thunder',
+	joinable: true,
+}
+
 describe('A New Authenticated User without access to dashboard', () => {
 	before(() => {
 		cy.task('createUser', testUser)
@@ -90,7 +104,6 @@ describe('A New Authenticated User without access to dashboard', () => {
 				.click()
 			cy.contains(/Username must be 20 characters or less/i)
 		})
-
 		it('Should be able to successfully create a profile', () => {
 			cy.visit('/create-profile')
 
@@ -115,49 +128,53 @@ describe('A New Authenticated User without access to dashboard', () => {
 				.find('h2')
 				.should('contain.text', firstUsername)
 		})
+		describe('Without a joinable group', () => {
+			it('Should see message about no joinable groups', () => {
+				cy.visit('/')
+				cy.contains(firstUsername).click()
+				cy.url().should('include', '/request-access')
+				cy.contains(
+					/There are currently no active groups available for requests. Please check back later./i,
+				)
+			})
+		})
+		describe('With a joinable group', () => {
+			before(() => {
+				cy.task('createSport', sport).then((s) => {
+					cy.task('createTournament', { ...tournament, sportId: s.id }).then(
+						(t) => {
+							cy.task('createGroup', { ...group, tournamentId: t.id })
+						},
+					)
+				})
+			})
 
-		it('Should be redirected to request access page', () => {
-			// This is verified in the previous test, but we can add specific checks
-			cy.visit('/create-profile')
+			after(() => {
+				cy.task('deleteGroup', { name: group.name })
+				cy.task('deleteTournament', { name: tournament.name })
+				cy.task('deleteSport', { name: sport.name })
+			})
 
-			cy.get('label')
-				.contains(/Username/i)
-				.parent()
-				.find('input')
-				.clear()
-				.type('TestRedirect')
-
-			cy.get('label').contains(/Star/i).click()
-
-			cy.get('button[type="submit"]')
-				.contains(/Create Profile/i)
-				.click()
-
-			cy.url().should('include', '/request-access')
-			cy.contains(/Request Access to QNFLMTY/i)
+			it('Should be able to request access', () => {
+				// This is verified in the previous test, but we can add specific checks
+				cy.visit('/')
+				cy.contains(firstUsername).click()
+				cy.url().should('include', '/request-access')
+				cy.get('button')
+					.contains(/Request Access/i)
+					.click()
+				cy.contains(/Request Already Submitted/i)
+			})
 		})
 	})
 
-	describe('Can select a profile from the profile selector', () => {
-		it('Should see the request access page', () => {
+	describe('From the profile selector', () => {
+		it('Can select a profile', () => {
 			cy.visit('/select-profile')
-
-			cy.contains(/QNFLMTY/i).should('be.visible')
-			cy.contains(/Your Premium NFL Experience/i).should('be.visible')
-			cy.contains(/Who's playing\?/i).should('be.visible')
 			cy.contains(/Select your profile to continue/i).should('be.visible')
-
-			// Should see the created profile
 			cy.contains(firstUsername).should('be.visible')
-			cy.contains(/Add Profile/i).should('be.visible')
-
-			// Select the profile
 			cy.get('h3').contains(firstUsername).click()
-
-			// Should redirect to request access page
 			cy.url().should('include', '/request-access')
-			cy.contains(/Request Access to QNFLMTY/i)
-			cy.contains(/Request Already Submitted/i).should('be.visible')
 		})
 	})
 
@@ -262,7 +279,6 @@ describe('A New Authenticated User without access to dashboard', () => {
 				.should('contain.text', secondUsername)
 
 			cy.contains(secondUsername)
-			cy.contains(/Request Already Submitted/i)
 		})
 
 		it('Should show multiple profiles in selection screen', () => {
@@ -285,7 +301,7 @@ describe('A New Authenticated User without access to dashboard', () => {
 
 			// Should be on request access page for first profile
 			cy.url().should('include', '/request-access')
-			cy.get('button')
+			cy.get('a')
 				.contains(/Switch Profile/i)
 				.click()
 

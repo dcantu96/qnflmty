@@ -1,33 +1,17 @@
 'use client'
 
 import {
-	BarChart3,
 	Trophy,
 	Users,
 	MessageSquare,
 	Calendar,
 	Target,
 	Gamepad2,
+	Table2,
 } from 'lucide-react'
 import { AppSidebar, type AppSidebarProps } from './app-sidebar'
 
 const navMain = [
-	{
-		title: 'Admin',
-		url: '/dashboard',
-		icon: BarChart3,
-		isActive: true,
-		items: [
-			{
-				title: 'Overview',
-				url: '/dashboard',
-			},
-			{
-				title: 'Statistics',
-				url: '/dashboard/stats',
-			},
-		],
-	},
 	{
 		title: 'Quiniela',
 		url: '/quiniela',
@@ -78,6 +62,17 @@ const navMain = [
 			{
 				title: 'Strategy',
 				url: '/chat/strategy',
+			},
+		],
+	},
+	{
+		title: 'Data',
+		url: '/data',
+		icon: Table2,
+		items: [
+			{
+				title: 'Tournaments',
+				url: '/admin/tournaments',
 			},
 		],
 	},

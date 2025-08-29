@@ -201,20 +201,19 @@ export async function createProfileAction(
 			where: (groups, { and, eq }) =>
 				and(eq(groups.joinable, true), eq(groups.finished, false)),
 		})
-		if (!activeGroup) {
-			return { error: 'No active group found' }
-		}
 
-		if (user.admin) {
-			await db.insert(memberships).values({
-				userAccountId: newAccount.id,
-				groupId: activeGroup.id,
-			})
-		} else {
-			await db.insert(requests).values({
-				userAccountId: newAccount.id,
-				groupId: activeGroup.id,
-			})
+		if (activeGroup) {
+			if (user.admin) {
+				await db.insert(memberships).values({
+					userAccountId: newAccount.id,
+					groupId: activeGroup.id,
+				})
+			} else {
+				await db.insert(requests).values({
+					userAccountId: newAccount.id,
+					groupId: activeGroup.id,
+				})
+			}
 		}
 	} catch (error) {
 		if (error instanceof Error && error.message.includes('unique constraint')) {

@@ -2,33 +2,23 @@ name: Cypress Tests
 
 on: [push]
 
-
 jobs:
-  cypress-run:
+  test:
+    name: Cypress Tests
     runs-on: ubuntu-latest
     environment: preview
     strategy:
       fail-fast: false
       matrix:
-        containers: [1]
-
+        containers: [1, 2, 3]
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       
-      - name: Create Neon Branch
-        id: create-branch
-        uses: neondatabase/create-branch-action@v6
-        with:
-          project_id: ${{ secrets.NEON_PROJECT_ID }}
-          branch_name: test-${{ github.run_id }}-${{ matrix.containers }}
-          role: neondb_owner
-          api_key: ${{ secrets.NEON_API_KEY }}
-
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: 24
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
 
@@ -52,6 +42,22 @@ jobs:
           key: cypress-${{ runner.os }}-${{ hashFiles('package.json') }}
           restore-keys: cypress-${{ runner.os }}-
 
+      - name: Install Cypress binary
+        run: pnpm exec cypress install
+
+      - name: Extract short commit hash
+        id: short-sha
+        run: echo "::set-output name=short_sha::$(echo $GITHUB_SHA | cut -c1-7)"
+
+      - name: Create Neon Branch
+        id: create-branch
+        uses: neondatabase/create-branch-action@v6
+        with:
+          project_id: ${{ secrets.NEON_PROJECT_ID }}
+          branch_name: test-${{ steps.short-sha.outputs.short_sha }}-${{ matrix.containers }}
+          api_key: ${{ secrets.NEON_API_KEY }}
+          branch_type: schema-only
+
       - name: Start app
         run: pnpm dev &
         env:
@@ -64,8 +70,12 @@ jobs:
       - name: Wait for app
         run: pnpm dlx wait-on http://localhost:3000 --timeout 60000 --strict
 
-      - name: Run Cypress tests
-        run: pnpm cypress run --record --parallel --ci-build-id ${{ github.run_id }} --group "Group-${{ matrix.containers }}"
+      - name: Cypress run
+        uses: cypress-io/github-action@v6
+        with:
+          record: true
+          parallel: true
+          group: '3x Electron'
         env:
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
           CYPRESS_DATABASE_URL: ${{ steps.create-branch.outputs.db_url }}
@@ -74,8 +84,9 @@ jobs:
           TERM: xterm
 
       - name: Delete neon branch
+        if: always()
         uses: neondatabase/delete-branch-action@v3
         with:
           project_id: ${{ secrets.NEON_PROJECT_ID }}
-          branch: test-${{ github.run_id }}-${{ matrix.containers }}
+          branch: test-${{ steps.short-sha.outputs.short_sha }}-${{ matrix.containers }}
           api_key: ${{ secrets.NEON_API_KEY }}
