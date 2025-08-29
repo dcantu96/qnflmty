@@ -53,3 +53,14 @@ export const getTournaments = adminAuth(
 		}
 	},
 )
+
+export const getSports = adminAuth(async () => {
+	const sportsList = await db.query.sports.findMany({
+		columns: {
+			id: true,
+			name: true,
+		},
+	})
+
+	return sportsList
+})
