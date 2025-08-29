@@ -7,6 +7,7 @@ import {
 	userAccounts,
 	sports,
 	tournaments,
+	groups,
 } from '~/server/db/schema'
 
 export type LoginTaskParams = string
@@ -177,6 +178,43 @@ export const deleteSport =
 		const db = getDb(connectionString)
 
 		await db.delete(sports).where(eq(sports.name, name))
+
+		return null
+	}
+
+export interface CreateGroupParams {
+	name: string
+	joinable: boolean
+	tournamentId: number
+}
+
+export const createGroup =
+	(connectionString: string) => async (params: CreateGroupParams) => {
+		const { name, joinable, tournamentId } = params
+		const db = getDb(connectionString)
+
+		const [group] = await db
+			.insert(groups)
+			.values({ name, joinable, tournamentId })
+			.returning()
+
+		if (!group) {
+			throw new Error(`Group not found for name: ${name}`)
+		}
+
+		return group
+	}
+
+export interface DeleteGroupParams {
+	name: string
+}
+
+export const deleteGroup =
+	(connectionString: string) => async (params: DeleteGroupParams) => {
+		const { name } = params
+		const db = getDb(connectionString)
+
+		await db.delete(groups).where(eq(groups.name, name))
 
 		return null
 	}

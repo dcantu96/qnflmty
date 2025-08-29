@@ -9,6 +9,8 @@ import {
 	createTournament,
 	deleteSport,
 	deleteTournament,
+	createGroup,
+	deleteGroup,
 } from './cypress/tasks'
 
 export default defineConfig({
@@ -29,6 +31,8 @@ export default defineConfig({
 				deleteSport: deleteSport(dbUrl),
 				createTournament: createTournament(dbUrl),
 				deleteTournament: deleteTournament(dbUrl),
+				createGroup: createGroup(dbUrl),
+				deleteGroup: deleteGroup(dbUrl),
 			})
 
 			return cypressConfig
