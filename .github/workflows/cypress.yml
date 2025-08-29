@@ -6,7 +6,7 @@ jobs:
   test:
     name: Cypress Tests
     runs-on: ubuntu-latest
-    environment: preview
+    environment: testing
     strategy:
       fail-fast: false
       matrix:
@@ -56,7 +56,7 @@ jobs:
           project_id: ${{ secrets.NEON_PROJECT_ID }}
           branch_name: test-${{ steps.short-sha.outputs.short_sha }}-${{ matrix.containers }}
           api_key: ${{ secrets.NEON_API_KEY }}
-          branch_type: schema-only
+          # branch_type: schema-only
 
       - name: Start app
         run: pnpm dev &
