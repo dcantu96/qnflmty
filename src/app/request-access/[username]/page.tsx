@@ -4,11 +4,13 @@ import { db } from '~/server/db'
 import { redirect } from 'next/navigation'
 import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card'
 import { avatarIconsMap } from '~/lib/avatar-icons'
-import { UserCheck, Mail, Clock, Users } from 'lucide-react'
+import { UserCheck, Mail, Clock, Users, ArrowLeft } from 'lucide-react'
 import {
 	getActiveWithTournament,
 	getRequestsByUserAccountId,
 } from '~/server/user/queries'
+import { Button } from '~/components/ui/button'
+import Link from 'next/link'
 
 export default async function RequestAccessPage({
 	params,
@@ -131,6 +133,18 @@ export default async function RequestAccessPage({
 											</p>
 										</div>
 									)}
+									<Button
+										type="button"
+										variant="outline"
+										size="lg"
+										className="w-full px-8 py-3"
+										asChild
+									>
+										<Link href="/select-profile">
+											<ArrowLeft className="mr-2 h-4 w-4" />
+											Switch Profile
+										</Link>
+									</Button>
 									<p className="mt-3 text-gray-500 text-sm">
 										You'll be notified once your request is reviewed
 									</p>

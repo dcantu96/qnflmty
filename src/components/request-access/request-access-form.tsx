@@ -1,11 +1,7 @@
 'use client'
-
-import { Button } from '~/components/ui/button'
-import { ArrowLeft } from 'lucide-react'
-import Link from 'next/link'
 import { createRequest } from '~/server/user/mutations'
-import { useFormStatus } from 'react-dom'
-import { useActionState } from 'react'
+import { Submit } from './submit-button'
+import { useFormState } from 'react-dom'
 
 interface RequestAccessFormProps {
 	userAccountId: number
@@ -13,58 +9,28 @@ interface RequestAccessFormProps {
 	groupId: number
 }
 
-export async function RequestAccessForm({
+const initialState = {
+	error: '',
+}
+
+export function RequestAccessForm({
 	userAccountId,
 	hasPendingRequest,
 	groupId,
 }: RequestAccessFormProps) {
-	const [message, formAction, isPending] = useActionState(createRequest, null)
+	const [state, action] = useFormState(createRequest, initialState)
 
 	return (
-		<form action={formAction}>
+		<form action={action}>
 			<input type="hidden" name="userAccountId" value={userAccountId} />
 			<input type="hidden" name="groupId" value={groupId} />
-			{message && (
+			{state?.error && (
 				<div className="mb-4 rounded-md border border-red-200 bg-red-50 p-3">
-					<p className="text-red-700 text-sm">{message}</p>
+					<p className="text-red-700 text-sm">{state.error}</p>
 				</div>
 			)}
 
-			<div className="flex flex-col gap-3">
-				<Submit hasPendingRequest={hasPendingRequest} />
-
-				<Button
-					type="button"
-					variant="outline"
-					size="lg"
-					className="px-8 py-3"
-					disabled={isPending}
-					asChild
-				>
-					<Link href="/select-profile">
-						<ArrowLeft className="mr-2 h-4 w-4" />
-						Switch Profile
-					</Link>
-				</Button>
-			</div>
+			<Submit hasPendingRequest={hasPendingRequest} />
 		</form>
-	)
-}
-
-const Submit = ({ hasPendingRequest }: { hasPendingRequest: boolean }) => {
-	const { pending } = useFormStatus()
-	return (
-		<Button
-			type="submit"
-			disabled={hasPendingRequest || pending}
-			size="lg"
-			className="px-8 py-6 text-lg"
-		>
-			{hasPendingRequest
-				? 'Request Already Submitted'
-				: pending
-					? 'Requesting...'
-					: 'Request Access'}
-		</Button>
 	)
 }

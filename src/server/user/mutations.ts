@@ -5,6 +5,7 @@ import { groups, requests, userAccounts } from '../db/schema'
 import { db } from '../db'
 import { and, eq } from 'drizzle-orm'
 import z from 'zod'
+import { revalidatePath } from 'next/cache'
 
 const avatarEnum = z.enum(userAccounts.avatar.enumValues)
 
@@ -113,56 +114,57 @@ export const updateUserAccount = protectedAuth(
 	},
 )
 
-export const createRequest = protectedAuth(
-	async (_prevState: string | null, queryData: FormData) => {
-		const {
-			user: { id: userId },
-		} = await auth()
+export const createRequest = async (
+	_initialState: unknown,
+	formData: FormData,
+) => {
+	const {
+		user: { id },
+	} = await auth()
 
-		const groupId = Number(queryData.get('groupId'))
-		const userAccountId = Number(queryData.get('userAccountId'))
+	const groupId = Number(formData.get('groupId'))
+	const userAccountId = Number(formData.get('userAccountId'))
 
-		const userAccount = await db.query.userAccounts.findFirst({
-			where: eq(userAccounts.id, userAccountId),
-		})
+	const userAccount = await db.query.userAccounts.findFirst({
+		where: eq(userAccounts.id, userAccountId),
+	})
 
-		if (!userAccount) {
-			return 'User account not found'
-		}
+	if (!userAccount) {
+		return { error: 'User account not found' }
+	}
 
-		if (userAccount.userId !== userId) {
-			return 'You can only make requests with your own profiles'
-		}
+	if (userAccount.userId !== id) {
+		return { error: 'You can only make requests with your own profiles' }
+	}
 
-		const group = await db.query.groups.findFirst({
-			where: and(
-				eq(groups.id, groupId),
-				eq(groups.joinable, true),
-				eq(groups.finished, false),
-			),
-		})
+	const group = await db.query.groups.findFirst({
+		where: and(
+			eq(groups.id, groupId),
+			eq(groups.joinable, true),
+			eq(groups.finished, false),
+		),
+	})
 
-		if (!group) {
-			return 'Group not found'
-		}
+	if (!group) {
+		return { error: 'Group not found' }
+	}
 
-		// Check if request already exists
-		const existingRequest = await db.query.requests.findFirst({
-			where: and(
-				eq(requests.groupId, groupId),
-				eq(requests.userAccountId, userAccountId),
-			),
-		})
+	// Check if request already exists
+	const existingRequest = await db.query.requests.findFirst({
+		where: and(
+			eq(requests.groupId, groupId),
+			eq(requests.userAccountId, userAccountId),
+		),
+	})
 
-		if (existingRequest) {
-			return 'You have already requested access to this group'
-		}
+	if (existingRequest) {
+		return { error: 'You have already requested access to this group' }
+	}
 
-		await db.insert(requests).values({
-			groupId,
-			userAccountId,
-		})
+	await db.insert(requests).values({
+		groupId,
+		userAccountId,
+	})
 
-		return 'Request submitted successfully'
-	},
-)
+	revalidatePath(`/request-access/${userAccount.username}`)
+}
