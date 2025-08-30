@@ -8,7 +8,9 @@ export interface Tournament {
 	id: number
 	name: string
 	year: number
-	sport: string
+	sport: {
+		name: string
+	}
 }
 
 export const columns: ColumnDef<Tournament>[] = [
@@ -47,7 +49,7 @@ export const columns: ColumnDef<Tournament>[] = [
 		),
 	},
 	{
-		accessorKey: 'sport',
+		accessorKey: 'sport.name',
 		header: ({ column }) => (
 			<DataTableColumnHeader column={column} title="Sport" />
 		),
