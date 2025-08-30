@@ -31,6 +31,8 @@ import { useState } from 'react'
 import { Button } from '../button'
 import { Input } from '../input'
 import { DataTablePagination } from './data-table-pagination'
+import { Settings2 } from 'lucide-react'
+import Link from 'next/link'
 
 interface DataTableProps<TData, TValue> {
 	columns: ColumnDef<TData, TValue>[]
@@ -69,7 +71,7 @@ export function DataTable<TData, TValue>({
 		<div>
 			<div className="flex items-center py-4">
 				<Input
-					placeholder="Filter name..."
+					placeholder="Filter tournaments..."
 					value={(table.getColumn('name')?.getFilterValue() as string) ?? ''}
 					onChange={(event) =>
 						table.getColumn('name')?.setFilterValue(event.target.value)
@@ -78,8 +80,9 @@ export function DataTable<TData, TValue>({
 				/>
 				<DropdownMenu>
 					<DropdownMenuTrigger asChild>
-						<Button variant="outline" className="ml-auto">
-							Columns
+						<Button variant="outline" className="ml-auto" size="sm">
+							<Settings2 />
+							View
 						</Button>
 					</DropdownMenuTrigger>
 					<DropdownMenuContent align="end">
@@ -102,6 +105,9 @@ export function DataTable<TData, TValue>({
 							})}
 					</DropdownMenuContent>
 				</DropdownMenu>
+				<Button size="sm" className="ml-2" asChild>
+					<Link href="/admin/tournaments/new">Add Tournament</Link>
+				</Button>
 			</div>
 			<div className="overflow-hidden rounded-md border">
 				<Table>

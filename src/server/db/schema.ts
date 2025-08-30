@@ -181,7 +181,7 @@ export const tournaments = pgTable(
 			.defaultNow(),
 		year: integer('year').notNull(),
 	},
-	(t) => [unique().on(t.name, t.year)],
+	(t) => [unique().on(t.sportId, t.name, t.year)],
 )
 
 export const sportsRelations = relations(sports, ({ many }) => ({

@@ -1,0 +1,2 @@
+ALTER TABLE "tournament" DROP CONSTRAINT "tournament_name_year_unique";--> statement-breakpoint
+ALTER TABLE "tournament" ADD CONSTRAINT "tournament_sport_id_name_year_unique" UNIQUE("sport_id","name","year");

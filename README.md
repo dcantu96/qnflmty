@@ -26,7 +26,9 @@
     - switch profiles
     - logout
     - sidebar
-- [ ] admin access
+- admin
+  - [x] list tournaments
+  - [ ] create tournaments
 - [ ] view requests
 - [ ] accept/deny requests
 - [ ] Error management (w/ sentry)

@@ -72,4 +72,48 @@ describe('An Admin', () => {
 			})
 		})
 	})
+
+	describe('Creating tournaments', () => {
+		before(() => {
+			cy.task('createSport', sport)
+		})
+		after(() => {
+			cy.task('deleteTournament', { name: tournament.name }).then(() => {
+				cy.task('deleteSport', { name: sport.name })
+			})
+		})
+
+		it('Should create a new tournament', () => {
+			cy.visit('/admin')
+			cy.contains(/data/i).click()
+			cy.contains(/tournaments/i).click()
+			cy.contains(/add tournament/i).click()
+			cy.url().should('include', '/admin/tournaments/new')
+			cy.get('input[name="name"]').type(tournament.name)
+			cy.get('input[name="year"]').type(tournament.year.toString())
+			cy.get('[name="sport"]').click()
+			cy.contains('[role="option"]', sport.name).click()
+			cy.get('button')
+				.contains(/create/i)
+				.click()
+			cy.contains(tournament.name)
+			cy.contains(tournament.year)
+			cy.contains(sport.name)
+		})
+
+		it('Should not allow to create a duplicate tournament', () => {
+			cy.visit('/admin')
+			cy.contains(/data/i).click()
+			cy.contains(/tournaments/i).click()
+			cy.contains(/add tournament/i).click()
+			cy.get('input[name="name"]').type(tournament.name)
+			cy.get('input[name="year"]').type(tournament.year.toString())
+			cy.get('[name="sport"]').click()
+			cy.contains('[role="option"]', sport.name).click()
+			cy.get('button')
+				.contains(/create/i)
+				.click()
+			cy.contains(/unique tournament already exists/i)
+		})
+	})
 })

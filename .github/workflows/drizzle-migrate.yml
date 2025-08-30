@@ -42,4 +42,4 @@ jobs:
       - name: Run Drizzle migrations
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
-        run: pnpm run db:migrate
+        run: pnpm db:push
