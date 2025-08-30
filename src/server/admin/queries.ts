@@ -54,6 +54,21 @@ export const getTournaments = adminAuth(
 	},
 )
 
+export const getTournamentById = adminAuth(async (id: number) => {
+	const tournament = await db.query.tournaments.findFirst({
+		where: (tournaments, { eq }) => eq(tournaments.id, id),
+		with: {
+			sport: {
+				columns: {
+					name: true,
+				},
+			},
+		},
+	})
+
+	return tournament
+})
+
 export const getSports = adminAuth(async () => {
 	const sportsList = await db.query.sports.findMany({
 		columns: {
