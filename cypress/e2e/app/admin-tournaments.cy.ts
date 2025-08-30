@@ -116,4 +116,66 @@ describe('An Admin', () => {
 			cy.contains(/unique tournament already exists/i)
 		})
 	})
+
+	describe('Editing tournaments', () => {
+		before(() => {
+			cy.task('createSport', sport).then(({ id }) => {
+				cy.task('createTournament', {
+					...tournament,
+					sportId: id,
+				})
+			})
+		})
+
+		after(() => {
+			cy.task('deleteTournament', { name: 'Champions League' }).then(() => {
+				cy.task('deleteSport', { name: sport.name })
+			})
+		})
+
+		it('Should edit an existing tournament', () => {
+			cy.visit('/admin/tournaments')
+			cy.contains(tournament.name).parent().find('button:has(svg)').click()
+			cy.contains(/edit tournament/i).click()
+
+			cy.get('input[name="name"]').clear().type('Champions League')
+			cy.get('button')
+				.contains(/update/i)
+				.click()
+			cy.contains('Champions League')
+		})
+	})
+
+	describe('Deleting tournaments', () => {
+		before(() => {
+			cy.task('createSport', sport).then(({ id }) => {
+				cy.task('createTournament', {
+					...tournament,
+					sportId: id,
+				})
+			})
+		})
+
+		after(() => {
+			cy.task('deleteTournament', { name: tournament.name }).then(() => {
+				cy.task('deleteSport', { name: sport.name })
+			})
+		})
+
+		it('Should delete an existing tournament', () => {
+			cy.visit('/admin/tournaments')
+			cy.contains(tournament.name).parent().find('button:has(svg)').click()
+			cy.contains(/delete tournament/i).click()
+			cy.contains('Delete Tournament')
+			cy.contains(
+				`Are you sure you want to delete tournament: ${tournament.name}?`,
+			)
+				.parent()
+				.parent()
+				.find('button')
+				.contains('Delete')
+				.click()
+			cy.contains(tournament.name).should('not.exist')
+		})
+	})
 })
