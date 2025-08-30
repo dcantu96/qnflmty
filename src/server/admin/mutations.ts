@@ -2,7 +2,7 @@
 
 import z, { ZodError } from 'zod'
 import { adminAuth } from '~/lib/auth'
-import { tournaments } from '../db/schema'
+import { sports, tournaments } from '../db/schema'
 import { redirect } from 'next/navigation'
 import { db } from '../db'
 import { NeonDbError } from '@neondatabase/serverless'
@@ -69,9 +69,66 @@ export const updateTournament = adminAuth(
 	},
 )
 
+const createSportSchema = z.object({
+	name: z.string().min(1).max(30),
+})
+
+export const createSport = adminAuth(
+	async (_initialState: unknown, formData: FormData) => {
+		try {
+			const data = createSportSchema.parse({
+				name: formData.get('name'),
+			})
+
+			await db.insert(sports).values({
+				name: data.name,
+			})
+		} catch (error) {
+			return fromErrorToFormState(error)
+		}
+
+		redirect('/admin/sports')
+	},
+)
+
+const updateSportSchema = z.object({
+	id: z.coerce.number().int().positive(),
+	name: z.string().min(1).max(30).optional(),
+})
+
+export const updateSport = adminAuth(
+	async (_initialState: unknown, formData: FormData) => {
+		try {
+			const data = updateSportSchema.parse({
+				id: Number(formData.get('id')),
+				name: formData.get('name'),
+			})
+
+			await db
+				.update(sports)
+				.set({
+					name: data.name,
+				})
+				.where(eq(sports.id, data.id))
+		} catch (error) {
+			return fromErrorToFormState(error)
+		}
+
+		redirect('/admin/sports')
+	},
+)
+
 export const deleteTournament = adminAuth(async ({ id }: { id: number }) => {
 	try {
 		await db.delete(tournaments).where(eq(tournaments.id, id))
+	} catch (error) {
+		return fromErrorToFormState(error)
+	}
+})
+
+export const deleteSport = adminAuth(async ({ id }: { id: number }) => {
+	try {
+		await db.delete(sports).where(eq(sports.id, id))
 	} catch (error) {
 		return fromErrorToFormState(error)
 	}
@@ -88,7 +145,7 @@ export const fromErrorToFormState = async (error: unknown) => {
 		switch (error.code) {
 			case '23505':
 				return {
-					message: 'Unique tournament already exists',
+					message: `Unique ${error.table} already exists`,
 				}
 			default:
 				return {

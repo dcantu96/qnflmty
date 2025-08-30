@@ -74,6 +74,10 @@ const navMain = [
 				title: 'Tournaments',
 				url: '/admin/tournaments',
 			},
+			{
+				title: 'Sports',
+				url: '/admin/sports',
+			},
 		],
 	},
 ]

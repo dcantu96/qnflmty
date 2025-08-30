@@ -37,16 +37,30 @@ import Link from 'next/link'
 interface DataTableProps<TData, TValue> {
 	columns: ColumnDef<TData, TValue>[]
 	data: TData[]
+	schema: string
+	label?: string
+	createLink?: string
 }
 
 export function DataTable<TData, TValue>({
 	columns,
 	data,
+	createLink,
+	schema,
+	label,
 }: DataTableProps<TData, TValue>) {
 	const [sorting, setSorting] = useState<SortingState>([])
 	const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
 	const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
 	const [rowSelection, setRowSelection] = useState({})
+
+	const createButtonHref = createLink
+		? createLink
+		: schema
+			? `/admin/${schema}/new`
+			: undefined
+
+	const filterPlaceholder = `Filter ${label ?? schema}...`
 
 	const table = useReactTable({
 		data,
@@ -71,7 +85,7 @@ export function DataTable<TData, TValue>({
 		<div>
 			<div className="flex items-center py-4">
 				<Input
-					placeholder="Filter tournaments..."
+					placeholder={filterPlaceholder}
 					value={(table.getColumn('name')?.getFilterValue() as string) ?? ''}
 					onChange={(event) =>
 						table.getColumn('name')?.setFilterValue(event.target.value)
@@ -106,7 +120,9 @@ export function DataTable<TData, TValue>({
 					</DropdownMenuContent>
 				</DropdownMenu>
 				<Button size="sm" className="ml-2" asChild>
-					<Link href="/admin/tournaments/new">Add Tournament</Link>
+					{createButtonHref && (
+						<Link href={createButtonHref}>Add {label ?? schema}</Link>
+					)}
 				</Button>
 			</div>
 			<div className="overflow-hidden rounded-md border">

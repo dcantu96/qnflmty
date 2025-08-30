@@ -14,12 +14,12 @@ export default async function Page({ params }: Props) {
 		return <div>Tournament not found</div>
 	}
 
-	const sports = await getSports()
+	const { items } = await getSports()
 	return (
 		<div className="container mx-auto">
 			<h1 className="font-bold text-2xl text-primary">Edit Tournament</h1>
 
-			<Form tournament={tournament} sports={sports} />
+			<Form tournament={tournament} sports={items} />
 		</div>
 	)
 }

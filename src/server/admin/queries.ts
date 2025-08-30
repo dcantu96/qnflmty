@@ -1,7 +1,7 @@
 import { db } from '../db'
 import { z } from 'zod'
 import { count, ilike } from 'drizzle-orm'
-import { tournaments } from '../db/schema'
+import { sports, tournaments } from '../db/schema'
 import { adminAuth } from '~/lib/auth'
 
 const inputParams = z
@@ -54,6 +54,39 @@ export const getTournaments = adminAuth(
 	},
 )
 
+export const getSports = adminAuth(
+	async (input?: z.infer<typeof inputParams>) => {
+		const { page = 1, limit = 10, search } = input || {}
+		const offset = (page - 1) * limit
+		const where = search ? ilike(sports.name, `%${search}%`) : undefined
+
+		const sportsList = await db.query.sports.findMany({
+			where,
+			columns: {
+				id: true,
+				name: true,
+			},
+			orderBy: (sports, { asc }) => [asc(sports.name)],
+			limit,
+			offset,
+		})
+
+		const totalResult = await db
+			.select({ value: count() })
+			.from(sports)
+			.where(where)
+		const total = totalResult[0]?.value ?? 0
+
+		return {
+			items: sportsList,
+			total: total,
+			page,
+			limit,
+			totalPages: Math.ceil(total / limit),
+		}
+	},
+)
+
 export const getTournamentById = adminAuth(async (id: number) => {
 	const tournament = await db.query.tournaments.findFirst({
 		where: (tournaments, { eq }) => eq(tournaments.id, id),
@@ -69,13 +102,10 @@ export const getTournamentById = adminAuth(async (id: number) => {
 	return tournament
 })
 
-export const getSports = adminAuth(async () => {
-	const sportsList = await db.query.sports.findMany({
-		columns: {
-			id: true,
-			name: true,
-		},
+export const getSportById = adminAuth(async (id: number) => {
+	const sport = await db.query.sports.findFirst({
+		where: (sports, { eq }) => eq(sports.id, id),
 	})
 
-	return sportsList
+	return sport
 })
