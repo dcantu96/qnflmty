@@ -2,7 +2,7 @@
 
 import z, { ZodError } from 'zod'
 import { adminAuth } from '~/lib/auth'
-import { sports, tournaments } from '../db/schema'
+import { sports, teams, tournaments } from '../db/schema'
 import { redirect } from 'next/navigation'
 import { db } from '../db'
 import { NeonDbError } from '@neondatabase/serverless'
@@ -66,6 +66,67 @@ export const updateTournament = adminAuth(
 		}
 
 		redirect('/admin/tournaments')
+	},
+)
+
+const updateTeamSchema = z.object({
+	id: z.coerce.number().int().positive(),
+	name: z.string().min(1).max(30).optional(),
+	shortName: z.string().min(1).max(3).optional(),
+	sportId: z.coerce.number().int().positive().optional(),
+})
+
+export const updateTeam = adminAuth(
+	async (_initialState: unknown, formData: FormData) => {
+		try {
+			const data = updateTeamSchema.parse({
+				id: Number(formData.get('id')),
+				name: formData.get('name'),
+				shortName: formData.get('shortName'),
+				sportId: Number(formData.get('sportId')),
+			})
+
+			await db
+				.update(teams)
+				.set({
+					name: data.name,
+					shortName: data.shortName,
+					sportId: data.sportId,
+				})
+				.where(eq(teams.id, data.id))
+		} catch (error) {
+			return fromErrorToFormState(error)
+		}
+
+		redirect(`/admin/sports/${formData.get('sportId')}/teams`)
+	},
+)
+
+const createTeamSchema = z.object({
+	name: z.string().min(1).max(30),
+	shortName: z.string().min(1).max(3),
+	sportId: z.coerce.number().int().positive(),
+})
+
+export const createTeam = adminAuth(
+	async (_initialState: unknown, formData: FormData) => {
+		try {
+			const data = createTeamSchema.parse({
+				name: formData.get('name'),
+				shortName: formData.get('shortName'),
+				sportId: Number(formData.get('sportId')),
+			})
+
+			await db.insert(teams).values({
+				name: data.name,
+				shortName: data.shortName,
+				sportId: data.sportId,
+			})
+		} catch (error) {
+			return fromErrorToFormState(error)
+		}
+
+		redirect(`/admin/sports/${formData.get('sportId')}/teams`)
 	},
 )
 

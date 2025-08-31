@@ -184,17 +184,6 @@ export const tournaments = pgTable(
 	(t) => [unique().on(t.sportId, t.name, t.year)],
 )
 
-export const sportsRelations = relations(sports, ({ many }) => ({
-	tournaments: many(tournaments),
-}))
-
-export const tournamentsRelations = relations(tournaments, ({ one }) => ({
-	sport: one(sports, {
-		fields: [tournaments.sportId],
-		references: [sports.id],
-	}),
-}))
-
 export const weeks = pgTable(
 	'week',
 	{
@@ -403,3 +392,22 @@ export const groupWeeks = pgTable(
 	},
 	(g) => [unique().on(g.groupId, g.weekId)],
 )
+
+export const sportsRelations = relations(sports, ({ many }) => ({
+	tournaments: many(tournaments),
+	teams: many(teams),
+}))
+
+export const tournamentsRelations = relations(tournaments, ({ one }) => ({
+	sport: one(sports, {
+		fields: [tournaments.sportId],
+		references: [sports.id],
+	}),
+}))
+
+export const teamsRelations = relations(teams, ({ one }) => ({
+	sport: one(sports, {
+		fields: [teams.sportId],
+		references: [sports.id],
+	}),
+}))

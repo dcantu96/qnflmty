@@ -1,7 +1,8 @@
 'use client'
 
 import type { ColumnDef } from '@tanstack/react-table'
-import { Edit2, Flag, MoreHorizontal, Trash2 } from 'lucide-react'
+import { Edit2, MoreHorizontal, Trash2 } from 'lucide-react'
+import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
@@ -23,16 +24,16 @@ import {
 	DropdownMenuSeparator,
 	DropdownMenuTrigger,
 } from '~/components/ui/dropdown-menu'
-import { deleteSport } from '~/server/admin/mutations'
+import { deleteTournament } from '~/server/admin/mutations'
 
-export interface Sport {
+export interface Team {
 	id: number
 	name: string
-	teams?: { id: number; shortName: string; name: string }[]
-	totalTeams: number
+	shortName: string
+	sportId: number
 }
 
-export const columns: ColumnDef<Sport>[] = [
+export const columns: ColumnDef<Team>[] = [
 	{
 		id: 'select',
 		header: ({ table }) => (
@@ -60,45 +61,25 @@ export const columns: ColumnDef<Sport>[] = [
 		header: ({ column }) => (
 			<DataTableColumnHeader column={column} title="Name" />
 		),
-	},
-	{
-		id: 'teams',
-		header: 'Teams',
 		cell: ({ row }) => {
-			const teams = row.original.teams || []
-			if (teams.length === 0)
-				return (
-					<Button size="sm" asChild variant="ghost">
-						<Link href={`/admin/sports/${row.original.id}/teams`}>
-							<Flag />
-						</Link>
-					</Button>
-				)
 			return (
-				<Link
-					href={`/admin/sports/${row.original.id}/teams`}
-					className="-space-x-3 flex"
-				>
-					{teams.map((team) => (
-						<div key={team.id} className="group relative">
-							<img
-								src={`/team-logos/${team.shortName}.svg`}
-								alt={team.name}
-								className="h-6 w-6 cursor-pointer rounded-full border-2 border-white shadow-sm transition-all duration-200 group-hover:z-20 group-hover:scale-110"
-							/>
-							<div className="-translate-x-1/2 absolute bottom-full left-1/2 z-20 mb-2 hidden whitespace-nowrap rounded-md bg-black px-2 py-1 text-white text-xs shadow-md group-hover:block">
-								{team.name}
-							</div>
-						</div>
-					))}
-					{row.original.totalTeams > teams.length && (
-						<div className="ml-4 flex items-center text-muted-foreground text-sm">
-							+{row.original.totalTeams - teams.length} more
-						</div>
-					)}
-				</Link>
+				<span className="flex items-center gap-2">
+					<Image
+						src={`/team-logos/${row.original.shortName}.svg`}
+						alt={row.original.name}
+						width={25}
+						height={25}
+					/>
+					{row.original.name}
+				</span>
 			)
 		},
+	},
+	{
+		accessorKey: 'shortName',
+		header: ({ column }) => (
+			<DataTableColumnHeader column={column} title="Short Name" />
+		),
 	},
 	{
 		id: 'actions',
@@ -112,14 +93,19 @@ export const columns: ColumnDef<Sport>[] = [
 				</DropdownMenuTrigger>
 				<DropdownMenuContent className="rounded-lg" align="end">
 					<DropdownMenuItem asChild>
-						<Link href={`/admin/sports/${row.original.id}/edit`}>
+						<Link
+							href={`/admin/sports/${row.original.sportId}/teams/${row.original.id}/edit`}
+						>
 							<Edit2 className="text-muted-foreground" />
-							<span>Edit Sport</span>
+							<span>Edit Team</span>
 						</Link>
 					</DropdownMenuItem>
 					<DropdownMenuSeparator />
 					<DropdownMenuItem asChild>
-						<DeleteSportButton id={row.original.id} name={row.original.name} />
+						<DeleteTournamentButton
+							id={row.original.id}
+							name={row.original.name}
+						/>
 					</DropdownMenuItem>
 				</DropdownMenuContent>
 			</DropdownMenu>
@@ -127,22 +113,26 @@ export const columns: ColumnDef<Sport>[] = [
 	},
 ]
 
-const DeleteSportButton = ({ id, name }: { id: number; name: string }) => {
+const DeleteTournamentButton = ({ id, name }: { id: number; name: string }) => {
 	const [open, setOpen] = useState(false)
 	return (
 		<>
 			<Button variant="ghost" className="py-1" onClick={() => setOpen(true)}>
 				<Trash2 className="text-muted-foreground" />
-				<span>Delete Sport</span>
+				<span>Delete Tournament</span>
 			</Button>
 			{open && (
-				<DeleteSportDialog id={id} name={name} onClose={() => setOpen(false)} />
+				<DeleteTournamentDialog
+					id={id}
+					name={name}
+					onClose={() => setOpen(false)}
+				/>
 			)}
 		</>
 	)
 }
 
-const DeleteSportDialog = ({
+const DeleteTournamentDialog = ({
 	id,
 	name,
 	onClose,
@@ -151,7 +141,7 @@ const DeleteSportDialog = ({
 	const [pending, setPending] = useState(false)
 	const handleDelete = async () => {
 		setPending(true)
-		await deleteSport({ id })
+		await deleteTournament({ id })
 		setPending(false)
 		router.refresh()
 	}
@@ -160,12 +150,12 @@ const DeleteSportDialog = ({
 		<Dialog open={true} onOpenChange={onClose}>
 			<DialogContent>
 				<DialogHeader>
-					<DialogTitle>Delete Sport</DialogTitle>
+					<DialogTitle>Delete Tournament</DialogTitle>
 					<DialogDescription>
-						Are you sure you want to delete sport: {name}?
+						Are you sure you want to delete tournament: {name}?
 					</DialogDescription>
 				</DialogHeader>
-				<input type="hidden" name="sportId" value={id} />
+				<input type="hidden" name="tournamentId" value={id} />
 				<DialogFooter>
 					<Button variant="outline" type="button" onClick={onClose}>
 						Cancel
