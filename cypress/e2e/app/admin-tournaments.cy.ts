@@ -1,11 +1,3 @@
-/**
- * An admin
- * Can view all tournaments
- * Can create new tournaments
- * Can edit tournaments
- * Can delete tournaments
- */
-
 const testAdmin = {
 	name: 'John Wick',
 	email: 'john@wick.com',

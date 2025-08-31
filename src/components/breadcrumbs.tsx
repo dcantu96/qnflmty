@@ -14,7 +14,9 @@ import {
 
 export function Breadcrumbs() {
 	const pathname = usePathname()
-	const segments = pathname.split('/').filter(Boolean)
+	const segments = pathname
+		.split('/')
+		.filter((seg) => seg.length > 0 && seg !== 'admin')
 
 	return (
 		<Breadcrumb>
