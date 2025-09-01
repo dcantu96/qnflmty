@@ -36,6 +36,13 @@
       "when": 1756751978045,
       "tag": "0004_tiny_naoko",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1756752874812,
+      "tag": "0005_glossy_clea",
+      "breakpoints": true
     }
   ]
 }

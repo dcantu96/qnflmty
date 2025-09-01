@@ -53,7 +53,7 @@ export const avatarEnum = pgEnum('avatar_icon', [
 
 export const users = pgTable('user', {
 	id: serial('id').primaryKey(),
-	name: text('name'),
+	name: text('name').notNull(),
 	email: text('email').unique(),
 	admin: boolean('admin').default(false).notNull(),
 	emailVerified: timestamp('emailVerified', { mode: 'date' }),
