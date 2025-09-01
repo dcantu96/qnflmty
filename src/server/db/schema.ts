@@ -54,7 +54,7 @@ export const avatarEnum = pgEnum('avatar_icon', [
 export const users = pgTable('user', {
 	id: serial('id').primaryKey(),
 	name: text('name').notNull(),
-	email: text('email').unique(),
+	email: text('email').unique().notNull(),
 	admin: boolean('admin').default(false).notNull(),
 	emailVerified: timestamp('emailVerified', { mode: 'date' }),
 	image: text('image'),
@@ -413,5 +413,16 @@ export const teamsRelations = relations(teams, ({ one }) => ({
 	sport: one(sports, {
 		fields: [teams.sportId],
 		references: [sports.id],
+	}),
+}))
+
+export const usersRelations = relations(users, ({ many }) => ({
+	userAccounts: many(userAccounts),
+}))
+
+export const userAccountsRelations = relations(userAccounts, ({ one }) => ({
+	user: one(users, {
+		fields: [userAccounts.userId],
+		references: [users.id],
 	}),
 }))
