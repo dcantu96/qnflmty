@@ -280,3 +280,22 @@ export const createWeek =
 
 		return week
 	}
+
+export interface DeleteWeekParams {
+	tournamentId: number
+	number: number
+}
+
+export const deleteWeek =
+	(connectionString: string) => async (params: DeleteWeekParams) => {
+		const { tournamentId, number } = params
+		const db = getDb(connectionString)
+
+		await db
+			.delete(weeks)
+			.where(
+				and(eq(weeks.tournamentId, tournamentId), eq(weeks.number, number)),
+			)
+
+		return null
+	}

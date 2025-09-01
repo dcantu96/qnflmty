@@ -127,7 +127,11 @@ describe('An Admin', () => {
 
 		it('Should edit an existing tournament', () => {
 			cy.visit('/admin/tournaments')
-			cy.contains(tournament.name).parent().find('button:has(svg)').click()
+			cy.contains(tournament.name)
+				.parent()
+				.parent()
+				.find('button:has(svg)')
+				.click()
 			cy.contains(/edit tournament/i).click()
 
 			cy.get('input[name="name"]').clear().type('Champions League')
@@ -156,7 +160,11 @@ describe('An Admin', () => {
 
 		it('Should delete an existing tournament', () => {
 			cy.visit('/admin/tournaments')
-			cy.contains(tournament.name).parent().find('button:has(svg)').click()
+			cy.contains(tournament.name)
+				.parent()
+				.parent()
+				.find('button:has(svg)')
+				.click()
 			cy.contains(/delete tournament/i).click()
 			cy.contains('Delete Tournament')
 			cy.contains(

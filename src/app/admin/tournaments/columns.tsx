@@ -6,7 +6,6 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { Button } from '~/components/ui/button'
-import { Checkbox } from '~/components/ui/checkbox'
 import { DataTableColumnHeader } from '~/components/ui/data-table/data-table-column-header'
 import {
 	Dialog,
@@ -36,31 +35,17 @@ export interface Tournament {
 
 export const columns: ColumnDef<Tournament>[] = [
 	{
-		id: 'select',
-		header: ({ table }) => (
-			<Checkbox
-				checked={
-					table.getIsAllPageRowsSelected() ||
-					(table.getIsSomePageRowsSelected() && 'indeterminate')
-				}
-				onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-				aria-label="Select all"
-			/>
-		),
-		cell: ({ row }) => (
-			<Checkbox
-				checked={row.getIsSelected()}
-				onCheckedChange={(value) => row.toggleSelected(!!value)}
-				aria-label="Select row"
-			/>
-		),
-		enableSorting: false,
-		enableHiding: false,
-	},
-	{
 		accessorKey: 'name',
 		header: ({ column }) => (
 			<DataTableColumnHeader column={column} title="Name" />
+		),
+		cell: ({ row }) => (
+			<Link
+				href={`/admin/tournaments/${row.original.id}`}
+				className="font-medium hover:underline"
+			>
+				{row.original.name}
+			</Link>
 		),
 	},
 	{
@@ -80,7 +65,12 @@ export const columns: ColumnDef<Tournament>[] = [
 		cell: ({ row }) => (
 			<DropdownMenu>
 				<DropdownMenuTrigger asChild>
-					<Button size="sm" variant="ghost" className="py-1">
+					<Button
+						size="sm"
+						variant="ghost"
+						className="py-1"
+						title="More options"
+					>
 						<MoreHorizontal />
 						<span className="sr-only">More</span>
 					</Button>

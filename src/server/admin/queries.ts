@@ -1,7 +1,7 @@
 import { db } from '../db'
 import { z } from 'zod'
 import { and, count, eq, ilike } from 'drizzle-orm'
-import { sports, teams, tournaments } from '../db/schema'
+import { sports, teams, tournaments, weeks } from '../db/schema'
 import { adminAuth } from '~/lib/auth'
 
 const inputParams = z
@@ -171,6 +171,41 @@ export const getTeamsBySportId = adminAuth(
 			.select({ value: count() })
 			.from(teams)
 			.where(where)
+		const total = totalResult[0]?.value ?? 0
+		const totalPages = Math.ceil(total / limit)
+
+		return {
+			items,
+			total,
+			page,
+			limit,
+			totalPages,
+		}
+	},
+)
+
+const getWeeksByTournamentIdParams = z.object({
+	tournamentId: z.coerce.number().positive(),
+	page: z.coerce.number().min(1).default(1).optional(),
+	limit: z.coerce.number().min(1).max(100).default(10).optional(),
+})
+
+export const getWeeksByTournamentId = adminAuth(
+	async (input: z.infer<typeof getWeeksByTournamentIdParams>) => {
+		const { tournamentId, page = 1, limit = 10 } = input
+		const offset = (page - 1) * limit
+
+		const items = await db.query.weeks.findMany({
+			where: (weeks, { eq }) => eq(weeks.tournamentId, tournamentId),
+			orderBy: (weeks, { desc }) => [desc(weeks.number)],
+			limit,
+			offset,
+		})
+
+		const totalResult = await db
+			.select({ value: count() })
+			.from(weeks)
+			.where(eq(weeks.tournamentId, tournamentId))
 		const total = totalResult[0]?.value ?? 0
 		const totalPages = Math.ceil(total / limit)
 

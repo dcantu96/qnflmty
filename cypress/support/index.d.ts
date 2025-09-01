@@ -37,5 +37,6 @@ declare namespace Cypress {
 			event: 'createWeek',
 			params: CreateWeekParams,
 		): Chainable<{ id: number }>
+		task(event: 'deleteWeek', params: DeleteWeekParams): Chainable<null>
 	}
 }
