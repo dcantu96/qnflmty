@@ -28,5 +28,14 @@ declare namespace Cypress {
 			params: CreateGroupParams,
 		): Chainable<{ id: number }>
 		task(event: 'deleteGroup', params: DeleteGroupParams): Chainable<null>
+		task(
+			event: 'createTeam',
+			params: CreateTeamParams,
+		): Chainable<{ id: number }>
+		task(event: 'deleteTeam', params: DeleteTeamParams): Chainable<null>
+		task(
+			event: 'createWeek',
+			params: CreateWeekParams,
+		): Chainable<{ id: number }>
 	}
 }
