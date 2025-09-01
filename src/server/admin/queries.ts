@@ -228,6 +228,18 @@ export const getUsers = adminAuth(
 			columns: {
 				name: true,
 				id: true,
+				createdAt: true,
+				email: true,
+				phone: true,
+			},
+			with: {
+				userAccounts: {
+					columns: {
+						id: true,
+						username: true,
+						avatar: true,
+					},
+				},
 			},
 			orderBy: (users, { desc }) => [desc(users.name)],
 			limit,
