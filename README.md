@@ -4,6 +4,7 @@
 
 ## Todo
 
+App Setup
 - [x] Make it deploy (vercel)
 - [x] Scaffold basic ui with mock data
 - [x] Setup db (vercel postgres)
@@ -11,27 +12,29 @@
 - [x] Add authentication (w/ next-auth)
 - [x] Attach end to end tests (cypress)
 - [x] Attach CI for cypress cloud
-- [x] Brand new users
-  - Layout: No sidebar, full page view
-    - welcome message
-    - what's next section
-    - Group Info sectiom
-- [x] create profile
-- [x] Request Access
-- If not profile authorized
-  - [x] Request access screen
-    - no access to dashboard yet
-- If profile authorized
-  - [x] dashboard access
-    - switch profiles
-    - logout
-    - sidebar
-- admin
-  - [x] list tournaments
-  - [ ] create tournaments
-- [ ] view requests
-- [ ] accept/deny requests
+- [x] Layouts
 - [ ] Error management (w/ sentry)
-- [ ] Routing (parallel route)
-- [ ] Analytics (posthog)
-- [ ] Ratelimiting (upstash)
+
+Features:
+- [x] Users - Create profile
+- [x] Users - Update profile
+- [x] Users - Select profile
+- [x] Users - Switch profile
+- [x] Users - Request access
+- [x] Users - View access
+- [x] Admin - List/Create/Edit/Delete tournaments
+- [x] Admin - List/Create/Edit/Delete sports
+- [x] Admin - List/Create teams
+- [x] Admin - List weeks
+- [ ] Admin - List/Edit/Suspend/Delete users
+- [ ] Admin - List/Edit/Suspend/Paid memberships
+- [ ] Admin - List/Edit/Delete groups
+- [ ] Admin - List/Accept/Deny requests
+- [ ] Users - List/Edit Picks
+- [ ] Users - List Leaderboard
+- [ ] Admin - List/Edit Picks
+- [ ] Admin - Populate tournament data
+- [ ] Admin - Update Group Week
+- [ ] Admin - Finalize Group Week
+- [ ] Add paymentDueDate to group schema to limit usage of app if any of the members have not paid by then
+

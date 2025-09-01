@@ -15,6 +15,20 @@
       "when": 1756490323525,
       "tag": "0001_busy_juggernaut",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1756701261494,
+      "tag": "0002_small_centennial",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1756703261224,
+      "tag": "0003_oval_lorna_dane",
+      "breakpoints": true
     }
   ]
 }

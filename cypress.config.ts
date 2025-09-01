@@ -13,6 +13,7 @@ import {
 	deleteGroup,
 	createTeam,
 	deleteTeam,
+	createWeek,
 } from './cypress/tasks'
 
 export default defineConfig({
@@ -37,6 +38,7 @@ export default defineConfig({
 				deleteGroup: deleteGroup(dbUrl),
 				createTeam: createTeam(dbUrl),
 				deleteTeam: deleteTeam(dbUrl),
+				createWeek: createWeek(dbUrl),
 			})
 
 			return cypressConfig

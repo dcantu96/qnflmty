@@ -9,6 +9,7 @@ import {
 	tournaments,
 	groups,
 	teams,
+	weeks,
 } from '~/server/db/schema'
 
 export type LoginTaskParams = string
@@ -253,6 +254,48 @@ export const deleteGroup =
 		const db = getDb(connectionString)
 
 		await db.delete(groups).where(eq(groups.name, name))
+
+		return null
+	}
+
+export interface CreateWeekParams {
+	number: number
+	tournamentId: number
+	finished?: boolean
+}
+
+export const createWeek =
+	(connectionString: string) => async (params: CreateWeekParams) => {
+		const { number, tournamentId, finished } = params
+		const db = getDb(connectionString)
+
+		const [week] = await db
+			.insert(weeks)
+			.values({ number, tournamentId, finished })
+			.returning()
+
+		if (!week) {
+			throw new Error(`Week not found for tournamentId: ${tournamentId}`)
+		}
+
+		return week
+	}
+
+export interface DeleteWeekParams {
+	tournamentId: number
+	number: number
+}
+
+export const deleteWeek =
+	(connectionString: string) => async (params: DeleteWeekParams) => {
+		const { tournamentId, number } = params
+		const db = getDb(connectionString)
+
+		await db
+			.delete(weeks)
+			.where(
+				and(eq(weeks.tournamentId, tournamentId), eq(weeks.number, number)),
+			)
 
 		return null
 	}

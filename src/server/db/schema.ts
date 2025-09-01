@@ -172,7 +172,9 @@ export const tournaments = pgTable(
 	{
 		id: serial('id').primaryKey(),
 		name: text('name').notNull(),
-		sportId: integer('sport_id').notNull(),
+		sportId: integer('sport_id')
+			.notNull()
+			.references(() => sports.id, { onDelete: 'cascade' }),
 		createdAt: timestamp('created_at', { withTimezone: true })
 			.notNull()
 			.defaultNow(),
@@ -211,6 +213,7 @@ export const groups = pgTable(
 		finished: boolean('finished').default(false),
 		joinable: boolean('joinable').default(false),
 		tournamentId: integer('tournament_id').notNull(),
+		paymentDueDate: timestamp('payment_due_date', { withTimezone: true }),
 		createdAt: timestamp('created_at', { withTimezone: true })
 			.notNull()
 			.defaultNow(),
