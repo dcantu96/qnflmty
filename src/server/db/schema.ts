@@ -60,6 +60,7 @@ export const users = pgTable('user', {
 	image: text('image'),
 	encryptedPassword: text('encryptedPassword'),
 	phone: text('phone'),
+	suspended: boolean('suspended').default(false).notNull(),
 	createdAt: timestamp('createdAt', { withTimezone: true })
 		.defaultNow()
 		.notNull(),
