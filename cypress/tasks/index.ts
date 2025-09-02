@@ -46,10 +46,11 @@ export type CreateUserTaskParams = {
 	email: string
 	phone?: string
 	createdAt?: string
+	suspended?: boolean
 }
 export const createUser =
 	(connectionString: string) => async (params: CreateUserTaskParams) => {
-		const { name, email, phone, createdAt } = params
+		const { name, email, phone, createdAt, suspended } = params
 		const db = getDb(connectionString)
 
 		const [user] = await db
@@ -60,6 +61,7 @@ export const createUser =
 				phone,
 				createdAt: createdAt ? new Date(createdAt) : undefined,
 				admin: false,
+				suspended,
 			})
 			.returning()
 
