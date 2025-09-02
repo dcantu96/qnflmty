@@ -4,7 +4,7 @@
  *  - [x] details: name, email, phone, userAccounts, createdAt
  *  - [x] client pagination works, shows correct page numbers
  *  - [x] show only non-suspended users by default and allow filtering by suspended, active or all
- *  - [ ] can search users by name
+ *  - [x] can search users by various criteria
  *  - [ ] can sort users by various criteria
  *  - [ ] can select multiple users and perform bulk actions:
  *    - [ ] suspend users
