@@ -53,6 +53,7 @@ export function DataTable<TData, TValue>({
 	const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
 	const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
 	const [rowSelection, setRowSelection] = useState({})
+	const [globalFilter, setGlobalFilter] = useState('')
 
 	const createButtonHref = createLink
 		? createLink
@@ -73,11 +74,14 @@ export function DataTable<TData, TValue>({
 		getFilteredRowModel: getFilteredRowModel(),
 		onColumnVisibilityChange: setColumnVisibility,
 		onRowSelectionChange: setRowSelection,
+		onGlobalFilterChange: setGlobalFilter,
+		globalFilterFn: 'includesString',
 		state: {
 			sorting,
 			columnFilters,
 			columnVisibility,
 			rowSelection,
+			globalFilter,
 		},
 	})
 
@@ -86,10 +90,8 @@ export function DataTable<TData, TValue>({
 			<div className="flex items-center py-4">
 				<Input
 					placeholder={filterPlaceholder}
-					value={(table.getColumn('name')?.getFilterValue() as string) ?? ''}
-					onChange={(event) =>
-						table.getColumn('name')?.setFilterValue(event.target.value)
-					}
+					value={globalFilter ?? ''}
+					onChange={(event) => setGlobalFilter(event.target.value)}
 					className="max-w-xs"
 				/>
 				<DropdownMenu>
