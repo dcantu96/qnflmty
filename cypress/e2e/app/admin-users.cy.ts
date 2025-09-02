@@ -2,9 +2,9 @@
  * An admin
  * Can view all users
  *  - [x] details: name, email, phone, userAccounts, createdAt
- *  - [ ] paginate remotely
- *  - [ ] show only non-suspended users by default and allow filtering by suspended, active or all
- *  - [ ] can filter users by various criteria
+ *  - [x] client pagination works, shows correct page numbers
+ *  - [x] show only non-suspended users by default and allow filtering by suspended, active or all
+ *  - [ ] can search users by name
  *  - [ ] can sort users by various criteria
  *  - [ ] can select multiple users and perform bulk actions:
  *    - [ ] suspend users
@@ -107,7 +107,7 @@ describe('An Admin', () => {
 				cy.get('div[role="tooltip"]').should('contain', userAccount3.username)
 			})
 		})
-		describe('With 20 users', () => {
+		describe('With 26 users', () => {
 			before(() => {
 				for (let i = 1; i <= 20; i++) {
 					cy.task('createUser', {
@@ -128,6 +128,26 @@ describe('An Admin', () => {
 						})
 					})
 				}
+				for (let i = 1; i <= 5; i++) {
+					cy.task('createUser', {
+						name: `Suspended User ${i}`,
+						email: `suspended.user${i}@example.com`,
+						phone: `555-555-${i}`,
+						createdAt: new Date(
+							Date.now() -
+								Math.floor(Math.random() * 1000 * 60 * 60 * 24 * 30 * 5),
+						).toISOString(),
+						suspended: true,
+					}).then(({ id }) => {
+						cy.task('createUserAccount', {
+							userId: id,
+							username: `suspended.user${i}`,
+							avatar: avatarEnum.enumValues.at(
+								Math.floor(Math.random() * 14) + 1,
+							),
+						})
+					})
+				}
 			})
 
 			after(() => {
@@ -135,12 +155,53 @@ describe('An Admin', () => {
 				for (let i = 1; i <= 20; i++) {
 					cy.task('deleteUser', `user${i}@example.com`)
 				}
+				for (let i = 1; i <= 5; i++) {
+					cy.task('deleteUser', `suspended.user${i}@example.com`)
+				}
 			})
 
-			it('should display the users list remotely paginated', () => {
+			it('should display the total number of active users', () => {
 				cy.visit('/admin/users')
-				cy.contains('Page 1 of 2')
-				cy.contains('0 of 20 row(s) selected.')
+				cy.contains('Page 1 of 3')
+				cy.contains('0 of 21 row(s) selected.')
+				cy.get('button[title="Go to previous page"]').should('be.disabled')
+				cy.get('button[title="Go to next page"]').click()
+				cy.contains('Page 2 of 3')
+				cy.get('button[title="Go to previous page"]').click()
+				cy.contains('Page 1 of 3')
+			})
+
+			it('by default show non-suspended users only', () => {
+				cy.visit('/admin/users')
+				cy.get('input[placeholder="Filter Users..."]').type('Suspended')
+				cy.contains('Suspended User 1').should('not.exist')
+				cy.contains('Suspended User 2').should('not.exist')
+				cy.contains('Suspended User 3').should('not.exist')
+				cy.contains('Suspended User 4').should('not.exist')
+				cy.contains('Suspended User 5').should('not.exist')
+			})
+
+			it('should be able to show suspended users', () => {
+				cy.visit('/admin/users')
+				cy.get('a').contains('Suspended').click()
+				cy.contains('Suspended User 1').should('exist')
+				cy.contains('Suspended User 2').should('exist')
+				cy.contains('Suspended User 3').should('exist')
+				cy.contains('Suspended User 4').should('exist')
+				cy.contains('Suspended User 5').should('exist')
+			})
+
+			it('should be able to show all users', () => {
+				cy.visit('/admin/users')
+				cy.get('a').contains('All').click()
+				cy.get('input[placeholder="Filter Users..."]').type('Suspended')
+				cy.contains('Suspended User 1').should('exist')
+				cy.get('input[placeholder="Filter Users..."]').clear().type('User 19')
+				cy.contains('User 19').should('exist')
+				cy.get('input[placeholder="Filter Users..."]')
+					.clear()
+					.type('user19@example')
+				cy.contains('User 19').should('exist')
 			})
 		})
 	})
