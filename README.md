@@ -26,7 +26,9 @@ Features:
 - [x] Admin - List/Create/Edit/Delete sports
 - [x] Admin - List/Create teams
 - [x] Admin - List weeks
-- [ ] Admin - List/Edit/Suspend/Delete users
+- [x] Add paymentDueDate to group schema to limit usage of app if any of the members have not paid by then
+- [x] Admin - List/Suspend/Activate users
+- [ ] Admin - View user details
 - [ ] Admin - List/Edit/Suspend/Paid memberships
 - [ ] Admin - List/Edit/Delete groups
 - [ ] Admin - List/Accept/Deny requests
@@ -36,5 +38,4 @@ Features:
 - [ ] Admin - Populate tournament data
 - [ ] Admin - Update Group Week
 - [ ] Admin - Finalize Group Week
-- [ ] Add paymentDueDate to group schema to limit usage of app if any of the members have not paid by then
 
