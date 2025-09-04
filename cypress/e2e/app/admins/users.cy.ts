@@ -28,7 +28,6 @@
  *
  * Can edit users
  *  - [ ] can edit name, email, phone, suspended
- *  - [ ] can select multiple users and perform bulk actions
  */
 
 import { avatarEnum } from '~/server/db/schema'
