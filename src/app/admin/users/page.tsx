@@ -1,8 +1,15 @@
 import { columns } from './columns'
 import { getUsers } from '~/server/admin/queries'
-import { DataTable } from '~/components/ui/data-table/data-table'
+import {
+	DataTable,
+	DataTableHeader,
+	DataTableContent,
+	DataTablePagination,
+} from '~/components/ui/data-table'
 import { ToggleGroup, ToggleGroupItem } from '~/components/ui/toggle-group'
 import Link from 'next/link'
+import { BulkSuspend } from './bulk-suspend'
+import { BulkActivate } from './bulk-activate'
 
 type UserSearchParams = {
 	/**
@@ -31,7 +38,7 @@ export default async function Page({
 					variant="outline"
 					asChild
 				>
-					<Link href="">Active</Link>
+					<Link href="?">Active</Link>
 				</ToggleGroupItem>
 				<ToggleGroupItem
 					className="w-24"
@@ -42,7 +49,13 @@ export default async function Page({
 					<Link href="?kind=suspended">Suspended</Link>
 				</ToggleGroupItem>
 			</ToggleGroup>
-			<DataTable columns={columns} data={items} schema="users" label="Users" />
+			<DataTable columns={columns} data={items} schema="users" label="Users">
+				<DataTableHeader>
+					{filters.kind === 'suspended' ? <BulkActivate /> : <BulkSuspend />}
+				</DataTableHeader>
+				<DataTableContent />
+				<DataTablePagination />
+			</DataTable>
 		</div>
 	)
 }

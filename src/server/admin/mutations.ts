@@ -2,11 +2,12 @@
 
 import z, { ZodError } from 'zod'
 import { adminAuth } from '~/lib/auth'
-import { sports, teams, tournaments } from '../db/schema'
+import { sports, teams, tournaments, users } from '../db/schema'
 import { redirect } from 'next/navigation'
 import { db } from '../db'
 import { NeonDbError } from '@neondatabase/serverless'
-import { eq } from 'drizzle-orm'
+import { eq, inArray } from 'drizzle-orm'
+import { revalidatePath } from 'next/cache'
 
 const createTournamentSchema = z.object({
 	name: z.string().min(1).max(30),
@@ -224,3 +225,29 @@ export const fromErrorToFormState = async (error: unknown) => {
 		message: 'An unknown error occurred',
 	}
 }
+
+export const suspendUsers = adminAuth(async ({ ids }: { ids: number[] }) => {
+	try {
+		await db
+			.update(users)
+			.set({ suspended: true })
+			.where(inArray(users.id, ids))
+	} catch (error) {
+		return fromErrorToFormState(error)
+	}
+
+	revalidatePath('/admin/users')
+})
+
+export const activateUsers = adminAuth(async ({ ids }: { ids: number[] }) => {
+	try {
+		await db
+			.update(users)
+			.set({ suspended: false })
+			.where(inArray(users.id, ids))
+	} catch (error) {
+		return fromErrorToFormState(error)
+	}
+
+	revalidatePath('/admin/users')
+})

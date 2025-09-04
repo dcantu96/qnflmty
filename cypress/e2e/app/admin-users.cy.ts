@@ -5,9 +5,10 @@
  *  - [x] client pagination works, shows correct page numbers
  *  - [x] show only non-suspended users by default and allow filtering by suspended, active or all
  *  - [x] can search users by various criteria
- *  - [ ] can sort users by various criteria
- *  - [ ] can select multiple users and perform bulk actions:
- *    - [ ] suspend users
+ *  - [x] can sort users by various criteria
+ *  - [x] can select multiple users and perform bulk actions:
+ *    - [x] suspend users
+ *    - [x] activate users
  * Can view a user
  *  - [ ] can view all user details
  *  - [ ] can view a chip list of the user's accounts
@@ -202,6 +203,54 @@ describe('An Admin', () => {
 					.clear()
 					.type('user19@example')
 				cy.contains('User 19').should('exist')
+			})
+
+			it('should be able to bulk suspend users', () => {
+				cy.visit('/admin/users')
+				cy.get('input[placeholder="Filter Users..."]').type('User 1')
+				cy.contains('User 1').parents('tr').find('[role="checkbox"]').click()
+				cy.get('input[placeholder="Filter Users..."]').clear().type('User 2')
+				cy.contains('User 2').parents('tr').find('[role="checkbox"]').click()
+				cy.get('input[placeholder="Filter Users..."]').clear().type('User 3')
+				cy.contains('User 3').parents('tr').find('[role="checkbox"]').click()
+				cy.get('input[placeholder="Filter Users..."]').clear().type('User 4')
+				cy.contains('User 4').parents('tr').find('[role="checkbox"]').click()
+				cy.get('input[placeholder="Filter Users..."]').clear().type('User 5')
+				cy.contains('User 5').parents('tr').find('[role="checkbox"]').click()
+				cy.get('button[title="Bulk Suspend"]').click()
+				cy.contains('Are you sure you want to suspend these 5 users?').should(
+					'exist',
+				)
+				cy.get('button').contains('Suspend').click()
+				cy.get('input[placeholder="Filter Users..."]').clear().type('User 5')
+				cy.contains('User 5').should('not.exist')
+				cy.get('a')
+					.contains(/suspended/i)
+					.click()
+				cy.contains('User 5').should('exist')
+				cy.get('input[placeholder="Filter Users..."]')
+					.clear()
+					.type('Suspended User 5')
+				cy.contains('Suspended User 5')
+					.parents('tr')
+					.find('[role="checkbox"]')
+					.click()
+				cy.get('button[title="Bulk Activate"]').click()
+				cy.contains('Are you sure you want to activate these 1 users?').should(
+					'exist',
+				)
+				cy.get('button').contains('Activate').click()
+				cy.get('input[placeholder="Filter Users..."]')
+					.clear()
+					.type('Suspended User 5')
+				cy.contains('Suspended User 5').should('not.exist')
+				cy.get('a')
+					.contains(/active/i)
+					.click()
+				cy.get('input[placeholder="Filter Users..."]')
+					.clear()
+					.type('Suspended User 5')
+				cy.contains('Suspended User 5').should('exist')
 			})
 		})
 	})
