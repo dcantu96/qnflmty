@@ -12,7 +12,7 @@ import { Button } from '../button'
 import Link from 'next/link'
 import { useDataTable } from './use-data-table'
 
-export default function DataTableHeader<TData>({
+export function DataTableHeader<TData>({
 	children,
 }: {
 	children?: React.ReactNode

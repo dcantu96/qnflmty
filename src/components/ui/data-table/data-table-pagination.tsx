@@ -17,7 +17,7 @@ import {
 } from '../select'
 import { useDataTable } from './use-data-table'
 
-export default function DataTablePagination<TData>() {
+export function DataTablePagination<TData>() {
 	const { table } = useDataTable<TData>()
 	return (
 		<div className="flex items-center justify-between px-2 py-4">

@@ -1,4 +1,9 @@
-import { DataTable } from '~/components/ui/data-table/data-table'
+import {
+	DataTable,
+	DataTableHeader,
+	DataTableContent,
+	DataTablePagination,
+} from '~/components/ui/data-table'
 import { columns } from './columns'
 import { getTournaments } from '~/server/admin/queries'
 
@@ -12,7 +17,11 @@ export default async function DashboardPage() {
 				data={items}
 				schema="tournaments"
 				label="Tournaments"
-			/>
+			>
+				<DataTableHeader />
+				<DataTableContent />
+				<DataTablePagination />
+			</DataTable>
 		</div>
 	)
 }

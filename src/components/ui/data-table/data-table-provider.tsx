@@ -42,7 +42,7 @@ export type BaseData = {
 	id: number
 }
 
-export default function DataTableProvider<TData extends BaseData, TValue>({
+export function DataTableProvider<TData extends BaseData, TValue>({
 	columns,
 	data,
 	createLink,

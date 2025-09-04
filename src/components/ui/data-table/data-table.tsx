@@ -1,10 +1,7 @@
 'use client'
 
 import type { ColumnDef } from '@tanstack/react-table'
-import DataTableProvider, { type BaseData } from './data-table-provider'
-import DataTableHeader from './data-table-header'
-import DataTableContent from './data-table-content'
-import DataTablePagination from './data-table-pagination'
+import { DataTableProvider, type BaseData } from './data-table-provider'
 
 interface DataTableProps<TData extends BaseData, TValue> {
 	columns: ColumnDef<TData, TValue>[]
@@ -36,8 +33,4 @@ function DataTable<TData extends BaseData, TValue>({
 	)
 }
 
-DataTable.Header = DataTableHeader
-DataTable.Content = DataTableContent
-DataTable.Pagination = DataTablePagination
-
-export default DataTable
+export { DataTable }

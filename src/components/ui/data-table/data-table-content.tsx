@@ -11,7 +11,7 @@ import {
 } from '../table'
 import { useDataTable } from './use-data-table'
 
-export default function DataTableContent<TData>() {
+export function DataTableContent<TData>() {
 	const { table, columnsLength } = useDataTable<TData>()
 	return (
 		<div className="overflow-hidden rounded-md border">
