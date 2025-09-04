@@ -1,1 +1,0 @@
-ALTER TABLE "tournament" ADD CONSTRAINT "tournament_sport_id_sport_id_fk" FOREIGN KEY ("sport_id") REFERENCES "public"."sport"("id") ON DELETE cascade ON UPDATE no action;

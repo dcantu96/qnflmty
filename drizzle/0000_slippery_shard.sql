@@ -32,7 +32,7 @@ CREATE TABLE "group_week" (
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
 	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,
 	"lowest_valid_points" integer,
-	CONSTRAINT "group_week_group_id_week_id_unique" UNIQUE("group_id","week_id")
+	CONSTRAINT "group_week_id_unique" UNIQUE("group_id","week_id")
 );
 --> statement-breakpoint
 CREATE TABLE "group" (
@@ -41,6 +41,7 @@ CREATE TABLE "group" (
 	"finished" boolean DEFAULT false,
 	"joinable" boolean DEFAULT false,
 	"tournament_id" integer NOT NULL,
+	"payment_due_date" timestamp with time zone,
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
 	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,
 	CONSTRAINT "group_tournament_id_name_unique" UNIQUE("tournament_id","name")
@@ -75,7 +76,7 @@ CREATE TABLE "membership_week" (
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
 	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,
 	"forgot_picks" boolean DEFAULT false,
-	CONSTRAINT "membership_week_membership_id_week_id_unique" UNIQUE("membership_id","week_id")
+	CONSTRAINT "membership_week_id_unique" UNIQUE("membership_id","week_id")
 );
 --> statement-breakpoint
 CREATE TABLE "membership" (
@@ -147,7 +148,7 @@ CREATE TABLE "tournament" (
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
 	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,
 	"year" integer NOT NULL,
-	CONSTRAINT "tournament_name_year_unique" UNIQUE("name","year")
+	CONSTRAINT "tournament_sport_id_name_year_unique" UNIQUE("sport_id","name","year")
 );
 --> statement-breakpoint
 CREATE TABLE "user_account" (
@@ -162,13 +163,14 @@ CREATE TABLE "user_account" (
 --> statement-breakpoint
 CREATE TABLE "user" (
 	"id" serial PRIMARY KEY NOT NULL,
-	"name" text,
-	"email" text,
+	"name" text NOT NULL,
+	"email" text NOT NULL,
 	"admin" boolean DEFAULT false NOT NULL,
 	"emailVerified" timestamp,
 	"image" text,
 	"encryptedPassword" text,
 	"phone" text,
+	"suspended" boolean DEFAULT false NOT NULL,
 	"createdAt" timestamp with time zone DEFAULT now() NOT NULL,
 	"updatedAt" timestamp with time zone DEFAULT now() NOT NULL,
 	CONSTRAINT "user_email_unique" UNIQUE("email")
@@ -207,5 +209,6 @@ ALTER TABLE "request" ADD CONSTRAINT "request_group_id_group_id_fk" FOREIGN KEY 
 ALTER TABLE "request" ADD CONSTRAINT "request_user_account_id_user_account_id_fk" FOREIGN KEY ("user_account_id") REFERENCES "public"."user_account"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "session" ADD CONSTRAINT "session_userId_user_id_fk" FOREIGN KEY ("userId") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "team" ADD CONSTRAINT "team_sport_id_sport_id_fk" FOREIGN KEY ("sport_id") REFERENCES "public"."sport"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "tournament" ADD CONSTRAINT "tournament_sport_id_sport_id_fk" FOREIGN KEY ("sport_id") REFERENCES "public"."sport"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "user_account" ADD CONSTRAINT "user_account_userId_user_id_fk" FOREIGN KEY ("userId") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "week" ADD CONSTRAINT "week_tournament_id_tournament_id_fk" FOREIGN KEY ("tournament_id") REFERENCES "public"."tournament"("id") ON DELETE cascade ON UPDATE no action;

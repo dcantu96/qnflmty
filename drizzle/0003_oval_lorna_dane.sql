@@ -1,1 +1,0 @@
-ALTER TABLE "group" ADD COLUMN "payment_due_date" timestamp with time zone;
