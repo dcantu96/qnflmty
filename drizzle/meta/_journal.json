@@ -50,6 +50,13 @@
       "when": 1756754361823,
       "tag": "0006_broad_red_ghost",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1756950002668,
+      "tag": "0007_chief_sally_floyd",
+      "breakpoints": true
     }
   ]
 }

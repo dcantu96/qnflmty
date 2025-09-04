@@ -184,7 +184,13 @@ export const tournaments = pgTable(
 			.defaultNow(),
 		year: integer('year').notNull(),
 	},
-	(t) => [unique().on(t.sportId, t.name, t.year)],
+	(t) => [
+		unique('tournament_sport_id_name_year_unique').on(
+			t.sportId,
+			t.name,
+			t.year,
+		),
+	],
 )
 
 export const weeks = pgTable(
@@ -203,7 +209,9 @@ export const weeks = pgTable(
 			.notNull()
 			.defaultNow(),
 	},
-	(w) => [unique().on(w.number, w.tournamentId)],
+	(w) => [
+		unique('week_number_tournament_id_unique').on(w.number, w.tournamentId),
+	],
 )
 
 export const groups = pgTable(
@@ -222,7 +230,7 @@ export const groups = pgTable(
 			.notNull()
 			.defaultNow(),
 	},
-	(t) => [unique().on(t.tournamentId, t.name)],
+	(t) => [unique('group_tournament_id_name_unique').on(t.tournamentId, t.name)],
 )
 
 export const requests = pgTable(
@@ -243,7 +251,12 @@ export const requests = pgTable(
 			.defaultNow(),
 		denied: boolean('denied').default(false),
 	},
-	(r) => [unique().on(r.groupId, r.userAccountId)],
+	(r) => [
+		unique('request_group_id_user_account_id_unique').on(
+			r.groupId,
+			r.userAccountId,
+		),
+	],
 )
 
 export const memberships = pgTable(
@@ -269,7 +282,12 @@ export const memberships = pgTable(
 		total: integer('total').default(0),
 		forgotPicks: boolean('forgot_picks').default(false),
 	},
-	(m) => [unique().on(m.userAccountId, m.groupId)],
+	(m) => [
+		unique('membership_user_account_id_group_id_unique').on(
+			m.userAccountId,
+			m.groupId,
+		),
+	],
 )
 
 export const teams = pgTable('team', {
@@ -307,7 +325,7 @@ export const membershipWeeks = pgTable(
 			.defaultNow(),
 		forgotPicks: boolean('forgot_picks').default(false),
 	},
-	(mw) => [unique().on(mw.membershipId, mw.weekId)],
+	(mw) => [unique('membership_week_id_unique').on(mw.membershipId, mw.weekId)],
 )
 
 export const matches = pgTable(
@@ -341,8 +359,8 @@ export const matches = pgTable(
 			.defaultNow(),
 	},
 	(m) => [
-		unique().on(m.weekId, m.homeTeamId),
-		unique().on(m.weekId, m.visitTeamId),
+		unique('match_week_id_home_team_id_unique').on(m.weekId, m.homeTeamId),
+		unique('match_week_id_visit_team_id_unique').on(m.weekId, m.visitTeamId),
 		check(
 			'winning_team_valid',
 			sql`${m.winningTeamId} IS NULL OR ${m.winningTeamId} = ${m.homeTeamId} OR ${m.winningTeamId} = ${m.visitTeamId}`,
@@ -373,7 +391,12 @@ export const picks = pgTable(
 			.defaultNow(),
 		modifiedByAdmin: boolean('modified_by_admin').default(false),
 	},
-	(p) => [unique().on(p.matchId, p.membershipWeekId)],
+	(p) => [
+		unique('pick_match_id_membership_week_id_unique').on(
+			p.matchId,
+			p.membershipWeekId,
+		),
+	],
 )
 
 export const groupWeeks = pgTable(
@@ -394,7 +417,7 @@ export const groupWeeks = pgTable(
 			.defaultNow(),
 		lowestValidPoints: integer('lowest_valid_points'),
 	},
-	(g) => [unique().on(g.groupId, g.weekId)],
+	(g) => [unique('group_week_id_unique').on(g.groupId, g.weekId)],
 )
 
 export const sportsRelations = relations(sports, ({ many }) => ({
