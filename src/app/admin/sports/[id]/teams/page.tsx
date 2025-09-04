@@ -1,4 +1,9 @@
-import { DataTable } from '~/components/ui/data-table/data-table'
+import {
+	DataTable,
+	DataTableHeader,
+	DataTableContent,
+	DataTablePagination,
+} from '~/components/ui/data-table'
 import { columns } from './columns'
 import { getTeamsBySportId } from '~/server/admin/queries'
 
@@ -18,7 +23,11 @@ export default async function Page({ params }: PageProps) {
 				schema="teams"
 				label="Teams"
 				createLink={`/admin/sports/${id}/teams/new`}
-			/>
+			>
+				<DataTableHeader />
+				<DataTableContent />
+				<DataTablePagination />
+			</DataTable>
 		</div>
 	)
 }

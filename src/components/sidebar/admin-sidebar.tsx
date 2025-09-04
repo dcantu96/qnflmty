@@ -1,69 +1,14 @@
 'use client'
 
-import {
-	Trophy,
-	Users,
-	MessageSquare,
-	Calendar,
-	Target,
-	Gamepad2,
-	Table2,
-} from 'lucide-react'
+import { Table2, Users } from 'lucide-react'
 import { AppSidebar, type AppSidebarProps } from './app-sidebar'
+import type { NavItem } from '../nav-main'
 
-const navMain = [
+const navMain: NavItem[] = [
 	{
-		title: 'Quiniela',
-		url: '/quiniela',
-		icon: Trophy,
-		items: [
-			{
-				title: 'Current Week',
-				url: '/quiniela/current',
-			},
-			{
-				title: 'Make Picks',
-				url: '/quiniela/picks',
-			},
-			{
-				title: 'Leaderboard',
-				url: '/quiniela/leaderboard',
-			},
-		],
-	},
-	{
-		title: 'Groups',
-		url: '/groups',
+		title: 'Users',
+		url: '/admin/users',
 		icon: Users,
-		items: [
-			{
-				title: 'My Groups',
-				url: '/groups/mine',
-			},
-			{
-				title: 'Join Group',
-				url: '/groups/join',
-			},
-			{
-				title: 'Create Group',
-				url: '/groups/create',
-			},
-		],
-	},
-	{
-		title: 'Premium Chat',
-		url: '/chat',
-		icon: MessageSquare,
-		items: [
-			{
-				title: 'General',
-				url: '/chat/general',
-			},
-			{
-				title: 'Strategy',
-				url: '/chat/strategy',
-			},
-		],
 	},
 	{
 		title: 'Data',
@@ -82,24 +27,6 @@ const navMain = [
 	},
 ]
 
-const projects = [
-	{
-		name: 'Season 2025',
-		url: '/season/2025',
-		icon: Calendar,
-	},
-	{
-		name: 'Premium Picks',
-		url: '/premium-picks',
-		icon: Target,
-	},
-	{
-		name: 'Game Center',
-		url: '/games',
-		icon: Gamepad2,
-	},
-]
-
 export function AdminSidebar({
 	selectedProfile,
 	accounts,
@@ -112,7 +39,7 @@ export function AdminSidebar({
 			userData={userData}
 			accounts={accounts}
 			navMain={navMain}
-			projects={projects}
+			projects={[]}
 		>
 			{children}
 		</AppSidebar>

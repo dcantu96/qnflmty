@@ -14,6 +14,8 @@ import {
 	createTeam,
 	deleteTeam,
 	createWeek,
+	createUserAccount,
+	deleteUserAccount,
 } from './cypress/tasks'
 
 export default defineConfig({
@@ -39,6 +41,8 @@ export default defineConfig({
 				createTeam: createTeam(dbUrl),
 				deleteTeam: deleteTeam(dbUrl),
 				createWeek: createWeek(dbUrl),
+				createUserAccount: createUserAccount(dbUrl),
+				deleteUserAccount: deleteUserAccount(dbUrl),
 			})
 
 			return cypressConfig

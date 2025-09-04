@@ -1,4 +1,5 @@
-import type { Table } from '@tanstack/react-table'
+'use client'
+
 import {
 	ChevronLeft,
 	ChevronRight,
@@ -14,16 +15,12 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from '../select'
+import { useDataTable } from './use-data-table'
 
-interface DataTablePaginationProps<TData> {
-	table: Table<TData>
-}
-
-export function DataTablePagination<TData>({
-	table,
-}: DataTablePaginationProps<TData>) {
+export function DataTablePagination<TData>() {
+	const { table } = useDataTable<TData>()
 	return (
-		<div className="flex items-center justify-between px-2">
+		<div className="flex items-center justify-between px-2 py-4">
 			<div className="flex-1 text-muted-foreground text-sm">
 				{table.getFilteredSelectedRowModel().rows.length} of{' '}
 				{table.getFilteredRowModel().rows.length} row(s) selected.
@@ -58,6 +55,7 @@ export function DataTablePagination<TData>({
 						variant="outline"
 						size="icon"
 						className="hidden size-8 lg:flex"
+						title="Go to first page"
 						onClick={() => table.setPageIndex(0)}
 						disabled={!table.getCanPreviousPage()}
 					>
@@ -68,6 +66,7 @@ export function DataTablePagination<TData>({
 						variant="outline"
 						size="icon"
 						className="size-8"
+						title="Go to previous page"
 						onClick={() => table.previousPage()}
 						disabled={!table.getCanPreviousPage()}
 					>
@@ -78,6 +77,7 @@ export function DataTablePagination<TData>({
 						variant="outline"
 						size="icon"
 						className="size-8"
+						title="Go to next page"
 						onClick={() => table.nextPage()}
 						disabled={!table.getCanNextPage()}
 					>
@@ -88,6 +88,7 @@ export function DataTablePagination<TData>({
 						variant="outline"
 						size="icon"
 						className="hidden size-8 lg:flex"
+						title="Go to last page"
 						onClick={() => table.setPageIndex(table.getPageCount() - 1)}
 						disabled={!table.getCanNextPage()}
 					>

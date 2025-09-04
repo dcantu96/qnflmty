@@ -1,16 +1,14 @@
 import { db } from '../db'
 import { z } from 'zod'
 import { and, count, eq, ilike } from 'drizzle-orm'
-import { sports, teams, tournaments, weeks } from '../db/schema'
+import { sports, teams, tournaments, users, weeks } from '../db/schema'
 import { adminAuth } from '~/lib/auth'
 
-const inputParams = z
-	.object({
-		page: z.number().min(1).default(1),
-		limit: z.number().min(1).max(100).default(10),
-		search: z.string().optional(),
-	})
-	.optional()
+const inputParams = z.object({
+	page: z.number().min(1).default(1),
+	limit: z.number().min(1).max(100).default(10),
+	search: z.string().optional(),
+})
 
 export const getTournaments = adminAuth(
 	async (input?: z.infer<typeof inputParams>) => {
@@ -206,6 +204,68 @@ export const getWeeksByTournamentId = adminAuth(
 			.select({ value: count() })
 			.from(weeks)
 			.where(eq(weeks.tournamentId, tournamentId))
+		const total = totalResult[0]?.value ?? 0
+		const totalPages = Math.ceil(total / limit)
+
+		return {
+			items,
+			total,
+			page,
+			limit,
+			totalPages,
+		}
+	},
+)
+
+const getUsersInputParams = z.object({
+	page: z.coerce.number().min(1).default(1).optional(),
+	limit: z.coerce.number().min(1).max(100).default(10).optional(),
+	search: z.string().optional(),
+	kind: z.enum(['all', 'suspended']).optional(),
+})
+
+export const getUsers = adminAuth(
+	async (input?: z.infer<typeof getUsersInputParams>) => {
+		const { page = 1, limit = 10, search, kind } = input || {}
+		const offset = (page - 1) * limit
+		const where = search
+			? and(
+					kind !== 'all'
+						? eq(users.suspended, kind === 'suspended')
+						: undefined,
+					ilike(users.name, `%${search}%`),
+				)
+			: kind !== 'all'
+				? eq(users.suspended, kind === 'suspended')
+				: undefined
+
+		const items = await db.query.users.findMany({
+			where,
+			columns: {
+				name: true,
+				id: true,
+				createdAt: true,
+				email: true,
+				phone: true,
+			},
+			with: {
+				userAccounts: {
+					columns: {
+						id: true,
+						username: true,
+						avatar: true,
+					},
+				},
+			},
+			orderBy: (users, { desc }) => [desc(users.name)],
+			limit,
+			offset,
+		})
+
+		const totalResult = await db
+			.select({ value: count() })
+			.from(users)
+			.where(where)
 		const total = totalResult[0]?.value ?? 0
 		const totalPages = Math.ceil(total / limit)
 

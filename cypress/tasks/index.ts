@@ -10,6 +10,7 @@ import {
 	groups,
 	teams,
 	weeks,
+	type AvatarIcon,
 } from '~/server/db/schema'
 
 export type LoginTaskParams = string
@@ -43,15 +44,32 @@ export const login =
 export type CreateUserTaskParams = {
 	name: string
 	email: string
+	phone?: string
+	createdAt?: string
+	suspended?: boolean
 }
 export const createUser =
 	(connectionString: string) => async (params: CreateUserTaskParams) => {
-		const { name, email } = params
+		const { name, email, phone, createdAt, suspended } = params
 		const db = getDb(connectionString)
 
-		await db.insert(users).values({ email, name, admin: false })
+		const [user] = await db
+			.insert(users)
+			.values({
+				email,
+				name,
+				phone,
+				createdAt: createdAt ? new Date(createdAt) : undefined,
+				admin: false,
+				suspended,
+			})
+			.returning()
 
-		return null
+		if (!user) {
+			throw new Error('Failed to create user')
+		}
+
+		return user
 	}
 
 export type DeleteUserTaskParams = string
@@ -67,14 +85,28 @@ export const deleteUser =
 export interface CreateAdminTaskParams {
 	name: string
 	email: string
+	phone?: string
+	createdAt?: string
 }
 export const createAdmin =
 	(connectionString: string) => async (params: CreateAdminTaskParams) => {
-		const { name, email } = params
+		const { name, email, phone, createdAt } = params
 		const db = getDb(connectionString)
 
-		await db.insert(users).values({ email, name, admin: true })
-		return null
+		const [admin] = await db
+			.insert(users)
+			.values({
+				email,
+				name,
+				phone,
+				createdAt: createdAt ? new Date(createdAt) : undefined,
+				admin: true,
+			})
+			.returning()
+		if (!admin) {
+			throw new Error('Failed to create admin user')
+		}
+		return admin
 	}
 
 export interface GetUserAccountIdTaskParams {
@@ -296,6 +328,43 @@ export const deleteWeek =
 			.where(
 				and(eq(weeks.tournamentId, tournamentId), eq(weeks.number, number)),
 			)
+
+		return null
+	}
+
+export interface CreateUserAccountParams {
+	userId: number
+	username: string
+	avatar: AvatarIcon
+}
+
+export const createUserAccount =
+	(connectionString: string) => async (params: CreateUserAccountParams) => {
+		const { userId, username, avatar } = params
+		const db = getDb(connectionString)
+
+		const [userAccount] = await db
+			.insert(userAccounts)
+			.values({ userId, username, avatar })
+			.returning()
+
+		if (!userAccount) {
+			throw new Error(`User account not found for userId: ${userId}`)
+		}
+
+		return userAccount
+	}
+
+export interface DeleteUserAccountParams {
+	username: string
+}
+
+export const deleteUserAccount =
+	(connectionString: string) => async (params: DeleteUserAccountParams) => {
+		const { username } = params
+		const db = getDb(connectionString)
+
+		await db.delete(userAccounts).where(eq(userAccounts.username, username))
 
 		return null
 	}

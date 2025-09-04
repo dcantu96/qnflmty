@@ -53,13 +53,14 @@ export const avatarEnum = pgEnum('avatar_icon', [
 
 export const users = pgTable('user', {
 	id: serial('id').primaryKey(),
-	name: text('name'),
-	email: text('email').unique(),
+	name: text('name').notNull(),
+	email: text('email').unique().notNull(),
 	admin: boolean('admin').default(false).notNull(),
 	emailVerified: timestamp('emailVerified', { mode: 'date' }),
 	image: text('image'),
 	encryptedPassword: text('encryptedPassword'),
 	phone: text('phone'),
+	suspended: boolean('suspended').default(false).notNull(),
 	createdAt: timestamp('createdAt', { withTimezone: true })
 		.defaultNow()
 		.notNull(),
@@ -412,5 +413,16 @@ export const teamsRelations = relations(teams, ({ one }) => ({
 	sport: one(sports, {
 		fields: [teams.sportId],
 		references: [sports.id],
+	}),
+}))
+
+export const usersRelations = relations(users, ({ many }) => ({
+	userAccounts: many(userAccounts),
+}))
+
+export const userAccountsRelations = relations(userAccounts, ({ one }) => ({
+	user: one(users, {
+		fields: [userAccounts.userId],
+		references: [users.id],
 	}),
 }))

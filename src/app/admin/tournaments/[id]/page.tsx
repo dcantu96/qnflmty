@@ -1,4 +1,9 @@
-import { DataTable } from '~/components/ui/data-table/data-table'
+import {
+	DataTable,
+	DataTableHeader,
+	DataTableContent,
+	DataTablePagination,
+} from '~/components/ui/data-table'
 import { columns } from './columns'
 import { getWeeksByTournamentId } from '~/server/admin/queries'
 
@@ -12,7 +17,11 @@ export default async function Page({ params }: PageProps) {
 
 	return (
 		<div className="container mx-auto">
-			<DataTable columns={columns} data={items} schema="weeks" label="Weeks" />
+			<DataTable columns={columns} data={items} schema="weeks" label="Weeks">
+				<DataTableHeader />
+				<DataTableContent />
+				<DataTablePagination />
+			</DataTable>
 		</div>
 	)
 }
