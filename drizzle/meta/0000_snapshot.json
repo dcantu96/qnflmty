@@ -1,5 +1,5 @@
 {
-  "id": "27ec55f7-4175-4357-82b6-304b406ef3d3",
+  "id": "58a1f181-0546-48c5-beeb-25fefc770cf6",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -254,8 +254,8 @@
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
-        "group_week_group_id_week_id_unique": {
-          "name": "group_week_group_id_week_id_unique",
+        "group_week_id_unique": {
+          "name": "group_week_id_unique",
           "nullsNotDistinct": false,
           "columns": [
             "group_id",
@@ -302,6 +302,12 @@
           "type": "integer",
           "primaryKey": false,
           "notNull": true
+        },
+        "payment_due_date": {
+          "name": "payment_due_date",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
         },
         "created_at": {
           "name": "created_at",
@@ -575,8 +581,8 @@
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
-        "membership_week_membership_id_week_id_unique": {
-          "name": "membership_week_membership_id_week_id_unique",
+        "membership_week_id_unique": {
+          "name": "membership_week_id_unique",
           "nullsNotDistinct": false,
           "columns": [
             "membership_id",
@@ -1128,13 +1134,28 @@
         }
       },
       "indexes": {},
-      "foreignKeys": {},
+      "foreignKeys": {
+        "tournament_sport_id_sport_id_fk": {
+          "name": "tournament_sport_id_sport_id_fk",
+          "tableFrom": "tournament",
+          "tableTo": "sport",
+          "columnsFrom": [
+            "sport_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
-        "tournament_name_year_unique": {
-          "name": "tournament_name_year_unique",
+        "tournament_sport_id_name_year_unique": {
+          "name": "tournament_sport_id_name_year_unique",
           "nullsNotDistinct": false,
           "columns": [
+            "sport_id",
             "name",
             "year"
           ]
@@ -1233,13 +1254,13 @@
           "name": "name",
           "type": "text",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "email": {
           "name": "email",
           "type": "text",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "admin": {
           "name": "admin",
@@ -1271,6 +1292,13 @@
           "type": "text",
           "primaryKey": false,
           "notNull": false
+        },
+        "suspended": {
+          "name": "suspended",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
         },
         "createdAt": {
           "name": "createdAt",
