@@ -2,6 +2,9 @@
 
 import type { ColumnDef } from '@tanstack/react-table'
 import DataTableProvider, { type BaseData } from './data-table-provider'
+import DataTableHeader from './data-table-header'
+import DataTableContent from './data-table-content'
+import DataTablePagination from './data-table-pagination'
 
 interface DataTableProps<TData extends BaseData, TValue> {
 	columns: ColumnDef<TData, TValue>[]
@@ -12,7 +15,7 @@ interface DataTableProps<TData extends BaseData, TValue> {
 	children?: React.ReactNode
 }
 
-export function DataTable<TData extends BaseData, TValue>({
+function DataTable<TData extends BaseData, TValue>({
 	columns,
 	data,
 	createLink,
@@ -32,3 +35,9 @@ export function DataTable<TData extends BaseData, TValue>({
 		</DataTableProvider>
 	)
 }
+
+DataTable.Header = DataTableHeader
+DataTable.Content = DataTableContent
+DataTable.Pagination = DataTablePagination
+
+export default DataTable
