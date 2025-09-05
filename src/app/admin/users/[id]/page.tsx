@@ -19,8 +19,11 @@ export interface TimelineEvent {
 
 type User = NonNullable<Awaited<ReturnType<typeof getUserDetailsById>>>
 
-export default async function UserPage({ params }: { params: { id: string } }) {
-	const user = await getUserDetailsById(Number(params.id))
+export default async function UserPage({
+	params,
+}: { params: Promise<{ id: string }> }) {
+	const { id } = await params
+	const user = await getUserDetailsById(Number(id))
 
 	if (!user) return <div>User not found</div>
 
