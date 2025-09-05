@@ -28,9 +28,16 @@ Features:
 - [x] Admin - List weeks
 - [x] Add paymentDueDate to group schema to limit usage of app if any of the members have not paid by then
 - [x] Admin - List/Suspend/Activate users
-- [ ] Admin - View user details
+- [x] Admin - Users/:id overview
+- [x] Admin - Users/:id suspend/activate & make/remove admin
+- [-] Admin - Users/:id/edit - email, name, phone
+- [ ] Admin - Users/:id list userAccounts - username, createdAt
+- [ ] Admin - List groups + bulk actions (joinable, finished)
+- [ ] Admin - Groups/:id overview (memberships)
+- [ ] Admin - Users/:id/memberships list memberships - suspended, paid, group, createdAt
+
+TBD
 - [ ] Admin - List/Edit/Suspend/Paid memberships
-- [ ] Admin - List/Edit/Delete groups
 - [ ] Admin - List/Accept/Deny requests
 - [ ] Users - List/Edit Picks
 - [ ] Users - List Leaderboard
