@@ -142,6 +142,14 @@ export const getSportById = adminAuth(async (id: number) => {
 	return sport
 })
 
+export const getUserById = adminAuth(async (id: number) => {
+	const user = await db.query.users.findFirst({
+		where: (users, { eq }) => eq(users.id, id),
+	})
+
+	return user
+})
+
 const getTeamsBySportIdParams = z.object({
 	sportId: z.coerce.number().positive(),
 	page: z.coerce.number().min(1).default(1).optional(),

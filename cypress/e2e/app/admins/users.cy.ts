@@ -508,4 +508,75 @@ describe('An Admin', () => {
 			cy.get('main').contains('Admin').should('not.exist')
 		})
 	})
+
+	describe('Editing Users', () => {
+		let userId: number | undefined = undefined
+		before(() => {
+			cy.task('createUser', {
+				name: 'Gabriel Garcia',
+				email: 'gabriel.garcia@gmail.com',
+				phone: '555-123-4567',
+				createdAt: '2023-04-20T12:34:56Z',
+			}).then(({ id }) => {
+				userId = id
+				cy.task('createUserAccount', {
+					userId: id,
+					username: 'gabriel.garcia',
+					avatar: 'heart',
+				})
+			})
+		})
+
+		after(() => {
+			cy.task('deleteUser', 'gabriel.newemail@gmail.com')
+			userId = undefined
+		})
+
+		it('should navigate to the edit user page', () => {
+			cy.visit('/admin/users')
+			cy.get('input[placeholder="Filter Users..."]').type('Gabriel Garcia')
+			cy.contains('Gabriel Garcia').should('be.visible')
+			cy.get('tr').last().find('button[title="More Actions"]').click()
+			cy.contains('Edit User').click()
+			cy.url().should('include', `/admin/users/${userId}/edit`)
+			cy.contains('Edit User').should('be.visible')
+			cy.get('input[name="email"]').should(
+				'have.value',
+				'gabriel.garcia@gmail.com',
+			)
+			cy.get('input[name="name"]').should('have.value', 'Gabriel Garcia')
+			cy.get('input[name="phone"]').should('have.value', '555-123-4567')
+			cy.visit(`/admin/users/${userId}`)
+			cy.contains('Gabriel Garcia').should('be.visible')
+			cy.contains('Edit User').click()
+			cy.url().should('include', `/admin/users/${userId}/edit`)
+			cy.get('input[name="email"]').should(
+				'have.value',
+				'gabriel.garcia@gmail.com',
+			)
+		})
+		it('should be able to edit a user basic information', () => {
+			cy.visit(`/admin/users/${userId}/edit`)
+			cy.get('input[name="email"]').clear().type('gabriel.newemail@gmail.com')
+			cy.get('input[name="name"]').clear().type('Gabriel Newname Real Long')
+			cy.get('input[name="phone"]').clear().type('555-987-6543')
+			cy.get('button[type="submit"]').click()
+			cy.url().should('include', `/admin/users/${userId}`)
+			cy.contains('Gabriel Newname').should('be.visible')
+			cy.contains('gabriel.newemail@gmail.com').should('be.visible')
+			cy.contains('555-987-6543').should('be.visible')
+		})
+		it('should show validation errors when editing a user with invalid data', () => {
+			cy.visit(`/admin/users/${userId}/edit`)
+			cy.get('input[name="email"]').clear().type('not-an-email')
+			cy.get('button[type="submit"]').click()
+			cy.url().should('include', `/admin/users/${userId}/edit`)
+			cy.visit(`/admin/users/${userId}/edit`)
+			cy.get('input[name="phone"]').clear().type('123-123-123-123-123-123')
+			cy.get('button[type="submit"]').click()
+			cy.contains('Phone number must be at most 15 characters long').should(
+				'be.visible',
+			)
+		})
+	})
 })

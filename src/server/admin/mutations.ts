@@ -180,6 +180,44 @@ export const updateSport = adminAuth(
 	},
 )
 
+const updateUserSchema = z.object({
+	id: z.coerce.number().int().positive(),
+	name: z.string().min(1).max(100).optional(),
+	email: z.string().email().optional(),
+	phone: z
+		.string()
+		.min(10, 'Phone number must be at least 10 characters long')
+		.max(15, 'Phone number must be at most 15 characters long')
+		.optional()
+		.nullable(),
+})
+
+export const updateUser = adminAuth(
+	async (_initialState: unknown, formData: FormData) => {
+		try {
+			const data = updateUserSchema.parse({
+				id: Number(formData.get('id')),
+				name: formData.get('name'),
+				email: formData.get('email'),
+				phone: formData.get('phone'),
+			})
+
+			await db
+				.update(users)
+				.set({
+					name: data.name,
+					email: data.email,
+					phone: data.phone,
+				})
+				.where(eq(users.id, data.id))
+		} catch (error) {
+			return fromErrorToFormState(error)
+		}
+
+		redirect(`/admin/users/${formData.get('id')}`)
+	},
+)
+
 export const deleteTournament = adminAuth(async ({ id }: { id: number }) => {
 	try {
 		await db.delete(tournaments).where(eq(tournaments.id, id))
