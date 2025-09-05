@@ -2,8 +2,8 @@ import { redirect } from 'next/navigation'
 import { DashboardHeader } from '~/components/dashboard-header'
 import { AdminSidebar } from '~/components/sidebar/admin-sidebar'
 import { auth } from '~/lib/auth'
-import { getSelectedProfile } from '~/lib/profile-actions'
 import { db } from '~/server/db'
+import { getSelectedProfile } from '~/server/user/queries'
 
 export default async function DashboardLayout({
 	children,

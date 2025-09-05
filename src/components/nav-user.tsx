@@ -27,9 +27,9 @@ import {
 	SidebarMenuItem,
 	useSidebar,
 } from '~/components/ui/sidebar'
-import { clearSelectedProfile } from '~/lib/profile-actions'
 import type { UserData } from './sidebar/app-sidebar'
 import { usePathname, useRouter } from 'next/navigation'
+import { clearSelectedProfile } from '~/server/user/mutations'
 
 export function NavUser({
 	user,
