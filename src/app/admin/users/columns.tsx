@@ -1,6 +1,7 @@
 'use client'
 
 import type { ColumnDef } from '@tanstack/react-table'
+import Link from 'next/link'
 import { Checkbox } from '~/components/ui/checkbox'
 import { DataTableColumnHeader } from '~/components/ui/data-table/data-table-column-header'
 import { avatarIconsMap } from '~/lib/avatar-icons'
@@ -46,6 +47,14 @@ export const columns: ColumnDef<Users>[] = [
 		accessorKey: 'name',
 		header: ({ column }) => (
 			<DataTableColumnHeader column={column} title="Name" />
+		),
+		cell: ({ row }) => (
+			<Link
+				href={`/admin/users/${row.original.id}`}
+				className="font-medium hover:underline"
+			>
+				{row.original.name}
+			</Link>
 		),
 	},
 	{
