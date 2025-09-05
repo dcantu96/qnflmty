@@ -251,3 +251,43 @@ export const activateUsers = adminAuth(async ({ ids }: { ids: number[] }) => {
 
 	revalidatePath('/admin/users')
 })
+
+export const suspendUser = adminAuth(async ({ id }: { id: number }) => {
+	try {
+		await db.update(users).set({ suspended: true }).where(eq(users.id, id))
+	} catch (error) {
+		return fromErrorToFormState(error)
+	}
+
+	revalidatePath(`/admin/users/${id}`)
+})
+
+export const activateUser = adminAuth(async ({ id }: { id: number }) => {
+	try {
+		await db.update(users).set({ suspended: false }).where(eq(users.id, id))
+	} catch (error) {
+		return fromErrorToFormState(error)
+	}
+
+	revalidatePath(`/admin/users/${id}`)
+})
+
+export const makeAdmin = adminAuth(async ({ id }: { id: number }) => {
+	try {
+		await db.update(users).set({ admin: true }).where(eq(users.id, id))
+	} catch (error) {
+		return fromErrorToFormState(error)
+	}
+
+	revalidatePath(`/admin/users/${id}`)
+})
+
+export const removeAdmin = adminAuth(async ({ id }: { id: number }) => {
+	try {
+		await db.update(users).set({ admin: false }).where(eq(users.id, id))
+	} catch (error) {
+		return fromErrorToFormState(error)
+	}
+
+	revalidatePath(`/admin/users/${id}`)
+})
