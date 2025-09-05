@@ -1,9 +1,17 @@
 'use client'
 
 import type { ColumnDef } from '@tanstack/react-table'
+import { Edit2, MoreHorizontal } from 'lucide-react'
 import Link from 'next/link'
+import { Button } from '~/components/ui/button'
 import { Checkbox } from '~/components/ui/checkbox'
 import { DataTableColumnHeader } from '~/components/ui/data-table/data-table-column-header'
+import {
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuItem,
+	DropdownMenuTrigger,
+} from '~/components/ui/dropdown-menu'
 import { avatarIconsMap } from '~/lib/avatar-icons'
 import type { AvatarIcon } from '~/server/db/schema'
 
@@ -112,5 +120,31 @@ export const columns: ColumnDef<Users>[] = [
 				day: 'numeric',
 				year: 'numeric',
 			}),
+	},
+	{
+		id: 'actions',
+		cell: ({ row }) => (
+			<DropdownMenu>
+				<DropdownMenuTrigger asChild>
+					<Button
+						size="sm"
+						variant="ghost"
+						className="py-1"
+						title="More Actions"
+					>
+						<MoreHorizontal />
+						<span className="sr-only">More Actions</span>
+					</Button>
+				</DropdownMenuTrigger>
+				<DropdownMenuContent className="rounded-lg" align="end">
+					<DropdownMenuItem asChild>
+						<Link href={`/admin/users/${row.original.id}/edit`}>
+							<Edit2 className="text-muted-foreground" />
+							<span>Edit User</span>
+						</Link>
+					</DropdownMenuItem>
+				</DropdownMenuContent>
+			</DropdownMenu>
+		),
 	},
 ]

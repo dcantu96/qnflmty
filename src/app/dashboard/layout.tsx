@@ -1,11 +1,11 @@
 import { redirect } from 'next/navigation'
 import { DashboardSidebar } from '~/components/sidebar/dashboard-sidebar'
 import { auth } from '~/lib/auth'
-import {
-	getSelectedProfile,
-	enforceGroupMembership,
-} from '~/lib/profile-actions'
 import { db } from '~/server/db'
+import {
+	enforceGroupMembership,
+	getSelectedProfile,
+} from '~/server/user/queries'
 
 export default async function DashboardLayout({
 	children,

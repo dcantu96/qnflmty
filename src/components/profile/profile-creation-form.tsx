@@ -7,8 +7,8 @@ import { Input } from '~/components/ui/input'
 import { Label } from '~/components/ui/label'
 import { cn } from '~/lib/utils'
 import { useFormStatus } from 'react-dom'
-import { createProfileAction } from '~/lib/profile-actions'
 import { avatarIconsMap } from '~/lib/avatar-icons'
+import { createProfileAction } from '~/server/user/mutations'
 
 function SubmitButton() {
 	const { pending } = useFormStatus()
