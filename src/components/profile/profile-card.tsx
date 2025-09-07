@@ -2,11 +2,11 @@
 
 import { Card, CardContent } from '~/components/ui/card'
 import { Button } from '~/components/ui/button'
-import { Edit3, User } from 'lucide-react'
+import { Edit3 } from 'lucide-react'
 import { useFormStatus } from 'react-dom'
-import { selectProfileAction } from '~/lib/profile-actions'
 import { avatarIconsMap } from '~/lib/avatar-icons'
 import type { AvatarIcon } from '~/server/db/schema'
+import { selectProfileAction } from '~/server/user/mutations'
 
 interface ProfileCardProps {
 	account: {

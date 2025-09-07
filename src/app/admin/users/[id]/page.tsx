@@ -3,7 +3,14 @@ import { Button } from '~/components/ui/button'
 import { Separator } from '~/components/ui/separator'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs'
 import { Avatar, AvatarFallback } from '~/components/ui/avatar'
-import { Mail, Phone, CreditCard, AlertTriangle, Clock } from 'lucide-react'
+import {
+	Mail,
+	Phone,
+	CreditCard,
+	AlertTriangle,
+	Clock,
+	Edit2,
+} from 'lucide-react'
 import Link from 'next/link'
 import { getUserDetailsById } from '~/server/admin/queries'
 import { SettingsDropdown } from './settings-dropdown'
@@ -18,6 +25,19 @@ export interface TimelineEvent {
 }
 
 type User = NonNullable<Awaited<ReturnType<typeof getUserDetailsById>>>
+
+/**
+ * Generates user initials from the first two words of a full name
+ * @param fullName - The user's full name
+ * @returns The first letter of the first two words, uppercased
+ */
+function getUserInitials(fullName: string): string {
+	return fullName
+		.split(' ')
+		.slice(0, 2)
+		.map((word) => word[0]?.toUpperCase() || '')
+		.join('')
+}
 
 export default async function UserPage({
 	params,
@@ -103,22 +123,30 @@ const TabOverview = ({ user }: { user: User }) => {
 								<Badge className="bg-black text-white text-xs">Admin</Badge>
 							)}
 						</div>
+						{/* Edit Icon - positioned absolute top-4 right-4 */}
+						<div className="absolute top-2 right-2">
+							<Button variant="ghost" size="sm" asChild title="Edit User">
+								<Link href={`/admin/users/${user.id}/edit`}>
+									<Edit2 className="h-4 w-4" />
+									<span className="sr-only">Edit User</span>
+								</Link>
+							</Button>
+						</div>
 
 						<div className="mt-8 flex flex-col items-center space-y-4">
 							{/* Avatar and Basic Info */}
 							<div className="relative">
 								<Avatar className="h-12 w-12">
 									<AvatarFallback className="font-semibold text-xl">
-										{user.name
-											.split(' ')
-											.map((n) => n[0])
-											.join('')}
+										{getUserInitials(user.name)}
 									</AvatarFallback>
 								</Avatar>
 							</div>
 
 							<div className="text-center">
-								<h2 className="font-semibold text-xl">{user.name}</h2>
+								<h2 className="max-w-48 truncate font-semibold text-xl">
+									{user.name}
+								</h2>
 								<p className="text-muted-foreground text-sm">
 									joined {new Date(user.createdAt).toLocaleDateString('en-GB')}
 								</p>
@@ -145,12 +173,22 @@ const TabOverview = ({ user }: { user: User }) => {
 							{/* Contact Info */}
 							<div className="w-full space-y-3">
 								<div className="flex items-center space-x-3">
-									<Mail className="h-4 w-4 text-muted-foreground" />
-									<span className="text-sm">{user.email}</span>
+									<Mail className="h-4 w-4 flex-shrink-0 text-muted-foreground" />
+									<span
+										className="max-w-44 truncate text-sm"
+										title={user.email}
+									>
+										{user.email}
+									</span>
 								</div>
 								<div className="flex items-center space-x-3">
-									<Phone className="h-4 w-4 text-muted-foreground" />
-									<span className="text-sm">{user.phone}</span>
+									<Phone className="h-4 w-4 flex-shrink-0 text-muted-foreground" />
+									<span
+										className="max-w-44 truncate text-sm"
+										title={user.phone || undefined}
+									>
+										{user.phone}
+									</span>
 								</div>
 							</div>
 						</div>
@@ -186,10 +224,7 @@ const TabOverview = ({ user }: { user: User }) => {
 									<div className="flex items-center space-x-3">
 										<Avatar className="h-8 w-8">
 											<AvatarFallback className="text-xs">
-												{referral.name
-													.split(' ')
-													.map((n) => n[0])
-													.join('')}
+												{getUserInitials(referral.name)}
 											</AvatarFallback>
 										</Avatar>
 										<div>
