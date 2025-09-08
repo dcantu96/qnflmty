@@ -219,17 +219,25 @@ export const deleteSport =
 export interface CreateGroupParams {
 	name: string
 	joinable: boolean
+	finished?: boolean
 	tournamentId: number
+	paymentDueDate?: string
 }
 
 export const createGroup =
 	(connectionString: string) => async (params: CreateGroupParams) => {
-		const { name, joinable, tournamentId } = params
+		const { name, joinable, tournamentId, paymentDueDate, finished } = params
 		const db = getDb(connectionString)
 
 		const [group] = await db
 			.insert(groups)
-			.values({ name, joinable, tournamentId })
+			.values({
+				name,
+				joinable,
+				tournamentId,
+				paymentDueDate: paymentDueDate ? new Date(paymentDueDate) : null,
+				finished,
+			})
 			.returning()
 
 		if (!group) {
