@@ -12,17 +12,25 @@ import { Button } from '../button'
 import Link from 'next/link'
 import { useDataTable } from './use-data-table'
 
+interface DataTableHeaderProps {
+	children?: React.ReactNode
+	disableCreateButton?: boolean
+	className?: string
+}
+
 export function DataTableHeader<TData>({
 	children,
-}: {
-	children?: React.ReactNode
-}) {
+	disableCreateButton,
+	className,
+}: DataTableHeaderProps) {
 	const { table, label, schema, createButtonHref } = useDataTable<TData>()
 
 	const filterPlaceholder = `Filter ${label ?? schema}...`
 
 	return (
-		<div className="flex items-center justify-between gap-2 py-4">
+		<div
+			className={`flex items-center justify-between gap-2 pb-4 ${className}`}
+		>
 			<div className="flex items-center gap-2">
 				<Input
 					placeholder={filterPlaceholder}
@@ -59,7 +67,7 @@ export function DataTableHeader<TData>({
 							})}
 					</DropdownMenuContent>
 				</DropdownMenu>
-				{createButtonHref && (
+				{!disableCreateButton && createButtonHref && (
 					<Button size="sm" asChild>
 						<Link href={createButtonHref}>Add {label ?? schema}</Link>
 					</Button>

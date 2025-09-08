@@ -416,7 +416,7 @@ describe('An Admin', () => {
 		})
 	})
 
-	describe('Viewing User Details', () => {
+	describe('Viewing User Overview', () => {
 		let userId: number | undefined = undefined
 		before(() => {
 			cy.task('createUser', {
@@ -506,6 +506,51 @@ describe('An Admin', () => {
 			cy.get('button[title="Confirm Remove Admin"]').click()
 			cy.contains('Gabriel Garcia').should('be.visible')
 			cy.get('main').contains('Admin').should('not.exist')
+		})
+	})
+
+	describe('Viewing User Accounts', () => {
+		let userId: number | undefined = undefined
+		before(() => {
+			cy.task('createUser', {
+				name: 'Sarah Johnson',
+				email: 'sarah.johnson@gmail.com',
+				phone: '555-987-6543',
+				createdAt: '2023-06-15T10:20:30Z',
+			}).then(({ id }) => {
+				userId = id
+				cy.task('createUserAccount', {
+					userId: id,
+					username: 'sarah.johnson',
+					avatar: 'heart',
+				})
+				cy.task('createUserAccount', {
+					userId: id,
+					username: 'dark.sarah',
+					avatar: 'star',
+				})
+				cy.task('createUserAccount', {
+					userId: id,
+					username: 'julio-jones',
+					avatar: 'lightning',
+				})
+			})
+		})
+
+		after(() => {
+			cy.task('deleteUser', 'sarah.johnson@gmail.com')
+			userId = undefined
+		})
+
+		it('should be able to view a user accounts', () => {
+			cy.visit(`/admin/users/${userId}`)
+			cy.get('div[title="User Accounts Count"]')
+				.contains('3')
+				.should('be.visible')
+			cy.get('button').contains('Accounts').should('be.visible').click()
+			cy.contains('sarah.johnson').should('be.visible')
+			cy.contains('dark.sarah').should('be.visible')
+			cy.contains('julio-jones').should('be.visible')
 		})
 	})
 

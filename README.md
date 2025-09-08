@@ -31,10 +31,22 @@ Features:
 - [x] Admin - Users/:id overview
 - [x] Admin - Users/:id suspend/activate & make/remove admin
 - [x] Admin - Users/:id/edit - email, name, phone
-- [-] Admin - Users/:id list userAccounts - username, createdAt
-- [ ] Admin - List groups + bulk actions (joinable, finished)
-- [ ] Admin - Groups/:id overview (memberships)
-- [ ] Admin - Users/:id/memberships list memberships - suspended, paid, group, createdAt
+- [x] Admin - Users/:id list userAccounts - username, avatar, createdAt
+- [ ] Admin - Groups - name, tournament, joinable, finished, members count, createdAt, paymentDueDate
+- [ ] Admin - Groups - bulk actions (joinable, finished)
+- [ ] Admin - Groups/new - name, tournament, joinable, finished, paymentDueDate
+- [ ] Admin - Groups/:id/edit - name, joinable, finished, paymentDueDate (tournament cannot be changed)
+- [ ] Admin - Groups/:id overview (memberships list) - username, avatar, name, email, paid, suspended, createdAt
+- [ ] Admin - Groups/:id overview (memberships list) - bulk actions - suspend/activate, mark paid/unpaid
+- [ ] Admin - Users/:id/ list userAccounts - memberships
+- [ ] Admin - Users/:id/ list memberships - suspended, paid, group, createdAt
+- [ ] Admin - Users/:id/ list memberships - bulk actions - suspend/activate, mark paid/unpaid
+- [ ] Admin - Groups/:id requests
+- [ ] Admin - Groups/:id requests - bulk actions (accept/deny)
+- [ ] Admin - Users/:id/requests list requests - group, status, createdAt
+- [ ] Admin - Users/:id/requests - bulk actions - accept/deny
+- [ ] Admin - Users/:id list userAccounts - edit (username, avatar)
+- [ ] Admin - Users/:id list userAccounts - transfer ownership
 
 TBD
 - [ ] Admin - List/Edit/Suspend/Paid memberships
