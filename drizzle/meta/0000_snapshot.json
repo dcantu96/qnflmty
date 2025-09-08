@@ -1,5 +1,5 @@
 {
-  "id": "58a1f181-0546-48c5-beeb-25fefc770cf6",
+  "id": "60be80ef-1415-4515-a94a-135faa8e83df",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -287,14 +287,14 @@
           "name": "finished",
           "type": "boolean",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "default": false
         },
         "joinable": {
           "name": "joinable",
           "type": "boolean",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "default": false
         },
         "tournament_id": {
@@ -385,14 +385,14 @@
           "name": "untie",
           "type": "boolean",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "default": false
         },
         "premium": {
           "name": "premium",
           "type": "boolean",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "default": false
         },
         "visit_team_score": {
@@ -411,7 +411,7 @@
           "name": "tie",
           "type": "boolean",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "default": false
         },
         "order": {
@@ -546,7 +546,7 @@
           "name": "forgot_picks",
           "type": "boolean",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "default": false
         }
       },
@@ -634,14 +634,14 @@
           "name": "paid",
           "type": "boolean",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "default": false
         },
         "suspended": {
           "name": "suspended",
           "type": "boolean",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "default": false
         },
         "notes": {
@@ -668,7 +668,7 @@
           "name": "forgot_picks",
           "type": "boolean",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "default": false
         }
       },
@@ -776,7 +776,7 @@
           "name": "modified_by_admin",
           "type": "boolean",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "default": false
         }
       },

@@ -38,8 +38,8 @@ CREATE TABLE "group_week" (
 CREATE TABLE "group" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"name" text NOT NULL,
-	"finished" boolean DEFAULT false,
-	"joinable" boolean DEFAULT false,
+	"finished" boolean DEFAULT false NOT NULL,
+	"joinable" boolean DEFAULT false NOT NULL,
 	"tournament_id" integer NOT NULL,
 	"payment_due_date" timestamp with time zone,
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
@@ -54,11 +54,11 @@ CREATE TABLE "match" (
 	"visit_team_id" integer NOT NULL,
 	"winning_team_id" integer,
 	"start_time" timestamp with time zone,
-	"untie" boolean DEFAULT false,
-	"premium" boolean DEFAULT false,
+	"untie" boolean DEFAULT false NOT NULL,
+	"premium" boolean DEFAULT false NOT NULL,
 	"visit_team_score" integer,
 	"home_team_score" integer,
-	"tie" boolean DEFAULT false,
+	"tie" boolean DEFAULT false NOT NULL,
 	"order" integer,
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
 	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,
@@ -75,7 +75,7 @@ CREATE TABLE "membership_week" (
 	"week_winner" boolean DEFAULT false NOT NULL,
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
 	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,
-	"forgot_picks" boolean DEFAULT false,
+	"forgot_picks" boolean DEFAULT false NOT NULL,
 	CONSTRAINT "membership_week_id_unique" UNIQUE("membership_id","week_id")
 );
 --> statement-breakpoint
@@ -85,12 +85,12 @@ CREATE TABLE "membership" (
 	"group_id" integer NOT NULL,
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
 	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,
-	"paid" boolean DEFAULT false,
-	"suspended" boolean DEFAULT false,
+	"paid" boolean DEFAULT false NOT NULL,
+	"suspended" boolean DEFAULT false NOT NULL,
 	"notes" text,
 	"position" integer DEFAULT 0,
 	"total" integer DEFAULT 0,
-	"forgot_picks" boolean DEFAULT false,
+	"forgot_picks" boolean DEFAULT false NOT NULL,
 	CONSTRAINT "membership_user_account_id_group_id_unique" UNIQUE("user_account_id","group_id")
 );
 --> statement-breakpoint
@@ -103,7 +103,7 @@ CREATE TABLE "pick" (
 	"points" integer DEFAULT 0 NOT NULL,
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
 	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,
-	"modified_by_admin" boolean DEFAULT false,
+	"modified_by_admin" boolean DEFAULT false NOT NULL,
 	CONSTRAINT "pick_match_id_membership_week_id_unique" UNIQUE("match_id","membership_week_id")
 );
 --> statement-breakpoint

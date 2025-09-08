@@ -219,8 +219,8 @@ export const groups = pgTable(
 	{
 		id: serial('id').primaryKey(),
 		name: text('name').notNull(),
-		finished: boolean('finished').default(false),
-		joinable: boolean('joinable').default(false),
+		finished: boolean('finished').default(false).notNull(),
+		joinable: boolean('joinable').default(false).notNull(),
 		tournamentId: integer('tournament_id').notNull(),
 		paymentDueDate: timestamp('payment_due_date', { withTimezone: true }),
 		createdAt: timestamp('created_at', { withTimezone: true })
@@ -275,12 +275,12 @@ export const memberships = pgTable(
 		updatedAt: timestamp('updated_at', { withTimezone: true })
 			.notNull()
 			.defaultNow(),
-		paid: boolean('paid').default(false),
-		suspended: boolean('suspended').default(false),
+		paid: boolean('paid').default(false).notNull(),
+		suspended: boolean('suspended').default(false).notNull(),
 		notes: text('notes'),
 		position: integer('position').default(0),
 		total: integer('total').default(0),
-		forgotPicks: boolean('forgot_picks').default(false),
+		forgotPicks: boolean('forgot_picks').default(false).notNull(),
 	},
 	(m) => [
 		unique('membership_user_account_id_group_id_unique').on(
@@ -323,7 +323,7 @@ export const membershipWeeks = pgTable(
 		updatedAt: timestamp('updated_at', { withTimezone: true })
 			.notNull()
 			.defaultNow(),
-		forgotPicks: boolean('forgot_picks').default(false),
+		forgotPicks: boolean('forgot_picks').default(false).notNull(),
 	},
 	(mw) => [unique('membership_week_id_unique').on(mw.membershipId, mw.weekId)],
 )
@@ -345,11 +345,11 @@ export const matches = pgTable(
 			}),
 		winningTeamId: integer('winning_team_id'),
 		startTime: timestamp('start_time', { withTimezone: true }),
-		untie: boolean('untie').default(false),
-		premium: boolean('premium').default(false),
+		untie: boolean('untie').default(false).notNull(),
+		premium: boolean('premium').default(false).notNull(),
 		visitTeamScore: integer('visit_team_score'),
 		homeTeamScore: integer('home_team_score'),
-		tie: boolean('tie').default(false),
+		tie: boolean('tie').default(false).notNull(),
 		order: integer('order'),
 		createdAt: timestamp('created_at', { withTimezone: true })
 			.notNull()
@@ -389,7 +389,7 @@ export const picks = pgTable(
 		updatedAt: timestamp('updated_at', { withTimezone: true })
 			.notNull()
 			.defaultNow(),
-		modifiedByAdmin: boolean('modified_by_admin').default(false),
+		modifiedByAdmin: boolean('modified_by_admin').default(false).notNull(),
 	},
 	(p) => [
 		unique('pick_match_id_membership_week_id_unique').on(
