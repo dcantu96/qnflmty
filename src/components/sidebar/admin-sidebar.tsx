@@ -1,6 +1,6 @@
 'use client'
 
-import { Table2, Users } from 'lucide-react'
+import { Table2, UserRoundCog, Users } from 'lucide-react'
 import { AppSidebar, type AppSidebarProps } from './app-sidebar'
 import type { NavItem } from '../nav-main'
 
@@ -8,6 +8,11 @@ const navMain: NavItem[] = [
 	{
 		title: 'Users',
 		url: '/admin/users',
+		icon: UserRoundCog,
+	},
+	{
+		title: 'Groups',
+		url: '/admin/groups',
 		icon: Users,
 	},
 	{

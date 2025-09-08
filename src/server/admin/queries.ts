@@ -1,7 +1,7 @@
 import { db } from '../db'
 import { z } from 'zod'
 import { and, count, eq, ilike } from 'drizzle-orm'
-import { sports, teams, tournaments, users, weeks } from '../db/schema'
+import { groups, sports, teams, tournaments, users, weeks } from '../db/schema'
 import { adminAuth } from '~/lib/auth'
 
 const inputParams = z.object({
@@ -273,6 +273,51 @@ export const getUsers = adminAuth(
 		const totalResult = await db
 			.select({ value: count() })
 			.from(users)
+			.where(where)
+		const total = totalResult[0]?.value ?? 0
+		const totalPages = Math.ceil(total / limit)
+
+		return {
+			items,
+			total,
+			page,
+			limit,
+			totalPages,
+		}
+	},
+)
+
+export const getGroups = adminAuth(
+	async (input?: {
+		page?: number
+		limit?: number
+		kind?: 'all' | 'finished'
+	}) => {
+		const page = input?.page ?? 1
+		const limit = input?.limit ?? 10
+		const kind = input?.kind
+		const offset = (page - 1) * limit
+
+		const where =
+			kind === 'finished'
+				? eq(groups.finished, true)
+				: kind === 'all'
+					? undefined
+					: eq(groups.finished, false)
+
+		const items = await db.query.groups.findMany({
+			where,
+			offset,
+			limit,
+			orderBy: (groups, { desc }) => [desc(groups.createdAt)],
+			with: {
+				tournament: true,
+			},
+		})
+
+		const totalResult = await db
+			.select({ value: count() })
+			.from(groups)
 			.where(where)
 		const total = totalResult[0]?.value ?? 0
 		const totalPages = Math.ceil(total / limit)
