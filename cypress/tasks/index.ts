@@ -222,11 +222,19 @@ export interface CreateGroupParams {
 	finished?: boolean
 	tournamentId: number
 	paymentDueDate?: string
+	createdAt?: string
 }
 
 export const createGroup =
 	(connectionString: string) => async (params: CreateGroupParams) => {
-		const { name, joinable, tournamentId, paymentDueDate, finished } = params
+		const {
+			name,
+			joinable,
+			tournamentId,
+			paymentDueDate,
+			finished,
+			createdAt,
+		} = params
 		const db = getDb(connectionString)
 
 		const [group] = await db
@@ -235,8 +243,9 @@ export const createGroup =
 				name,
 				joinable,
 				tournamentId,
-				paymentDueDate: paymentDueDate ? new Date(paymentDueDate) : null,
 				finished,
+				paymentDueDate: paymentDueDate ? new Date(paymentDueDate) : null,
+				createdAt: createdAt ? new Date(createdAt) : undefined,
 			})
 			.returning()
 

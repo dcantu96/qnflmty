@@ -15,6 +15,7 @@ export interface Group {
 	tournament: {
 		id: number
 		name: string
+		year: number
 	}
 }
 
@@ -65,7 +66,7 @@ export const columns: ColumnDef<Group>[] = [
 				href={`/admin/tournaments/${row.original.tournament.id}`}
 				className="font-medium hover:underline"
 			>
-				{row.original.tournament.name}
+				{row.original.tournament.name} {row.original.tournament.year}
 			</Link>
 		),
 	},
@@ -80,6 +81,12 @@ export const columns: ColumnDef<Group>[] = [
 		header: ({ column }) => (
 			<DataTableColumnHeader column={column} title="Payment Due" />
 		),
+		cell: ({ row }) =>
+			row.original.paymentDueDate?.toLocaleDateString('en-US', {
+				month: 'short',
+				day: 'numeric',
+				year: 'numeric',
+			}),
 	},
 	{
 		accessorKey: 'createdAt',
