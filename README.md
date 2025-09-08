@@ -32,11 +32,14 @@ Features:
 - [x] Admin - Users/:id suspend/activate & make/remove admin
 - [x] Admin - Users/:id/edit - email, name, phone
 - [x] Admin - Users/:id list userAccounts - username, avatar, createdAt
-- [ ] Admin - Groups - name, tournament, joinable, finished, members count, createdAt, paymentDueDate
+- [x] Admin - Groups - name, tournament, joinable, finished, createdAt, paymentDueDate
+- [x] Admin - Groups - filter by tournament, active/finished
+- [x] Admin - Groups - link to group.tournament
 - [ ] Admin - Groups - bulk actions (joinable, finished)
 - [ ] Admin - Groups/new - name, tournament, joinable, finished, paymentDueDate
 - [ ] Admin - Groups/:id/edit - name, joinable, finished, paymentDueDate (tournament cannot be changed)
 - [ ] Admin - Groups/:id overview (memberships list) - username, avatar, name, email, paid, suspended, createdAt
+- [ ] Admin - Groups - add members count to list view
 - [ ] Admin - Groups/:id overview (memberships list) - bulk actions - suspend/activate, mark paid/unpaid
 - [ ] Admin - Users/:id/ list userAccounts - memberships
 - [ ] Admin - Users/:id/ list memberships - suspended, paid, group, createdAt

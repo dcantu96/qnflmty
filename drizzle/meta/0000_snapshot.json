@@ -1,5 +1,5 @@
 {
-  "id": "58a1f181-0546-48c5-beeb-25fefc770cf6",
+  "id": "b7c9fe5d-eeaa-4b8c-90fe-3ff2c716f597",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -287,14 +287,14 @@
           "name": "finished",
           "type": "boolean",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "default": false
         },
         "joinable": {
           "name": "joinable",
           "type": "boolean",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "default": false
         },
         "tournament_id": {
@@ -325,7 +325,21 @@
         }
       },
       "indexes": {},
-      "foreignKeys": {},
+      "foreignKeys": {
+        "group_tournament_id_tournament_id_fk": {
+          "name": "group_tournament_id_tournament_id_fk",
+          "tableFrom": "group",
+          "tableTo": "tournament",
+          "columnsFrom": [
+            "tournament_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
         "group_tournament_id_name_unique": {
@@ -385,14 +399,14 @@
           "name": "untie",
           "type": "boolean",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "default": false
         },
         "premium": {
           "name": "premium",
           "type": "boolean",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "default": false
         },
         "visit_team_score": {
@@ -411,7 +425,7 @@
           "name": "tie",
           "type": "boolean",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "default": false
         },
         "order": {
@@ -546,7 +560,7 @@
           "name": "forgot_picks",
           "type": "boolean",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "default": false
         }
       },
@@ -634,14 +648,14 @@
           "name": "paid",
           "type": "boolean",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "default": false
         },
         "suspended": {
           "name": "suspended",
           "type": "boolean",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "default": false
         },
         "notes": {
@@ -668,7 +682,7 @@
           "name": "forgot_picks",
           "type": "boolean",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "default": false
         }
       },
@@ -776,7 +790,7 @@
           "name": "modified_by_admin",
           "type": "boolean",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "default": false
         }
       },

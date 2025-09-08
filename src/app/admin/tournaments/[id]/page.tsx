@@ -5,7 +5,16 @@ import {
 	DataTablePagination,
 } from '~/components/ui/data-table'
 import { columns } from './columns'
-import { getWeeksByTournamentId } from '~/server/admin/queries'
+import {
+	getTournamentById,
+	getWeeksByTournamentId,
+} from '~/server/admin/queries'
+import {
+	Card,
+	CardDescription,
+	CardHeader,
+	CardTitle,
+} from '~/components/ui/card'
 
 interface PageProps {
 	params: Promise<{ id: string }>
@@ -13,10 +22,36 @@ interface PageProps {
 
 export default async function Page({ params }: PageProps) {
 	const { id } = await params
+	const tournament = await getTournamentById(Number(id))
+
+	if (!tournament) {
+		return <div className="container mx-auto">Tournament not found</div>
+	}
+
 	const { items } = await getWeeksByTournamentId({ tournamentId: Number(id) })
 
 	return (
 		<div className="container mx-auto">
+			<div className="md: mb-4 grid grid-cols-1 gap-4 md:grid-cols-3">
+				<Card className="rounded-md py-4 shadow-none">
+					<CardHeader className="px-4">
+						<CardTitle>Tournament</CardTitle>
+						<CardDescription>{tournament.name}</CardDescription>
+					</CardHeader>
+				</Card>
+				<Card className="rounded-md py-4 shadow-none">
+					<CardHeader className="px-4">
+						<CardTitle>Year</CardTitle>
+						<CardDescription>{tournament.year}</CardDescription>
+					</CardHeader>
+				</Card>
+				<Card className="rounded-md py-4 shadow-none">
+					<CardHeader className="px-4">
+						<CardTitle>Sport</CardTitle>
+						<CardDescription>{tournament.sport.name}</CardDescription>
+					</CardHeader>
+				</Card>
+			</div>
 			<DataTable columns={columns} data={items} schema="weeks" label="Weeks">
 				<DataTableHeader />
 				<DataTableContent />

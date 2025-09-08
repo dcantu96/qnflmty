@@ -24,7 +24,7 @@ declare namespace Cypress {
 			event: 'createTournament',
 			params: CreateTournamentTaskParams,
 		): Chainable<{ id: number }>
-		task(event: 'deleteSport', params: DeleteSportTaskParams): Chainable<null>
+		task(event: 'deleteSport', params: { name: string }): Chainable<null>
 		task(
 			event: 'deleteTournament',
 			params: DeleteTournamentTaskParams,
