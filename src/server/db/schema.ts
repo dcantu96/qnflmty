@@ -221,7 +221,9 @@ export const groups = pgTable(
 		name: text('name').notNull(),
 		finished: boolean('finished').default(false).notNull(),
 		joinable: boolean('joinable').default(false).notNull(),
-		tournamentId: integer('tournament_id').notNull(),
+		tournamentId: integer('tournament_id')
+			.notNull()
+			.references(() => tournaments.id, { onDelete: 'cascade' }),
 		paymentDueDate: timestamp('payment_due_date', { withTimezone: true }),
 		createdAt: timestamp('created_at', { withTimezone: true })
 			.notNull()
