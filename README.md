@@ -30,8 +30,8 @@ Features:
 - [x] Admin - List/Suspend/Activate users
 - [x] Admin - Users/:id overview
 - [x] Admin - Users/:id suspend/activate & make/remove admin
-- [-] Admin - Users/:id/edit - email, name, phone
-- [ ] Admin - Users/:id list userAccounts - username, createdAt
+- [x] Admin - Users/:id/edit - email, name, phone
+- [-] Admin - Users/:id list userAccounts - username, createdAt
 - [ ] Admin - List groups + bulk actions (joinable, finished)
 - [ ] Admin - Groups/:id overview (memberships)
 - [ ] Admin - Users/:id/memberships list memberships - suspended, paid, group, createdAt
