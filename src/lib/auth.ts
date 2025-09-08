@@ -10,7 +10,6 @@ import { db } from '~/server/db'
 export const auth = async () => {
 	const session = await getSession()
 	if (!session?.user) {
-		console.error('Session not found', session)
 		redirect('/login')
 	}
 
@@ -19,7 +18,10 @@ export const auth = async () => {
 	})
 
 	if (!user) {
-		console.error('User not found in database:', session.user.id)
+		console.error(
+			'Unexpected: No user found for session user id:',
+			session.user.id,
+		)
 		redirect('/login')
 	}
 
@@ -43,10 +45,8 @@ export const adminAuth =
 	<Args extends unknown[], R>(fn: (...args: Args) => Promise<R>) =>
 	async (...args: Args): Promise<R> => {
 		const { user } = await auth()
-		if (!user?.admin) {
-			console.error('User is not an admin:', user?.id)
-			redirect('/')
-		}
+		if (!user?.admin) redirect('/')
+
 		return await fn(...args)
 	}
 
