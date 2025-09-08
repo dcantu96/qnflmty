@@ -291,11 +291,7 @@ export const getUserDetailsById = adminAuth(async (id: number) => {
 	const user = await db.query.users.findFirst({
 		where: (users, { eq }) => eq(users.id, id),
 		with: {
-			userAccounts: {
-				columns: {
-					id: true,
-				},
-			},
+			userAccounts: true,
 		},
 	})
 

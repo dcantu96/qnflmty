@@ -50,7 +50,7 @@ export default async function Page({
 				</ToggleGroupItem>
 			</ToggleGroup>
 			<DataTable columns={columns} data={items} schema="users" label="Users">
-				<DataTableHeader>
+				<DataTableHeader className="mt-4">
 					{filters.kind === 'suspended' ? <BulkActivate /> : <BulkSuspend />}
 				</DataTableHeader>
 				<DataTableContent />

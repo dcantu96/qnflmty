@@ -14,6 +14,13 @@ import {
 import Link from 'next/link'
 import { getUserDetailsById } from '~/server/admin/queries'
 import { SettingsDropdown } from './settings-dropdown'
+import {
+	DataTable,
+	DataTableContent,
+	DataTableHeader,
+	DataTablePagination,
+} from '~/components/ui/data-table'
+import { columns } from './user-accounts-columns'
 
 export interface TimelineEvent {
 	type: 'payment' | 'suspension'
@@ -52,7 +59,7 @@ export default async function UserPage({
 			<div className="flex items-center justify-between">
 				<TabsList>
 					<TabsTrigger value="overview">Overview</TabsTrigger>
-					<TabsTrigger value="projects">Accounts</TabsTrigger>
+					<TabsTrigger value="accounts">Accounts</TabsTrigger>
 					<TabsTrigger value="activities">Memberships</TabsTrigger>
 				</TabsList>
 				<SettingsDropdown
@@ -63,6 +70,7 @@ export default async function UserPage({
 			</div>
 
 			<TabOverview user={user} />
+			<TabAccounts user={user} />
 		</Tabs>
 	)
 }
@@ -155,7 +163,10 @@ const TabOverview = ({ user }: { user: User }) => {
 							{/* Stats Grid */}
 							<div className="grid w-full grid-cols-2 gap-4 text-center">
 								<div>
-									<div className="font-bold text-xl">
+									<div
+										className="font-bold text-xl"
+										title="User Accounts Count"
+									>
 										{user.userAccounts.length}
 									</div>
 									<div className="text-muted-foreground text-xs">Accounts</div>
@@ -349,6 +360,23 @@ const TabOverview = ({ user }: { user: User }) => {
 					</div>
 				</div>
 			</div>
+		</TabsContent>
+	)
+}
+
+const TabAccounts = ({ user }: { user: User }) => {
+	return (
+		<TabsContent value="accounts">
+			<DataTable
+				columns={columns}
+				data={user.userAccounts}
+				schema="userAccounts"
+				label="User Accounts"
+			>
+				<DataTableHeader disableCreateButton />
+				<DataTableContent />
+				<DataTablePagination />
+			</DataTable>
 		</TabsContent>
 	)
 }
