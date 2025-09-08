@@ -425,7 +425,8 @@ export const sportsRelations = relations(sports, ({ many }) => ({
 	teams: many(teams),
 }))
 
-export const tournamentsRelations = relations(tournaments, ({ one }) => ({
+export const tournamentsRelations = relations(tournaments, ({ one, many }) => ({
+	groups: many(groups),
 	sport: one(sports, {
 		fields: [tournaments.sportId],
 		references: [sports.id],
@@ -447,5 +448,12 @@ export const userAccountsRelations = relations(userAccounts, ({ one }) => ({
 	user: one(users, {
 		fields: [userAccounts.userId],
 		references: [users.id],
+	}),
+}))
+
+export const groupsRelations = relations(groups, ({ one }) => ({
+	tournament: one(tournaments, {
+		fields: [groups.tournamentId],
+		references: [tournaments.id],
 	}),
 }))
