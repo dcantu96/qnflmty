@@ -8,6 +8,9 @@ import {
 } from '~/components/ui/data-table'
 import { ToggleGroup, ToggleGroupItem } from '~/components/ui/toggle-group'
 import Link from 'next/link'
+import { BulkFinish } from './bulk-finish'
+import { BulkActivate } from './bulk-activate'
+import { BulkJoinable } from './bulk-joinable'
 
 type SearchParams = {
 	/**
@@ -52,7 +55,10 @@ export default async function Page({
 				</ToggleGroupItem>
 			</ToggleGroup>
 			<DataTable columns={columns} data={items} schema="groups" label="Groups">
-				<DataTableHeader className="mt-4" />
+				<DataTableHeader className="mt-4">
+					{filters.kind === 'finished' ? <BulkActivate /> : <BulkFinish />}
+					<BulkJoinable />
+				</DataTableHeader>
 				<DataTableContent />
 				<DataTablePagination />
 			</DataTable>
