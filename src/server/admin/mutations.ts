@@ -44,6 +44,42 @@ export const createTournament = adminAuth(
 	},
 )
 
+const createGroupSchema = z.object({
+	name: z.string().min(1).max(30),
+	joinable: z.boolean().default(false),
+	finished: z.boolean().default(false),
+	paymentDueDate: z.coerce.date().optional(),
+	tournamentId: z.coerce.number().int().positive(),
+})
+
+export const createGroup = adminAuth(
+	async (_initialState: unknown, formData: FormData) => {
+		try {
+			const data = createGroupSchema.parse({
+				name: formData.get('name'),
+				joinable: formData.get('joinable') === 'on',
+				finished: formData.get('finished') === 'on',
+				paymentDueDate: formData.get('paymentDueDate')
+					? new Date(formData.get('paymentDueDate') as string)
+					: undefined,
+				tournamentId: Number(formData.get('tournamentId')),
+			})
+
+			await db.insert(groups).values({
+				name: data.name,
+				joinable: data.joinable,
+				finished: data.finished,
+				paymentDueDate: data.paymentDueDate,
+				tournamentId: data.tournamentId,
+			})
+		} catch (error) {
+			return fromErrorToFormState(error)
+		}
+
+		redirect('/admin/groups')
+	},
+)
+
 export const updateTournament = adminAuth(
 	async (_initialState: unknown, formData: FormData) => {
 		try {
