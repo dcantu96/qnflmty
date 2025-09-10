@@ -2,7 +2,7 @@
 
 import z, { ZodError } from 'zod'
 import { adminAuth } from '~/lib/auth'
-import { sports, teams, tournaments, users } from '../db/schema'
+import { groups, sports, teams, tournaments, users } from '../db/schema'
 import { redirect } from 'next/navigation'
 import { db } from '../db'
 import { NeonDbError } from '@neondatabase/serverless'
@@ -289,6 +289,44 @@ export const activateUsers = adminAuth(async ({ ids }: { ids: number[] }) => {
 
 	revalidatePath('/admin/users')
 })
+
+export const activateGroups = adminAuth(async ({ ids }: { ids: number[] }) => {
+	try {
+		await db
+			.update(groups)
+			.set({ finished: false })
+			.where(inArray(groups.id, ids))
+	} catch (error) {
+		return fromErrorToFormState(error)
+	}
+
+	revalidatePath('/admin/groups')
+})
+
+export const finishGroups = adminAuth(async ({ ids }: { ids: number[] }) => {
+	try {
+		await db
+			.update(groups)
+			.set({ finished: true })
+			.where(inArray(groups.id, ids))
+	} catch (error) {
+		return fromErrorToFormState(error)
+	}
+
+	revalidatePath('/admin/groups')
+})
+
+export const updateJoinableGroups = adminAuth(
+	async ({ ids, joinable }: { ids: number[]; joinable: boolean }) => {
+		try {
+			await db.update(groups).set({ joinable }).where(inArray(groups.id, ids))
+		} catch (error) {
+			return fromErrorToFormState(error)
+		}
+
+		revalidatePath('/admin/groups')
+	},
+)
 
 export const suspendUser = adminAuth(async ({ id }: { id: number }) => {
 	try {

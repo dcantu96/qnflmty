@@ -2,6 +2,7 @@
 
 import type { ColumnDef } from '@tanstack/react-table'
 import Link from 'next/link'
+import { Badge } from '~/components/ui/badge'
 import { Checkbox } from '~/components/ui/checkbox'
 import { DataTableColumnHeader } from '~/components/ui/data-table/data-table-column-header'
 
@@ -48,12 +49,22 @@ export const columns: ColumnDef<Group>[] = [
 			<DataTableColumnHeader column={column} title="Name" />
 		),
 		cell: ({ row }) => (
-			<Link
-				href={`/admin/groups/${row.original.id}`}
-				className="font-medium hover:underline"
-			>
-				{row.original.name}
-			</Link>
+			<div className="flex items-center gap-2">
+				<Link
+					href={`/admin/groups/${row.original.id}`}
+					className="font-medium hover:underline"
+				>
+					{row.original.name}
+				</Link>
+				{row.original.joinable && (
+					<Badge
+						className="border-green-400 bg-green-100 text-green-900"
+						variant="outline"
+					>
+						Joinable
+					</Badge>
+				)}
+			</div>
 		),
 	},
 	{
@@ -68,12 +79,6 @@ export const columns: ColumnDef<Group>[] = [
 			>
 				{row.original.tournament.name} {row.original.tournament.year}
 			</Link>
-		),
-	},
-	{
-		accessorKey: 'joinable',
-		header: ({ column }) => (
-			<DataTableColumnHeader column={column} title="Joinable" />
 		),
 	},
 	{
