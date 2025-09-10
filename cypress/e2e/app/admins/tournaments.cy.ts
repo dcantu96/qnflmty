@@ -70,9 +70,7 @@ describe('An Admin', () => {
 			cy.task('createSport', sport)
 		})
 		after(() => {
-			cy.task('deleteTournament', { name: tournament.name }).then(() => {
-				cy.task('deleteSport', { name: sport.name })
-			})
+			cy.task('deleteSport', { name: sport.name })
 		})
 
 		it('Should create a new tournament', () => {
