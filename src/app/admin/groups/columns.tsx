@@ -1,10 +1,18 @@
 'use client'
 
 import type { ColumnDef } from '@tanstack/react-table'
+import { Edit2, MoreHorizontal } from 'lucide-react'
 import Link from 'next/link'
 import { Badge } from '~/components/ui/badge'
+import { Button } from '~/components/ui/button'
 import { Checkbox } from '~/components/ui/checkbox'
 import { DataTableColumnHeader } from '~/components/ui/data-table/data-table-column-header'
+import {
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuItem,
+	DropdownMenuTrigger,
+} from '~/components/ui/dropdown-menu'
 
 export interface Group {
 	id: number
@@ -50,12 +58,7 @@ export const columns: ColumnDef<Group>[] = [
 		),
 		cell: ({ row }) => (
 			<div className="flex items-center gap-2">
-				<Link
-					href={`/admin/groups/${row.original.id}`}
-					className="font-medium hover:underline"
-				>
-					{row.original.name}
-				</Link>
+				<span className="font-medium">{row.original.name}</span>
 				{row.original.joinable && (
 					<Badge
 						className="border-green-400 bg-green-100 text-green-900"
@@ -104,5 +107,31 @@ export const columns: ColumnDef<Group>[] = [
 				day: 'numeric',
 				year: 'numeric',
 			}),
+	},
+	{
+		id: 'actions',
+		cell: ({ row }) => (
+			<DropdownMenu>
+				<DropdownMenuTrigger asChild>
+					<Button
+						size="sm"
+						variant="ghost"
+						className="py-1"
+						title="Group Actions"
+					>
+						<MoreHorizontal />
+						<span className="sr-only">More</span>
+					</Button>
+				</DropdownMenuTrigger>
+				<DropdownMenuContent className="rounded-lg" align="end">
+					<DropdownMenuItem asChild>
+						<Link href={`/admin/groups/${row.original.id}/edit`}>
+							<Edit2 className="text-muted-foreground" />
+							<span>Edit Group</span>
+						</Link>
+					</DropdownMenuItem>
+				</DropdownMenuContent>
+			</DropdownMenu>
+		),
 	},
 ]

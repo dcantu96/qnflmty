@@ -332,6 +332,25 @@ export const getGroups = adminAuth(
 	},
 )
 
+export const getGroupById = adminAuth(async (id: number) => {
+	const group = await db.query.groups.findFirst({
+		where: (groups, { eq }) => eq(groups.id, id),
+		with: {
+			tournament: {
+				with: {
+					sport: {
+						columns: {
+							name: true,
+						},
+					},
+				},
+			},
+		},
+	})
+
+	return group
+})
+
 export const getUserDetailsById = adminAuth(async (id: number) => {
 	const user = await db.query.users.findFirst({
 		where: (users, { eq }) => eq(users.id, id),
