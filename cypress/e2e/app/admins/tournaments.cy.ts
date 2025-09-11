@@ -103,7 +103,9 @@ describe('An Admin', () => {
 			cy.get('button')
 				.contains(/create/i)
 				.click()
-			cy.contains(/unique tournament already exists/i)
+			cy.contains(
+				/a tournament with this name and year already exists for this sport/i,
+			)
 		})
 	})
 
