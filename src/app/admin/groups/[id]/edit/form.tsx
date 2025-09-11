@@ -84,7 +84,13 @@ export default function Form({ group }: { group: Group }) {
 							variant="outline"
 							className="w-full justify-between font-normal"
 						>
-							{date ? date.toLocaleDateString() : 'Select date'}
+							{date
+								? date.toLocaleDateString('en-US', {
+										month: '2-digit',
+										day: '2-digit',
+										year: 'numeric',
+									})
+								: 'Select date'}
 							<ChevronDownIcon />
 						</Button>
 					</PopoverTrigger>
