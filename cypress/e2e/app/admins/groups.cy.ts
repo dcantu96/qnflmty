@@ -92,7 +92,7 @@ const sportMock = {
 				joinable: true,
 				finished: false,
 				createdAt: '2025-05-19T00:00:00.000Z',
-				paymentDueDate: '2025-10-19T00:00:00.000Z',
+				paymentDueDate: '2025-10-18T20:30:00.000Z',
 			},
 		},
 	],
