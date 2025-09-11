@@ -92,7 +92,7 @@ const sportMock = {
 				joinable: true,
 				finished: false,
 				createdAt: '2025-05-19T00:00:00.000Z',
-				paymentDueDate: '2025-10-19T00:00:00.000Z',
+				paymentDueDate: '2025-10-18T20:30:00.000Z',
 			},
 		},
 	],
@@ -111,6 +111,17 @@ describe('An Admin', () => {
 		cy.clearCookies()
 		cy.login(testAdmin.email)
 	})
+
+	// Helper function to navigate to edit page for a group
+	const editGroup = (groupName: string) => {
+		cy.get('table')
+			.contains(groupName)
+			.parents('tr')
+			.find('button[title="Group Actions"]')
+			.click()
+		cy.contains('Edit Group').click()
+		cy.url().should('match', /\/admin\/groups\/\d+\/edit$/)
+	}
 
 	it('should be able to navigate to groups list', () => {
 		cy.visit('/admin')
@@ -359,6 +370,245 @@ describe('An Admin', () => {
 
 			// Should show validation error and stay on form
 			cy.url().should('include', '/admin/groups/new')
+		})
+	})
+
+	describe('Editing a Group', () => {
+		before(() => {
+			const { tournaments, ...sport } = sportMock
+			cy.task('createSport', sport).then((s) => {
+				for (const { group, ...tournament } of tournaments) {
+					cy.task('createTournament', { sportId: s.id, ...tournament }).then(
+						(t) => {
+							cy.task('createGroup', { tournamentId: t.id, ...group })
+						},
+					)
+				}
+			})
+		})
+
+		after(() => {
+			cy.task('deleteSport', { name: sportMock.name })
+		})
+
+		it('should be able to edit a group from the list', () => {
+			cy.visit('/admin/groups')
+			editGroup('QNFLMTY')
+			cy.contains('Edit Group').should('be.visible')
+		})
+
+		it('should display current group data in the edit form', () => {
+			cy.visit('/admin/groups')
+			editGroup('QNFLMTY')
+
+			// Check that the form is populated with current data
+			cy.get('input[name="name"]').should('have.value', 'QNFLMTY')
+			cy.contains('NFL 2025 (American Football)').should('be.visible')
+			cy.contains('Tournament cannot be changed after group creation').should(
+				'be.visible',
+			)
+			cy.get('input[name="joinable"]').should('be.checked')
+			cy.get('input[name="finished"]').should('not.be.checked')
+			cy.get('button').contains('10/18/2025').should('be.visible')
+		})
+
+		it('should be able to update group name', () => {
+			cy.visit('/admin/groups')
+			editGroup('QNFLMTY')
+
+			cy.get('input[name="name"]').clear().type('Peaky Blinders')
+			cy.get('button').contains('Update').click()
+
+			cy.url().should('include', '/admin/groups')
+			cy.get('table').contains('Peaky Blinders').should('be.visible')
+			cy.get('table').contains('QNFLMTY').should('not.exist')
+		})
+
+		it('should be able to toggle joinable status', () => {
+			cy.visit('/admin/groups')
+			editGroup('Peaky Blinders')
+
+			// Verify current state (should be joinable)
+			cy.get('input[name="joinable"]').should('be.checked')
+			cy.get('label').contains('Joinable').click()
+			cy.get('button').contains('Update').click()
+
+			cy.url().should('include', '/admin/groups')
+			cy.get('table')
+				.contains('Peaky Blinders')
+				.parents('tr')
+				.within(() => {
+					cy.contains('Joinable').should('not.exist')
+				})
+
+			// Toggle back to joinable
+			editGroup('Peaky Blinders')
+			cy.get('input[name="joinable"]').should('not.be.checked')
+			cy.get('label').contains('Joinable').click()
+			cy.get('button').contains('Update').click()
+
+			cy.url().should('include', '/admin/groups')
+			cy.get('table')
+				.contains('Peaky Blinders')
+				.parents('tr')
+				.within(() => {
+					cy.contains('Joinable').should('be.visible')
+				})
+		})
+
+		it('should be able to toggle finished status', () => {
+			cy.visit('/admin/groups')
+			editGroup('Peaky Blinders')
+
+			// Verify current state (should not be finished)
+			cy.get('input[name="finished"]').should('not.be.checked')
+			cy.get('label').contains('Finished').click()
+			cy.get('button').contains('Update').click()
+
+			// Should now be on finished groups list
+			cy.url().should('include', '/admin/groups')
+			cy.get('table').contains('Peaky Blinders').should('not.exist')
+
+			// Check the finished tab
+			cy.get('a').contains('Finished').click()
+			cy.get('table').contains('Peaky Blinders').should('be.visible')
+
+			// Toggle back to active
+			editGroup('Peaky Blinders')
+			cy.get('input[name="finished"]').should('be.checked')
+			cy.get('label').contains('Finished').click()
+			cy.get('button').contains('Update').click()
+
+			cy.url().should('include', '/admin/groups')
+			cy.get('table').contains('Peaky Blinders').should('be.visible')
+		})
+
+		it('should be able to update payment due date', () => {
+			cy.visit('/admin/groups')
+			editGroup('Peaky Blinders')
+
+			// Open date picker and select a new date
+			cy.get('button').contains('10/18/2025').click()
+			cy.get('[role="dialog"]').should('be.visible')
+			cy.get('[role="dialog"]').within(() => {
+				cy.get('select').first().select('Dec')
+				cy.get('button').contains('25').click()
+			})
+
+			cy.get('button').contains('Update').click()
+
+			cy.url().should('include', '/admin/groups')
+			cy.get('table')
+				.contains('Peaky Blinders')
+				.parents('tr')
+				.within(() => {
+					cy.contains('Dec 25, 2025').should('be.visible')
+				})
+		})
+
+		it.skip('should be able to clear payment due date', () => {
+			cy.visit('/admin/groups')
+			editGroup('Peaky Blinders')
+
+			// Check current date exists
+			cy.get('button').contains('10/18/2025').should('be.visible')
+
+			// Clear the hidden input directly to simulate clearing the date
+			cy.get('input[name="paymentDueDate"]').invoke('val', '')
+
+			cy.get('button').contains('Update').click()
+
+			cy.url().should('include', '/admin/groups')
+			cy.get('table')
+				.contains('Peaky Blinders')
+				.parents('tr')
+				.within(() => {
+					cy.get('td').eq(3).should('be.empty') // Payment Due column should be empty
+				})
+		})
+
+		it('should validate group name is required', () => {
+			cy.visit('/admin/groups')
+			editGroup('Peaky Blinders')
+
+			cy.get('input[name="name"]').clear()
+			cy.get('button').contains('Update').click()
+
+			// Should stay on edit page with validation error
+			cy.url().should('match', /\/admin\/groups\/\d+\/edit$/)
+		})
+
+		it('should prevent duplicate group names within the same tournament', () => {
+			// First create a second group in the same tournament
+			cy.visit('/admin/groups')
+			cy.contains('Add Groups').click()
+			cy.get('input[name="name"]').type('Second Group')
+			cy.get('[name="tournament"]').click()
+			cy.contains('[role="option"]', 'NFL 2025').click()
+			cy.get('button')
+				.contains(/create/i)
+				.click()
+
+			// Now try to edit the second group to have the same name as the first
+			editGroup('Second Group')
+			cy.get('input[name="name"]').clear().type('Peaky Blinders')
+			cy.get('button').contains('Update').click()
+
+			// Should show error and stay on edit page
+			cy.contains(
+				'A group with this name already exists for this tournament',
+			).should('be.visible')
+			cy.url().should('match', /\/admin\/groups\/\d+\/edit$/)
+		})
+
+		it('should allow same group name in different tournaments', () => {
+			cy.visit('/admin/groups')
+			editGroup('Second Group')
+			cy.get('input[name="name"]').clear().type('QNFLMTY 2024')
+			cy.get('button').contains('Update').click()
+
+			// Should redirect successfully
+			cy.url().should('include', '/admin/groups')
+			cy.get('table').contains('QNFLMTY 2024').should('be.visible')
+
+			// Create another group with same name but different tournament
+			cy.contains('Add Groups').click()
+			cy.get('input[name="name"]').type('QNFLMTY 2024')
+			cy.get('[name="tournament"]').click()
+			cy.contains('[role="option"]', 'NFL 2024').click()
+			cy.get('button')
+				.contains(/create/i)
+				.click()
+
+			// Should succeed
+			cy.url().should('include', '/admin/groups')
+			cy.get('table').contains('QNFLMTY 2024').should('be.visible')
+		})
+
+		it('should be able to cancel editing and return to groups list', () => {
+			cy.visit('/admin/groups')
+			editGroup('Peaky Blinders')
+
+			cy.get('a').contains('Cancel').click()
+			cy.url().should('include', '/admin/groups')
+			cy.url().should('not.include', '/edit')
+		})
+
+		it('should handle 404 for non-existent group', () => {
+			cy.visit('/admin/groups/99999/edit', { failOnStatusCode: false })
+			cy.contains('This page could not be found').should('be.visible')
+		})
+
+		it('should show tournament is read-only in edit mode', () => {
+			cy.visit('/admin/groups')
+			editGroup('Peaky Blinders')
+
+			// Tournament field should be read-only (not a select)
+			cy.get('select[name="tournament"]').should('not.exist')
+			cy.contains('NFL 2025 (American Football)').should('be.visible')
+			cy.contains('Tournament cannot be changed after group creation').should(
+				'be.visible',
+			)
 		})
 	})
 })

@@ -1,5 +1,6 @@
 import { getTeamById, getSports } from '~/server/admin/queries'
 import Form from './form'
+import { notFound } from 'next/navigation'
 
 interface Props {
 	params: Promise<{ id: string; teamId: string }>
@@ -8,7 +9,7 @@ interface Props {
 export default async function Page({ params }: Props) {
 	const { teamId } = await params
 	const team = await getTeamById(Number(teamId))
-	if (!team) return <div>Team not found</div>
+	if (!team) notFound()
 
 	const { items } = await getSports()
 
