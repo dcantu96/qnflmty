@@ -1,5 +1,6 @@
 import { getSportById } from '~/server/admin/queries'
 import Form from './form'
+import { notFound } from 'next/navigation'
 
 interface Props {
 	params: Promise<{ id: string }>
@@ -10,7 +11,7 @@ export default async function Page({ params }: Props) {
 	const sport = await getSportById(Number(id))
 
 	if (!sport) {
-		return <div>Sport not found</div>
+		notFound()
 	}
 
 	return (

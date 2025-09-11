@@ -1,5 +1,6 @@
 import { getUserById } from '~/server/admin/queries'
 import Form from './form'
+import { notFound } from 'next/navigation'
 
 interface Props {
 	params: Promise<{ id: string }>
@@ -10,7 +11,7 @@ export default async function Page({ params }: Props) {
 	const user = await getUserById(Number(id))
 
 	if (!user) {
-		return <div>User not found</div>
+		notFound()
 	}
 
 	return (

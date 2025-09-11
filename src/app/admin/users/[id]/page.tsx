@@ -21,6 +21,7 @@ import {
 	DataTablePagination,
 } from '~/components/ui/data-table'
 import { columns } from './user-accounts-columns'
+import { notFound } from 'next/navigation'
 
 export interface TimelineEvent {
 	type: 'payment' | 'suspension'
@@ -52,7 +53,7 @@ export default async function UserPage({
 	const { id } = await params
 	const user = await getUserDetailsById(Number(id))
 
-	if (!user) return <div>User not found</div>
+	if (!user) notFound()
 
 	return (
 		<Tabs defaultValue="overview" className="space-y-2">

@@ -15,6 +15,7 @@ import {
 	CardHeader,
 	CardTitle,
 } from '~/components/ui/card'
+import { notFound } from 'next/navigation'
 
 interface PageProps {
 	params: Promise<{ id: string }>
@@ -25,7 +26,7 @@ export default async function Page({ params }: PageProps) {
 	const tournament = await getTournamentById(Number(id))
 
 	if (!tournament) {
-		return <div className="container mx-auto">Tournament not found</div>
+		notFound()
 	}
 
 	const { items } = await getWeeksByTournamentId({ tournamentId: Number(id) })
