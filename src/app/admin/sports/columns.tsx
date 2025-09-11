@@ -69,7 +69,10 @@ export const columns: ColumnDef<Sport>[] = [
 			if (teams.length === 0)
 				return (
 					<Button size="sm" asChild variant="ghost">
-						<Link href={`/admin/sports/${row.original.id}/teams`}>
+						<Link
+							href={`/admin/sports/${row.original.id}/teams`}
+							title="View Teams"
+						>
 							<Flag />
 						</Link>
 					</Button>

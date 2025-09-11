@@ -44,6 +44,42 @@ export const createTournament = adminAuth(
 	},
 )
 
+const createGroupSchema = z.object({
+	name: z.string().min(1).max(30),
+	joinable: z.boolean().default(false),
+	finished: z.boolean().default(false),
+	paymentDueDate: z.coerce.date().optional(),
+	tournamentId: z.coerce.number().int().positive(),
+})
+
+export const createGroup = adminAuth(
+	async (_initialState: unknown, formData: FormData) => {
+		try {
+			const data = createGroupSchema.parse({
+				name: formData.get('name'),
+				joinable: formData.get('joinable') === 'on',
+				finished: formData.get('finished') === 'on',
+				paymentDueDate: formData.get('paymentDueDate')
+					? new Date(formData.get('paymentDueDate') as string)
+					: undefined,
+				tournamentId: Number(formData.get('tournamentId')),
+			})
+
+			await db.insert(groups).values({
+				name: data.name,
+				joinable: data.joinable,
+				finished: data.finished,
+				paymentDueDate: data.paymentDueDate,
+				tournamentId: data.tournamentId,
+			})
+		} catch (error) {
+			return fromErrorToFormState(error)
+		}
+
+		redirect('/admin/groups')
+	},
+)
+
 export const updateTournament = adminAuth(
 	async (_initialState: unknown, formData: FormData) => {
 		try {
@@ -244,8 +280,31 @@ export const fromErrorToFormState = async (error: unknown) => {
 	if (error instanceof NeonDbError) {
 		switch (error.code) {
 			case '23505':
+				// Handle specific unique constraint violations
+				if (error.constraint === 'group_tournament_id_name_unique') {
+					return {
+						message:
+							'A group with this name already exists for this tournament',
+					}
+				}
+				if (error.constraint === 'tournament_sport_id_name_year_unique') {
+					return {
+						message:
+							'A tournament with this name and year already exists for this sport',
+					}
+				}
+				if (error.constraint === 'sport_name_unique') {
+					return {
+						message: 'A sport with this name already exists',
+					}
+				}
+				if (error.constraint === 'team_name_unique') {
+					return {
+						message: 'A team with this name already exists',
+					}
+				}
 				return {
-					message: `Unique ${error.table} already exists`,
+					message: `This ${error.table || 'item'} already exists`,
 				}
 			default:
 				return {

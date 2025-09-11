@@ -147,17 +147,24 @@ export const getUserAccountId =
 
 export interface CreateSportParams {
 	name: string
+	tournaments?: Omit<CreateTournamentParams, 'sportId'>[]
 }
 
 export const createSport =
 	(connectionString: string) => async (params: CreateSportParams) => {
-		const { name } = params
 		const db = getDb(connectionString)
 
-		const [sport] = await db.insert(sports).values({ name }).returning()
+		const [sport] = await db
+			.insert(sports)
+			.values({ name: params.name })
+			.returning()
 
 		if (!sport) {
-			throw new Error(`Sport not found for name: ${name}`)
+			throw new Error(`Sport not found for name: ${params.name}`)
+		}
+
+		for (const tournament of params.tournaments ?? []) {
+			await db.insert(tournaments).values({ ...tournament, sportId: sport.id })
 		}
 
 		return sport

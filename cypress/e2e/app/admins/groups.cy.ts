@@ -241,4 +241,124 @@ describe('An Admin', () => {
 				.should('not.exist')
 		})
 	})
+
+	describe('Creating a Group', () => {
+		before(() => {
+			const { tournaments, ...sport } = sportMock
+			cy.task('createSport', {
+				...sport,
+				tournaments: tournaments.map(({ group, ...tournament }) => tournament),
+			})
+		})
+
+		after(() => {
+			cy.task('deleteSport', { name: sportMock.name })
+		})
+
+		it('should be able to create a new group', () => {
+			cy.visit('/admin/groups')
+			cy.contains('Add Groups').click()
+			cy.url().should('include', '/admin/groups/new')
+			cy.get('input[name="name"]').type('Masters League')
+			cy.get('[name="tournament"]').click()
+			cy.contains('[role="option"]', 'NFL 2025').click()
+			cy.get('button[type="button"]').contains('Select date').click()
+			cy.get('[role="dialog"]').should('be.visible')
+			cy.get('[role="dialog"]').within(() => {
+				cy.get('select').first().select('Oct')
+				cy.get('select').last().select('2025')
+				cy.get('button').contains('20').click()
+			})
+			cy.get('label').contains('Joinable').click()
+			cy.get('button')
+				.contains(/create/i)
+				.click()
+			cy.url().should('include', '/admin/groups/')
+			cy.contains('Masters League')
+				.should('be.visible')
+				.parents('tr')
+				.within(() => {
+					cy.contains('NFL 2025')
+					cy.contains('Joinable')
+					cy.contains('Oct 20, 2025')
+				})
+		})
+		it('can create a new finished group', () => {
+			cy.visit('/admin/groups')
+			cy.contains('Add Groups').click()
+			cy.url().should('include', '/admin/groups/new')
+			cy.get('input[name="name"]').type('Legends League')
+			cy.get('[name="tournament"]').click()
+			cy.contains('[role="option"]', 'NFL 2024').click()
+			cy.get('label').contains('Finished').click()
+			cy.get('button')
+				.contains(/create/i)
+				.click()
+			cy.url().should('include', '/admin/groups/')
+			cy.get('a').contains('Finished').click()
+			cy.contains('Legends League')
+				.should('be.visible')
+				.parents('tr')
+				.within(() => {
+					cy.contains('NFL 2024')
+				})
+		})
+
+		it('should prevent creating duplicate groups with same name and tournament', () => {
+			cy.visit('/admin/groups')
+			cy.contains('Add Groups').click()
+			cy.url().should('include', '/admin/groups/new')
+			cy.get('input[name="name"]').type('Masters League')
+			cy.get('[name="tournament"]').click()
+			cy.contains('[role="option"]', 'NFL 2025').click()
+			cy.get('button')
+				.contains(/create/i)
+				.click()
+
+			// Should show error message and stay on the form
+			cy.contains(
+				'A group with this name already exists for this tournament',
+			).should('be.visible')
+			cy.url().should('include', '/admin/groups/new')
+
+			// Verify the original group still exists and no duplicate was created
+			cy.visit('/admin/groups')
+			cy.get('table tbody tr')
+				.contains('Masters League')
+				.should('have.length', 1)
+		})
+
+		it('should allow creating groups with same name but different tournaments', () => {
+			cy.visit('/admin/groups')
+			cy.contains('Add Groups').click()
+			cy.url().should('include', '/admin/groups/new')
+			cy.get('input[name="name"]').type('Masters League')
+			cy.get('[name="tournament"]').click()
+			cy.contains('[role="option"]', 'NFL 2024').click()
+			cy.get('button')
+				.contains(/create/i)
+				.click()
+			cy.url().should('include', '/admin/groups/')
+
+			// Verify both groups exist - one for 2024 and one for 2025
+			cy.get('table').contains('Masters League').should('be.visible')
+			cy.get('a').contains('Finished').click()
+			cy.get('table').contains('Masters League').should('be.visible')
+		})
+
+		it('should validate group name is required', () => {
+			cy.visit('/admin/groups')
+			cy.contains('Add Groups').click()
+			cy.url().should('include', '/admin/groups/new')
+			// Don't enter a name
+			cy.get('[name="tournament"]').click()
+			cy.contains('[role="option"]', 'NFL 2025').click()
+			cy.get('button')
+				.contains(/create/i)
+				.click()
+
+			// Should show validation error and stay on form
+			cy.url().should('include', '/admin/groups/new')
+		})
+	})
 })

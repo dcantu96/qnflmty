@@ -70,9 +70,7 @@ describe('An Admin', () => {
 			cy.task('createSport', sport)
 		})
 		after(() => {
-			cy.task('deleteTournament', { name: tournament.name }).then(() => {
-				cy.task('deleteSport', { name: sport.name })
-			})
+			cy.task('deleteSport', { name: sport.name })
 		})
 
 		it('Should create a new tournament', () => {
@@ -105,7 +103,9 @@ describe('An Admin', () => {
 			cy.get('button')
 				.contains(/create/i)
 				.click()
-			cy.contains(/unique tournament already exists/i)
+			cy.contains(
+				/a tournament with this name and year already exists for this sport/i,
+			)
 		})
 	})
 
