@@ -1,5 +1,5 @@
 {
-  "id": "ee4806f6-eece-4e47-b9af-e9c28c696efc",
+  "id": "2e081255-1504-447e-8aa1-dc977f230f99",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -1262,7 +1262,7 @@
         },
         "username_format": {
           "name": "username_format",
-          "value": "\"user_account\".\"username\" ~ '^[a-zA-Z0-9_-]+$'"
+          "value": "\"user_account\".\"username\" ~ '^[a-zA-Z0-9_.-]+$'"
         }
       },
       "isRLSEnabled": false

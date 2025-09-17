@@ -161,7 +161,7 @@ export const userAccounts = pgTable(
 	(t) => [
 		check('username_not_empty', sql`length(trim(${t.username})) > 0`),
 		check('username_max_length', sql`length(${t.username}) <= 20`),
-		check('username_format', sql`${t.username} ~ '^[a-zA-Z0-9_-]+$'`),
+		check('username_format', sql`${t.username} ~ '^[a-zA-Z0-9_.-]+$'`),
 	],
 )
 

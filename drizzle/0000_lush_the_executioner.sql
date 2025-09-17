@@ -161,7 +161,7 @@ CREATE TABLE "user_account" (
 	CONSTRAINT "user_account_username_unique" UNIQUE("username"),
 	CONSTRAINT "username_not_empty" CHECK (length(trim("user_account"."username")) > 0),
 	CONSTRAINT "username_max_length" CHECK (length("user_account"."username") <= 20),
-	CONSTRAINT "username_format" CHECK ("user_account"."username" ~ '^[a-zA-Z0-9_-]+$')
+	CONSTRAINT "username_format" CHECK ("user_account"."username" ~ '^[a-zA-Z0-9_.-]+$')
 );
 --> statement-breakpoint
 CREATE TABLE "user" (
