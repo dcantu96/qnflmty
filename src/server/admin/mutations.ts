@@ -341,8 +341,34 @@ export const fromErrorToFormState = async (error: unknown) => {
 						message: 'A team with this name already exists',
 					}
 				}
+				if (error.constraint === 'user_account_username_unique') {
+					return {
+						message: 'Username is already taken',
+					}
+				}
 				return {
 					message: `This ${error.table || 'item'} already exists`,
+				}
+			case '23514':
+				// Handle CHECK constraint violations
+				if (error.constraint === 'username_not_empty') {
+					return {
+						message: 'Username is required',
+					}
+				}
+				if (error.constraint === 'username_max_length') {
+					return {
+						message: 'Username must be 20 characters or less',
+					}
+				}
+				if (error.constraint === 'username_format') {
+					return {
+						message:
+							'Username can only contain letters, numbers, underscores, and hyphens',
+					}
+				}
+				return {
+					message: 'Invalid data provided',
 				}
 			default:
 				return {

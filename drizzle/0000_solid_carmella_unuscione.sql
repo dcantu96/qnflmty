@@ -158,7 +158,10 @@ CREATE TABLE "user_account" (
 	"avatar" "avatar_icon" DEFAULT 'user' NOT NULL,
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
 	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,
-	CONSTRAINT "user_account_username_unique" UNIQUE("username")
+	CONSTRAINT "user_account_username_unique" UNIQUE("username"),
+	CONSTRAINT "username_not_empty" CHECK (length(trim("user_account"."username")) > 0),
+	CONSTRAINT "username_max_length" CHECK (length("user_account"."username") <= 20),
+	CONSTRAINT "username_format" CHECK ("user_account"."username" ~ '^[a-zA-Z0-9_-]+$')
 );
 --> statement-breakpoint
 CREATE TABLE "user" (

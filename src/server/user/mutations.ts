@@ -1,19 +1,14 @@
 'use server'
 
 import { auth, protectedAuth } from '~/lib/auth'
-import {
-	groups,
-	memberships,
-	requests,
-	userAccounts,
-	type AvatarIcon,
-} from '../db/schema'
+import { groups, memberships, requests, userAccounts } from '../db/schema'
 import { db } from '../db'
 import { and, eq } from 'drizzle-orm'
 import z from 'zod'
 import { revalidatePath } from 'next/cache'
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
+import { fromErrorToFormState } from '../admin/mutations'
 
 const avatarEnum = z.enum(userAccounts.avatar.enumValues)
 
@@ -215,63 +210,63 @@ export async function clearSelectedProfile() {
 	cookieStore.delete('selectedProfile')
 }
 
+const createProfileSchema = z.object({
+	username: z.string(),
+	avatar: z.enum([
+		'user',
+		'crown',
+		'star',
+		'heart',
+		'shield',
+		'rocket',
+		'gamepad',
+		'diamond',
+		'club',
+		'spade',
+		'lightning',
+		'fire',
+		'snowflake',
+		'sun',
+		'moon',
+	]),
+})
+
 export async function createProfileAction(
-	_prevState: { error?: string } | null,
+	_prevState: { message?: string } | null,
 	formData: FormData,
 ) {
 	const { user } = await auth()
 
-	const username = formData.get('username') as string
-	const avatar = formData.get('avatar') as AvatarIcon
-
-	// Server-side validation
-	if (!username || typeof username !== 'string') {
-		return { error: 'Username is required' }
-	}
-
-	const trimmedUsername = username.trim()
-
-	if (trimmedUsername.length === 0) {
-		return { error: 'Username is required' }
-	}
-
-	if (trimmedUsername.length > 20) {
-		return { error: 'Username must be 20 characters or less' }
-	}
-
-	if (!/^[a-zA-Z0-9_-]+$/.test(trimmedUsername)) {
-		return {
-			error:
-				'Username can only contain letters, numbers, underscores, and hyphens',
-		}
-	}
-
 	let newAccount: typeof userAccounts.$inferSelect | undefined
 
 	try {
-		// Check if username already exists (case insensitive)
+		const newProfile = createProfileSchema.parse({
+			username: formData.get('username'),
+			avatar: formData.get('avatar'),
+		})
+
 		const existingAccount = await db.query.userAccounts.findFirst({
 			where: (accounts, { sql }) =>
-				sql`lower(${accounts.username}) = lower(${trimmedUsername})`,
+				sql`lower(${accounts.username}) = lower(${newProfile.username})`,
 		})
 
 		if (existingAccount) {
-			return { error: 'Username is already taken' }
+			return { message: 'Username is already taken' }
 		}
 
 		const result = await db
 			.insert(userAccounts)
 			.values({
 				userId: user.id,
-				username: trimmedUsername,
-				avatar,
+				username: newProfile.username.trim(),
+				avatar: newProfile.avatar,
 			})
 			.returning()
 
 		newAccount = result[0]
 
 		if (!newAccount) {
-			return { error: 'Failed to create profile' }
+			return { message: 'Failed to create profile' }
 		}
 
 		const activeGroup = await db.query.groups.findFirst({
@@ -296,11 +291,7 @@ export async function createProfileAction(
 			}
 		}
 	} catch (error) {
-		if (error instanceof Error && error.message.includes('unique constraint')) {
-			return { error: 'Username is already taken' }
-		}
-
-		return { error: 'Something went wrong creating your profile' }
+		return fromErrorToFormState(error)
 	}
 
 	await setSelectedProfile(newAccount.id)

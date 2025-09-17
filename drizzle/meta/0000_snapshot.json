@@ -1,5 +1,5 @@
 {
-  "id": "b7c9fe5d-eeaa-4b8c-90fe-3ff2c716f597",
+  "id": "ee4806f6-eece-4e47-b9af-e9c28c696efc",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -1251,7 +1251,20 @@
         }
       },
       "policies": {},
-      "checkConstraints": {},
+      "checkConstraints": {
+        "username_not_empty": {
+          "name": "username_not_empty",
+          "value": "length(trim(\"user_account\".\"username\")) > 0"
+        },
+        "username_max_length": {
+          "name": "username_max_length",
+          "value": "length(\"user_account\".\"username\") <= 20"
+        },
+        "username_format": {
+          "name": "username_format",
+          "value": "\"user_account\".\"username\" ~ '^[a-zA-Z0-9_-]+$'"
+        }
+      },
       "isRLSEnabled": false
     },
     "public.user": {
