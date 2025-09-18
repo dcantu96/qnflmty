@@ -102,23 +102,27 @@ const stats = [
 	},
 ]
 
-async function rootRedirectHandler() {
+export default async function Page() {
 	const session = await getSession()
-	const cookiesStore = await cookies()
-	const selectedProfileId = cookiesStore.get('selectedProfile')?.value
-	const accounts = await db.query.userAccounts.findMany({
-		where: (accounts, { eq }) => eq(accounts.userId, session?.user.id ?? -1),
-	})
 
 	if (session) {
+		const cookiesStore = await cookies()
+		const selectedProfileId = cookiesStore.get('selectedProfile')?.value
 		const isAdmin = await isAdminSession()
+
 		if (isAdmin) {
 			if (selectedProfileId) {
 				redirect('/dashboard')
-			} else if (accounts.length) {
-				redirect('/select-profile')
 			} else {
-				redirect('/admin')
+				const accounts = await db.query.userAccounts.findMany({
+					where: (accounts, { eq }) => eq(accounts.userId, session.user.id),
+				})
+
+				if (accounts.length > 0) {
+					redirect('/select-profile')
+				} else {
+					redirect('/admin')
+				}
 			}
 		} else if (selectedProfileId) {
 			redirect('/dashboard')
@@ -126,10 +130,6 @@ async function rootRedirectHandler() {
 			redirect('/select-profile')
 		}
 	}
-}
-
-export default async function Page() {
-	await rootRedirectHandler()
 
 	return (
 		<div className="min-h-screen bg-background">
