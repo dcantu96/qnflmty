@@ -26,13 +26,11 @@ import {
 } from '~/components/ui/card'
 import { Separator } from '~/components/ui/separator'
 import { db } from '~/server/db'
-import { clearSelectedProfile } from '~/server/user/mutations'
 
 async function handleRootRedirect(): Promise<void> {
 	const session = await getSession()
 
 	if (!session) {
-		await clearSelectedProfile()
 		return
 	}
 
