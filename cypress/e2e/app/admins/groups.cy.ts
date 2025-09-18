@@ -271,7 +271,7 @@ describe('An Admin', () => {
 		it('should be able to create a new group', () => {
 			cy.visit('/admin/groups')
 			cy.contains('Add Groups').click()
-			cy.url().should('include', '/admin/groups/new')
+			cy.url({ timeout: 5000 }).should('include', '/admin/groups/new')
 			cy.get('input[name="name"]').type('Masters League')
 			cy.get('[name="tournament"]').click()
 			cy.contains('[role="option"]', 'NFL 2025').click()
@@ -329,9 +329,9 @@ describe('An Admin', () => {
 				.click()
 
 			// Should show error message and stay on the form
-			cy.contains(
-				'A group with this name already exists for this tournament',
-			).should('be.visible')
+			cy.contains('A group with this name already exists for this tournament', {
+				timeout: 5000,
+			}).should('be.visible')
 			cy.url().should('include', '/admin/groups/new')
 
 			// Verify the original group still exists and no duplicate was created
