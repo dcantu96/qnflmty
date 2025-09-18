@@ -2,6 +2,7 @@
 
 import { getServerSession } from 'next-auth'
 import { redirect } from 'next/navigation'
+import { cache } from 'react'
 import { authOptions } from '~/app/api/auth/[...nextauth]'
 import { db } from '~/server/db'
 
@@ -9,7 +10,7 @@ import { db } from '~/server/db'
  * For Server Components only
  * @returns The current user session, throwing an error if the user is not authenticated.
  */
-export const auth = async () => {
+export const auth = cache(async () => {
 	const session = await getSession()
 	if (!session?.user) {
 		redirect('/login')
@@ -28,7 +29,7 @@ export const auth = async () => {
 	}
 
 	return { session, user }
-}
+})
 
 /**
  * For Server Components only

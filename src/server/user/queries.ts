@@ -12,6 +12,7 @@ import {
 import { eq, and } from 'drizzle-orm'
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
+import { cache } from 'react'
 
 export const getActiveWithTournament = async () => {
 	await userGuard()
@@ -117,7 +118,7 @@ async function checkProfileGroupMembership(
 	return !!membership
 }
 
-export async function enforceGroupMembership() {
+export const enforceGroupMembership = cache(async () => {
 	const isAdmin = await isAdminSession()
 	const profile = await getSelectedProfile()
 
@@ -132,4 +133,4 @@ export async function enforceGroupMembership() {
 		// Profile doesn't have access to active group, redirect to request access
 		redirect(`/request-access/${profile.username}`)
 	}
-}
+})
