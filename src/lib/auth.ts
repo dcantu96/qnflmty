@@ -1,3 +1,5 @@
+'use server'
+
 import { getServerSession } from 'next-auth'
 import { redirect } from 'next/navigation'
 import { authOptions } from '~/app/api/auth/[...nextauth]'
@@ -41,18 +43,11 @@ export const isAdminSession = async () => {
 	return user.admin
 }
 
-export const adminAuth =
-	<Args extends unknown[], R>(fn: (...args: Args) => Promise<R>) =>
-	async (...args: Args): Promise<R> => {
-		const { user } = await auth()
-		if (!user?.admin) redirect('/')
+export const adminGuard = async () => {
+	const { user } = await auth()
+	if (!user.admin) redirect('/')
+}
 
-		return await fn(...args)
-	}
-
-export const protectedAuth =
-	<Args extends unknown[], R>(fn: (...args: Args) => Promise<R>) =>
-	async (...args: Args): Promise<R> => {
-		await auth()
-		return await fn(...args)
-	}
+export const userGuard = async () => {
+	return await auth()
+}

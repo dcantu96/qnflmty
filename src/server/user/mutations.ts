@@ -1,6 +1,6 @@
 'use server'
 
-import { auth, protectedAuth } from '~/lib/auth'
+import { userGuard } from '~/lib/auth'
 import { groups, memberships, requests, userAccounts } from '../db/schema'
 import { db } from '../db'
 import { and, eq } from 'drizzle-orm'
@@ -8,7 +8,7 @@ import z from 'zod'
 import { revalidatePath } from 'next/cache'
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
-import { fromErrorToFormState } from '../admin/mutations'
+import { fromErrorToFormState } from '../errors/errors'
 
 const avatarEnum = z.enum(userAccounts.avatar.enumValues)
 
@@ -24,38 +24,38 @@ const createUserAccountParams = z.object({
 	avatar: avatarEnum,
 })
 
-export const createUserAccount = protectedAuth(
-	async (input: z.infer<typeof createUserAccountParams>) => {
-		const {
-			user: { id: userId },
-		} = await auth()
-		const parsedInput = createUserAccountParams.parse(input)
-		const { username, avatar } = parsedInput
+export const createUserAccount = async (
+	input: z.infer<typeof createUserAccountParams>,
+) => {
+	const {
+		user: { id: userId },
+	} = await userGuard()
+	const parsedInput = createUserAccountParams.parse(input)
+	const { username, avatar } = parsedInput
 
-		const existingAccount = await db.query.userAccounts.findFirst({
-			where: eq(userAccounts.username, username.toLowerCase()),
+	const existingAccount = await db.query.userAccounts.findFirst({
+		where: eq(userAccounts.username, username.toLowerCase()),
+	})
+
+	if (existingAccount) {
+		throw new Error('Username already taken')
+	}
+
+	const [newUserAccount] = await db
+		.insert(userAccounts)
+		.values({
+			userId,
+			username: username.toLowerCase(),
+			avatar,
 		})
+		.returning()
 
-		if (existingAccount) {
-			throw new Error('Username already taken')
-		}
+	if (!newUserAccount) {
+		throw new Error('Failed to create profile')
+	}
 
-		const [newUserAccount] = await db
-			.insert(userAccounts)
-			.values({
-				userId,
-				username: username.toLowerCase(),
-				avatar,
-			})
-			.returning()
-
-		if (!newUserAccount) {
-			throw new Error('Failed to create profile')
-		}
-
-		return newUserAccount
-	},
-)
+	return newUserAccount
+}
 
 const updateUserAccountParams = z.object({
 	username: z
@@ -70,52 +70,53 @@ const updateUserAccountParams = z.object({
 	avatar: avatarEnum.optional(),
 })
 
-export const updateUserAccount = protectedAuth(
-	async (id: number, input: z.infer<typeof updateUserAccountParams>) => {
-		const {
-			user: { id: userId },
-		} = await auth()
-		const parsedInput = updateUserAccountParams.parse(input)
-		const { username, avatar } = parsedInput
+export const updateUserAccount = async (
+	id: number,
+	input: z.infer<typeof updateUserAccountParams>,
+) => {
+	const {
+		user: { id: userId },
+	} = await userGuard()
+	const parsedInput = updateUserAccountParams.parse(input)
+	const { username, avatar } = parsedInput
 
-		const existingAccount = await db.query.userAccounts.findFirst({
-			where: eq(userAccounts.id, id),
+	const existingAccount = await db.query.userAccounts.findFirst({
+		where: eq(userAccounts.id, id),
+	})
+
+	if (!existingAccount) {
+		throw new Error('Profile not found')
+	}
+
+	if (existingAccount.userId !== userId) {
+		throw new Error('You can only update your own profiles')
+	}
+
+	if (username && username.toLowerCase() !== existingAccount.username) {
+		const usernameTaken = await db.query.userAccounts.findFirst({
+			where: eq(userAccounts.username, username.toLowerCase()),
 		})
 
-		if (!existingAccount) {
-			throw new Error('Profile not found')
+		if (usernameTaken) {
+			throw new Error('Username already taken')
 		}
+	}
 
-		if (existingAccount.userId !== userId) {
-			throw new Error('You can only update your own profiles')
-		}
+	const [updatedAccount] = await db
+		.update(userAccounts)
+		.set({
+			username: username ? username.toLowerCase() : existingAccount.username,
+			avatar: avatar || existingAccount.avatar,
+		})
+		.where(eq(userAccounts.id, id))
+		.returning()
 
-		if (username && username.toLowerCase() !== existingAccount.username) {
-			const usernameTaken = await db.query.userAccounts.findFirst({
-				where: eq(userAccounts.username, username.toLowerCase()),
-			})
+	if (!updatedAccount) {
+		throw new Error('Failed to update profile')
+	}
 
-			if (usernameTaken) {
-				throw new Error('Username already taken')
-			}
-		}
-
-		const [updatedAccount] = await db
-			.update(userAccounts)
-			.set({
-				username: username ? username.toLowerCase() : existingAccount.username,
-				avatar: avatar || existingAccount.avatar,
-			})
-			.where(eq(userAccounts.id, id))
-			.returning()
-
-		if (!updatedAccount) {
-			throw new Error('Failed to update profile')
-		}
-
-		return updatedAccount
-	},
-)
+	return updatedAccount
+}
 
 export const createRequest = async (
 	_initialState: unknown,
@@ -123,7 +124,7 @@ export const createRequest = async (
 ) => {
 	const {
 		user: { id },
-	} = await auth()
+	} = await userGuard()
 
 	const groupId = Number(formData.get('groupId'))
 	const userAccountId = Number(formData.get('userAccountId'))
@@ -173,7 +174,7 @@ export const createRequest = async (
 }
 
 export async function setSelectedProfile(profileId: number) {
-	const session = await auth()
+	const session = await userGuard()
 
 	const profile = await db.query.userAccounts.findFirst({
 		where: (accounts, { and, eq }) =>
@@ -205,11 +206,6 @@ export async function selectProfileAction(formData: FormData) {
 	await selectProfileAndRedirect(profileId)
 }
 
-export async function clearSelectedProfile() {
-	const cookieStore = await cookies()
-	cookieStore.delete('selectedProfile')
-}
-
 const createProfileSchema = z.object({
 	username: z.string(),
 	avatar: z.enum([
@@ -235,7 +231,7 @@ export async function createProfileAction(
 	_prevState: { message?: string } | null,
 	formData: FormData,
 ) {
-	const { user } = await auth()
+	const { user } = await userGuard()
 
 	let newAccount: typeof userAccounts.$inferSelect | undefined
 
