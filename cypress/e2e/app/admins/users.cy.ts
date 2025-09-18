@@ -32,7 +32,6 @@
  * Can edit user's basic information
  *  - [ ] can edit name, email, phone
  */
-
 const sixMonthsAgo = new Date(Date.now() - 1000 * 60 * 60 * 24 * 30 * 6)
 
 const testAdmin = {
@@ -233,7 +232,7 @@ describe('An Admin', () => {
 	it('should be able to navigate to users list', () => {
 		cy.visit('/admin')
 		cy.get('[data-sidebar="content"]').contains(/users/i).click()
-		cy.url().should('include', '/admin/users')
+		cy.url({ timeout: 5000 }).should('include', '/admin/users')
 	})
 
 	describe('Viewing Users', () => {

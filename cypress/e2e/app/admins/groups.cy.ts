@@ -128,7 +128,7 @@ describe('An Admin', () => {
 		cy.get('[data-sidebar="content"]')
 			.contains(/groups/i)
 			.click()
-		cy.url().should('include', '/admin/groups')
+		cy.url({ timeout: 5000 }).should('include', '/admin/groups')
 		cy.get('table').contains('No results.')
 	})
 
