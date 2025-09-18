@@ -37,7 +37,7 @@ Features:
 - [x] Admin - Groups - link to group.tournament
 - [x] Admin - Groups - bulk actions (joinable, finished)
 - [x] Admin - Groups/new - name, tournament, joinable, finished, paymentDueDate
-- [ ] Admin - Groups/:id/edit - name, joinable, finished, paymentDueDate (tournament cannot be changed)
+- [x] Admin - Groups/:id/edit - name, joinable, finished, paymentDueDate (tournament cannot be changed)
 - [ ] Admin - Groups/:id overview (memberships list) - username, avatar, name, email, paid, suspended, createdAt
 - [ ] Admin - Groups - add members count to list view
 - [ ] Admin - Groups/:id overview (memberships list) - bulk actions - suspend/activate, mark paid/unpaid
