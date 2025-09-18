@@ -125,7 +125,9 @@ describe('An Admin', () => {
 
 	it('should be able to navigate to groups list', () => {
 		cy.visit('/admin')
-		cy.contains(/groups/i).click()
+		cy.get('[data-sidebar="content"]')
+			.contains(/groups/i)
+			.click()
 		cy.url().should('include', '/admin/groups')
 		cy.get('table').contains('No results.')
 	})

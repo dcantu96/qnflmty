@@ -232,7 +232,7 @@ describe('An Admin', () => {
 
 	it('should be able to navigate to users list', () => {
 		cy.visit('/admin')
-		cy.contains(/users/i).click()
+		cy.get('[data-sidebar="content"]').contains(/users/i).click()
 		cy.url().should('include', '/admin/users')
 	})
 
