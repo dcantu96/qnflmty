@@ -104,6 +104,81 @@ describe('A New Authenticated User without access to dashboard', () => {
 				.click()
 			cy.contains(/Username must be 20 characters or less/i)
 		})
+
+		it('Should trim whitespace from username', () => {
+			cy.visit('/create-profile')
+
+			cy.get('input[name="username"]').clear().type(' testuser')
+			cy.get('button[type="submit"]')
+				.contains(/Create Profile/i)
+				.click()
+
+			cy.url().should('include', '/request-access')
+			cy.contains(/Profile Created/i)
+				.parent()
+				.find('h2')
+				.should('contain.text', 'testuser')
+
+			cy.visit('/create-profile')
+
+			cy.get('input[name="username"]').clear().type('anothertest ')
+			cy.get('button[type="submit"]')
+				.contains(/Create Profile/i)
+				.click()
+
+			cy.url().should('include', '/request-access')
+			cy.contains(/Profile Created/i)
+				.parent()
+				.find('h2')
+				.should('contain.text', 'anothertest')
+		})
+
+		it('Username should be unique case insensitive', () => {
+			cy.visit('/create-profile')
+
+			cy.get('input[name="username"]').clear().type('UniqueUser')
+			cy.get('button[type="submit"]')
+				.contains(/Create Profile/i)
+				.click()
+
+			cy.url().should('include', '/request-access')
+			cy.contains(/Profile Created/i)
+				.parent()
+				.find('h2')
+				.should('contain.text', 'UniqueUser')
+
+			// Attempt to create another profile with same username but different case
+			cy.visit('/create-profile')
+			cy.get('input[name="username"]').clear().type('uniqueuser')
+			cy.get('button[type="submit"]')
+				.contains(/Create Profile/i)
+				.click()
+
+			// Should see error about username already taken
+			cy.contains(/Username is already taken/i)
+		})
+
+		it('Should not allow spaces in username', () => {
+			cy.visit('/create-profile')
+			// Test space in the middle
+			cy.get('input[name="username"]').clear().type('test user')
+			cy.get('button[type="submit"]')
+				.contains(/Create Profile/i)
+				.click()
+			cy.contains(
+				/Username can only contain letters, numbers, underscores, and hyphens/i,
+			)
+
+			// Test multiple spaces
+			cy.get('input[name="username"]').clear().type('test  user  name')
+			cy.get('button[type="submit"]')
+				.contains(/Create Profile/i)
+				.click()
+			cy.contains(
+				/Username can only contain letters, numbers, underscores, and hyphens/i,
+			)
+		})
+
 		it('Should be able to successfully create a profile', () => {
 			cy.visit('/create-profile')
 
@@ -183,16 +258,15 @@ describe('A New Authenticated User without access to dashboard', () => {
 			cy.visit('/select-profile')
 
 			// Find the profile card and hover to reveal edit button
-			cy.get('h3')
-				.contains(firstUsername)
-				.parent()
-				.parent()
-				.trigger('mouseover')
+			cy.get('div').contains(firstUsername).closest('div').as('profileCard')
 
-			// Click edit button
-			cy.get('button')
-				.contains(/Edit avatar/i)
-				.click({ force: true })
+			cy.get('@profileCard')
+				.trigger('mouseover')
+				.within(() => {
+					cy.get('button')
+						.contains(/Edit avatar/i)
+						.click({ force: true })
+				})
 
 			// Avatar update modal should open
 			cy.contains(/Update Avatar/i).should('be.visible')

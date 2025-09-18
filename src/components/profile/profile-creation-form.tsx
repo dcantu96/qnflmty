@@ -6,26 +6,13 @@ import { Button } from '~/components/ui/button'
 import { Input } from '~/components/ui/input'
 import { Label } from '~/components/ui/label'
 import { cn } from '~/lib/utils'
-import { useFormStatus } from 'react-dom'
 import { avatarIconsMap } from '~/lib/avatar-icons'
 import { createProfileAction } from '~/server/user/mutations'
 
-function SubmitButton() {
-	const { pending } = useFormStatus()
-
-	return (
-		<Button
-			type="submit"
-			className="w-full disabled:cursor-not-allowed disabled:opacity-50 group-invalid:pointer-events-none group-invalid:cursor-not-allowed group-invalid:opacity-50"
-			disabled={pending}
-		>
-			{pending ? 'Creating Profile...' : 'Create Profile'}
-		</Button>
-	)
-}
-
 export function ProfileCreationForm() {
-	const [state, formAction] = useActionState(createProfileAction, null)
+	const [state, formAction, pending] = useActionState(createProfileAction, {
+		message: '',
+	})
 
 	return (
 		<form action={formAction} className="group space-y-6">
@@ -80,13 +67,19 @@ export function ProfileCreationForm() {
 						</p>
 					</div>
 
-					{state?.error && (
+					{state?.message && (
 						<div className="rounded-md bg-destructive/10 p-3 text-destructive text-sm">
-							{state.error}
+							{state.message}
 						</div>
 					)}
 
-					<SubmitButton />
+					<Button
+						type="submit"
+						className="w-full disabled:cursor-not-allowed disabled:opacity-50 group-invalid:pointer-events-none group-invalid:cursor-not-allowed group-invalid:opacity-50"
+						disabled={pending}
+					>
+						{pending ? 'Creating Profile...' : 'Create Profile'}
+					</Button>
 				</CardContent>
 			</Card>
 		</form>

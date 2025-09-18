@@ -142,20 +142,28 @@ export const authenticators = pgTable(
 	],
 )
 
-export const userAccounts = pgTable('user_account', {
-	id: serial('id').primaryKey(),
-	userId: integer('userId')
-		.notNull()
-		.references(() => users.id, { onDelete: 'cascade' }),
-	username: text('username').notNull().unique(),
-	avatar: avatarEnum('avatar').default('user').notNull(),
-	createdAt: timestamp('created_at', { withTimezone: true })
-		.notNull()
-		.defaultNow(),
-	updatedAt: timestamp('updated_at', { withTimezone: true })
-		.notNull()
-		.defaultNow(),
-})
+export const userAccounts = pgTable(
+	'user_account',
+	{
+		id: serial('id').primaryKey(),
+		userId: integer('userId')
+			.notNull()
+			.references(() => users.id, { onDelete: 'cascade' }),
+		username: text('username').notNull().unique(),
+		avatar: avatarEnum('avatar').default('user').notNull(),
+		createdAt: timestamp('created_at', { withTimezone: true })
+			.notNull()
+			.defaultNow(),
+		updatedAt: timestamp('updated_at', { withTimezone: true })
+			.notNull()
+			.defaultNow(),
+	},
+	(t) => [
+		check('username_not_empty', sql`length(trim(${t.username})) > 0`),
+		check('username_max_length', sql`length(${t.username}) <= 20`),
+		check('username_format', sql`${t.username} ~ '^[a-zA-Z0-9_.-]+$'`),
+	],
+)
 
 export const sports = pgTable('sport', {
 	id: serial('id').primaryKey(),

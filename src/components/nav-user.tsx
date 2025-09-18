@@ -29,7 +29,7 @@ import {
 } from '~/components/ui/sidebar'
 import type { UserData } from './sidebar/app-sidebar'
 import { usePathname, useRouter } from 'next/navigation'
-import { clearSelectedProfile } from '~/server/user/mutations'
+import { clearSelectedProfile } from '~/server/public/actions'
 
 export function NavUser({
 	user,
@@ -41,8 +41,8 @@ export function NavUser({
 	const { isMobile } = useSidebar()
 
 	const handleLogout = async () => {
+		await signOut({ redirect: false })
 		await clearSelectedProfile()
-		await signOut({ callbackUrl: '/' })
 	}
 
 	return (

@@ -1,4 +1,6 @@
-import { auth, isAdminSession, protectedAuth } from '~/lib/auth'
+'use server'
+
+import { userGuard, isAdminSession } from '~/lib/auth'
 import { db } from '../db'
 import {
 	groups,
@@ -10,8 +12,10 @@ import {
 import { eq, and } from 'drizzle-orm'
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
+import { cache } from 'react'
 
-export const getActiveWithTournament = protectedAuth(async () => {
+export const getActiveWithTournament = async () => {
+	await userGuard()
 	const activeGroup = await db
 		.select({
 			id: groups.id,
@@ -28,30 +32,28 @@ export const getActiveWithTournament = protectedAuth(async () => {
 		.limit(1)
 
 	return activeGroup[0]
-})
+}
 
-export const getRequestsByUserAccountId = protectedAuth(
-	async (userAccountId: number) => {
-		const { user } = await auth()
+export const getRequestsByUserAccountId = async (userAccountId: number) => {
+	const { user } = await userGuard()
 
-		const userAccount = await db.query.userAccounts.findFirst({
-			where: and(
-				eq(userAccounts.id, userAccountId),
-				eq(userAccounts.userId, user.id),
-			),
-		})
+	const userAccount = await db.query.userAccounts.findFirst({
+		where: and(
+			eq(userAccounts.id, userAccountId),
+			eq(userAccounts.userId, user.id),
+		),
+	})
 
-		if (!userAccount) {
-			throw new Error('User account not found')
-		}
+	if (!userAccount) {
+		throw new Error('User account not found')
+	}
 
-		const request = await db.query.requests.findMany({
-			where: eq(requests.userAccountId, userAccountId),
-		})
+	const request = await db.query.requests.findMany({
+		where: eq(requests.userAccountId, userAccountId),
+	})
 
-		return request
-	},
-)
+	return request
+}
 
 export async function getSelectedProfile(): Promise<
 	| {
@@ -64,7 +66,7 @@ export async function getSelectedProfile(): Promise<
 	  }
 	| undefined
 > {
-	const session = await auth()
+	const session = await userGuard()
 	const cookieStore = await cookies()
 	const selectedProfileId = cookieStore.get('selectedProfile')?.value
 
@@ -85,7 +87,7 @@ export async function getSelectedProfile(): Promise<
 	return profile
 }
 
-export async function checkProfileGroupMembership(
+async function checkProfileGroupMembership(
 	profileId: number,
 ): Promise<boolean> {
 	// Get the active group
@@ -116,7 +118,7 @@ export async function checkProfileGroupMembership(
 	return !!membership
 }
 
-export async function enforceGroupMembership() {
+export const enforceGroupMembership = cache(async () => {
 	const isAdmin = await isAdminSession()
 	const profile = await getSelectedProfile()
 
@@ -131,4 +133,4 @@ export async function enforceGroupMembership() {
 		// Profile doesn't have access to active group, redirect to request access
 		redirect(`/request-access/${profile.username}`)
 	}
-}
+})

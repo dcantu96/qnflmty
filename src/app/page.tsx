@@ -1,6 +1,4 @@
-import { getSession, isAdminSession } from '~/lib/auth'
-import { redirect } from 'next/navigation'
-import { cookies } from 'next/headers'
+import { handleRootRedirect } from '~/lib/auth-handlers'
 import {
 	Star,
 	Calendar,
@@ -25,7 +23,6 @@ import {
 	CardDescription,
 } from '~/components/ui/card'
 import { Separator } from '~/components/ui/separator'
-import { db } from '~/server/db'
 
 const steps = [
 	{
@@ -102,34 +99,8 @@ const stats = [
 	},
 ]
 
-async function rootRedirectHandler() {
-	const session = await getSession()
-	const cookiesStore = await cookies()
-	const selectedProfileId = cookiesStore.get('selectedProfile')?.value
-	const accounts = await db.query.userAccounts.findMany({
-		where: (accounts, { eq }) => eq(accounts.userId, session?.user.id ?? -1),
-	})
-
-	if (session) {
-		const isAdmin = await isAdminSession()
-		if (isAdmin) {
-			if (selectedProfileId) {
-				redirect('/dashboard')
-			} else if (accounts.length) {
-				redirect('/select-profile')
-			} else {
-				redirect('/admin')
-			}
-		} else if (selectedProfileId) {
-			redirect('/dashboard')
-		} else {
-			redirect('/select-profile')
-		}
-	}
-}
-
 export default async function Page() {
-	await rootRedirectHandler()
+	await handleRootRedirect()
 
 	return (
 		<div className="min-h-screen bg-background">
