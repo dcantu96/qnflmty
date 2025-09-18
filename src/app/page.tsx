@@ -26,6 +26,40 @@ import {
 } from '~/components/ui/card'
 import { Separator } from '~/components/ui/separator'
 import { db } from '~/server/db'
+import { clearSelectedProfile } from '~/server/user/mutations'
+
+async function handleRootRedirect(): Promise<void> {
+	const session = await getSession()
+
+	if (!session) {
+		await clearSelectedProfile()
+		return
+	}
+
+	const cookiesStore = await cookies()
+	const selectedProfileId = cookiesStore.get('selectedProfile')?.value
+	const isAdmin = await isAdminSession()
+
+	if (isAdmin) {
+		if (selectedProfileId) {
+			redirect('/dashboard')
+		} else {
+			const accounts = await db.query.userAccounts.findMany({
+				where: (accounts, { eq }) => eq(accounts.userId, session.user.id),
+			})
+
+			if (accounts.length > 0) {
+				redirect('/select-profile')
+			} else {
+				redirect('/admin')
+			}
+		}
+	} else if (selectedProfileId) {
+		redirect('/dashboard')
+	} else {
+		redirect('/select-profile')
+	}
+}
 
 const steps = [
 	{
@@ -103,33 +137,8 @@ const stats = [
 ]
 
 export default async function Page() {
-	const session = await getSession()
-
-	if (session) {
-		const cookiesStore = await cookies()
-		const selectedProfileId = cookiesStore.get('selectedProfile')?.value
-		const isAdmin = await isAdminSession()
-
-		if (isAdmin) {
-			if (selectedProfileId) {
-				redirect('/dashboard')
-			} else {
-				const accounts = await db.query.userAccounts.findMany({
-					where: (accounts, { eq }) => eq(accounts.userId, session.user.id),
-				})
-
-				if (accounts.length > 0) {
-					redirect('/select-profile')
-				} else {
-					redirect('/admin')
-				}
-			}
-		} else if (selectedProfileId) {
-			redirect('/dashboard')
-		} else {
-			redirect('/select-profile')
-		}
-	}
+	// Handle redirects before any rendering occurs
+	await handleRootRedirect()
 
 	return (
 		<div className="min-h-screen bg-background">
