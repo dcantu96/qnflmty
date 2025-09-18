@@ -1,6 +1,4 @@
-import { getSession, isAdminSession } from '~/lib/auth'
-import { redirect } from 'next/navigation'
-import { cookies } from 'next/headers'
+import { handleRootRedirect } from '~/lib/auth-handlers'
 import {
 	Star,
 	Calendar,
@@ -25,39 +23,6 @@ import {
 	CardDescription,
 } from '~/components/ui/card'
 import { Separator } from '~/components/ui/separator'
-import { db } from '~/server/db'
-
-async function handleRootRedirect(): Promise<void> {
-	const session = await getSession()
-
-	if (!session) {
-		return
-	}
-
-	const cookiesStore = await cookies()
-	const selectedProfileId = cookiesStore.get('selectedProfile')?.value
-	const isAdmin = await isAdminSession()
-
-	if (isAdmin) {
-		if (selectedProfileId) {
-			redirect('/dashboard')
-		} else {
-			const accounts = await db.query.userAccounts.findMany({
-				where: (accounts, { eq }) => eq(accounts.userId, session.user.id),
-			})
-
-			if (accounts.length > 0) {
-				redirect('/select-profile')
-			} else {
-				redirect('/admin')
-			}
-		}
-	} else if (selectedProfileId) {
-		redirect('/dashboard')
-	} else {
-		redirect('/select-profile')
-	}
-}
 
 const steps = [
 	{
@@ -135,7 +100,6 @@ const stats = [
 ]
 
 export default async function Page() {
-	// Handle redirects before any rendering occurs
 	await handleRootRedirect()
 
 	return (
